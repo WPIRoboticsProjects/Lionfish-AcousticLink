@@ -4,6 +4,7 @@
 
 
 import numpy as np
+from scipy.fftpack import fft
 import matplotlib.pyplot as plt
 
 
@@ -22,7 +23,7 @@ spacePeriod = 1/spaceFreq # in ms.
 
 samplePeriod = 1/sampleRate # in ms
 numMaskPerBit = 5 # number of period per bit
-numSpacePerBit = 3 # number of period per bit
+numSpacePerBit = 5 # number of period per bit
 
 
 data = format(0x55F0AA, '024b') # just some data for it to work with
@@ -59,12 +60,29 @@ for bit in data :
 	dataDivide[0].append(x[index-1,0])
 	dataDivide[1].append(-1)
 
-print(dataDivide)
+# print(dataDivide)
 
-plt.plot(x[:index,0] , x[:index,1] ) 
-plt.plot(dataDivide[0],dataDivide[1] , 'ro' )
-plt.show()
-	
+# plt.plot(x[:index,0] , x[:index,1] ) 
+# plt.plot(dataDivide[0],dataDivide[1] , 'ro' )
+# plt.show()
+
+def demodulate(x):
+	'''given the 1d array of signal values, calculate the given message using FSK demodulation using FFT'''
+	arr = np.zeros(len(x))
+	fft_data = fft(x)
+	for i in range(len(x)):
+		arr[i] = x[i] * np.cos(2*np.pi*baseFreq*i*samplePeriod)
+
+	plt.plot(x)
+	plt.plot(arr)
+	plt.show()
+
+	fft_data = np.fft.fft(x)
+	y = np.fft.fftfreq(len(fft_data))
+	plt.plot(y, fft_data)
+	plt.show()
+
+demodulate(x[:index,1])
 
 
 

@@ -9,13 +9,13 @@ from scipy.io.wavfile import write
 from scipy.io import wavfile as wav
 
 SAMPLE_RATE = 44100 #points per second (AUDIO STANDARD)
-BIT_RATE = 1000 #100 bits per second
+BIT_RATE = 1 #100 bits per second
 
 #we are using two frequencies based on sampling theory:
 #       you need to sample at a speed at least twice 
 #       the highest frequency of your signal
-base_freq = 15000 #base
-carrier_freq = 5000 # 0/1 = base +/- this
+base_freq = 5000 #base
+carrier_freq = 2000 # 0/1 = base +/- this
 
 
 def text_to_bits(text, encoding='utf-8', errors='surrogatepass'):
