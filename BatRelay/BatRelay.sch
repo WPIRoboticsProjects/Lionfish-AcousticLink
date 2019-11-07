@@ -134,18 +134,16 @@ $EndComp
 $Comp
 L power:GND #PWR?
 U 1 1 5DC3DBDD
-P 4000 3700
-F 0 "#PWR?" H 4000 3450 50  0001 C CNN
-F 1 "GND" H 4005 3527 50  0000 C CNN
-F 2 "" H 4000 3700 50  0001 C CNN
-F 3 "" H 4000 3700 50  0001 C CNN
-	1    4000 3700
+P 3650 3800
+F 0 "#PWR?" H 3650 3550 50  0001 C CNN
+F 1 "GND" H 3655 3627 50  0000 C CNN
+F 2 "" H 3650 3800 50  0001 C CNN
+F 3 "" H 3650 3800 50  0001 C CNN
+	1    3650 3800
 	1    0    0    -1  
 $EndComp
-Text GLabel 4700 3650 2    50   Input ~ 0
+Text GLabel 5600 3950 2    50   Input ~ 0
 Robot
-Wire Wire Line
-	4400 3650 4700 3650
 Wire Wire Line
 	3800 1800 4000 1800
 Wire Wire Line
@@ -158,12 +156,12 @@ Wire Wire Line
 $Comp
 L Device:D D?
 U 1 1 5DC3DBEE
-P 4750 3050
-F 0 "D?" V 4704 3129 50  0000 L CNN
-F 1 "D" V 4795 3129 50  0000 L CNN
-F 2 "" H 4750 3050 50  0001 C CNN
-F 3 "~" H 4750 3050 50  0001 C CNN
-	1    4750 3050
+P 5100 3100
+F 0 "D?" V 5054 3179 50  0000 L CNN
+F 1 "D" V 5145 3179 50  0000 L CNN
+F 2 "" H 5100 3100 50  0001 C CNN
+F 3 "~" H 5100 3100 50  0001 C CNN
+	1    5100 3100
 	0    1    1    0   
 $EndComp
 $Comp
@@ -178,45 +176,80 @@ F 3 "~" H 4300 3050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	4400 1800 4400 2750
-Wire Wire Line
-	4400 3250 4400 3350
-Wire Wire Line
 	4000 3050 4100 3050
 Wire Wire Line
-	4750 2900 4750 2750
-Wire Wire Line
-	4750 2750 4400 2750
-Connection ~ 4400 2750
-Wire Wire Line
-	4400 2750 4400 2850
-Wire Wire Line
-	4750 3200 4750 3350
-Wire Wire Line
-	4750 3350 4400 3350
-Connection ~ 4400 3350
-Wire Wire Line
-	4400 3350 4400 3650
-Wire Wire Line
 	4000 2700 4000 3050
-Wire Wire Line
-	4000 3450 4000 3700
 $Comp
 L Device:R R?
 U 1 1 5DC3FB09
-P 4000 3300
-F 0 "R?" H 3930 3254 50  0000 R CNN
-F 1 "R" H 3930 3345 50  0000 R CNN
-F 2 "" V 3930 3300 50  0001 C CNN
-F 3 "~" H 4000 3300 50  0001 C CNN
-	1    4000 3300
+P 3650 3350
+F 0 "R?" H 3580 3304 50  0000 R CNN
+F 1 "R" H 3580 3395 50  0000 R CNN
+F 2 "" V 3580 3350 50  0001 C CNN
+F 3 "~" H 3650 3350 50  0001 C CNN
+	1    3650 3350
 	-1   0    0    1   
 $EndComp
-Wire Wire Line
-	4000 3050 4000 3150
 Connection ~ 4000 3050
 Text Notes 1250 1550 0    50   ~ 0
 High Current Relay is made fore AC switching. \nArc might be a problem\n
 Text Notes 3450 1550 0    50   ~ 0
 MOSFET is potential to ESD problem. \nSpecially in robot
+$Comp
+L Device:D_Zener D?
+U 1 1 5DC40F21
+P 4000 3300
+F 0 "D?" V 3954 3379 50  0000 L CNN
+F 1 "D_Zener" V 4045 3379 50  0000 L CNN
+F 2 "" H 4000 3300 50  0001 C CNN
+F 3 "~" H 4000 3300 50  0001 C CNN
+	1    4000 3300
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:D_Zener D?
+U 1 1 5DC417FD
+P 4000 3650
+F 0 "D?" V 4046 3571 50  0000 R CNN
+F 1 "D_Zener" V 3955 3571 50  0000 R CNN
+F 2 "" H 4000 3650 50  0001 C CNN
+F 3 "~" H 4000 3650 50  0001 C CNN
+	1    4000 3650
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	4400 3250 4400 3400
+Wire Wire Line
+	4400 1800 4400 2800
+Wire Wire Line
+	4400 3950 5600 3950
+Wire Wire Line
+	4000 3050 4000 3150
+Wire Wire Line
+	4000 3450 4000 3500
+Wire Wire Line
+	4000 3800 4000 3950
+Wire Wire Line
+	4000 3950 4400 3950
+Connection ~ 4400 3950
+Wire Wire Line
+	4400 2800 5100 2800
+Wire Wire Line
+	5100 2800 5100 2950
+Connection ~ 4400 2800
+Wire Wire Line
+	4400 2800 4400 2850
+Wire Wire Line
+	5100 3250 5100 3400
+Wire Wire Line
+	5100 3400 4400 3400
+Connection ~ 4400 3400
+Wire Wire Line
+	4400 3400 4400 3950
+Wire Wire Line
+	4000 3050 3650 3050
+Wire Wire Line
+	3650 3050 3650 3200
+Wire Wire Line
+	3650 3500 3650 3800
 $EndSCHEMATC

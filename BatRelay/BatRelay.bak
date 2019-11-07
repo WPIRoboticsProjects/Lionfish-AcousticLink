@@ -215,4 +215,8 @@ $EndComp
 Wire Wire Line
 	4000 3050 4000 3150
 Connection ~ 4000 3050
+Text Notes 1250 1550 0    50   ~ 0
+High Current Relay is made fore AC switching. \nArc might be a problem\n
+Text Notes 3450 1550 0    50   ~ 0
+MOSFET is potential to ESD problem. \nSpecially in robot
 $EndSCHEMATC
