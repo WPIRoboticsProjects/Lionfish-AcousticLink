@@ -1,6 +1,7 @@
 %%% Transmission lost
-%   Absorbation lost
-%   Spreading lost
+%   - Absorbation lost
+%   - Spreading lost
+%%% Ambient noise
 %% Absorbation Lost
 % Marsh and Schulkin formula
 clear
@@ -66,7 +67,7 @@ hold off
 %Thorp formula
 fins =[];
 thropLosses = [];
-for fin = 0.5:10
+for fin = 0.5:0.5:20
     fins =[fins fin]; %Khz 
     thropLoss = (0.11 * fin^2) / (1+ fin^2) + (44 * fin^2) / (4100 + fin^2);
     thropLosses  = [ thropLosses thropLoss ];
@@ -93,6 +94,7 @@ title ("Spread losts ")
 xlabel("distance [m]")
 ylabel("dB")
 
+%% ambient noise
 
 
 
