@@ -1,0 +1,185 @@
+EESchema-LIBRARY Version 2.4
+#encoding utf-8
+#
+# ComponentBlock_5Vreg
+#
+DEF ComponentBlock_5Vreg U 0 40 Y Y 1 F N
+F0 "U" 0 -100 50 H V C CNN
+F1 "ComponentBlock_5Vreg" 0 0 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+S -400 -200 400 -650 0 1 0 N
+X 5V_Out ~ -600 -300 200 R 50 50 1 1 w
+X Batt+ ~ 600 -300 200 L 50 50 1 1 W
+X Batt- ~ 600 -400 200 L 50 50 1 1 W
+X GND ~ -600 -400 200 R 50 50 1 1 w
+X ON/Off ~ 600 -600 200 L 50 50 1 1 w
+ENDDRAW
+ENDDEF
+#
+# ComponentBlock_Bar30
+#
+DEF ComponentBlock_Bar30 U 0 40 Y Y 1 F N
+F0 "U" -100 -150 50 H V C CNN
+F1 "ComponentBlock_Bar30" -100 0 50 H V C CNN
+F2 "" -100 50 79 H I C CNN
+F3 "" -100 50 79 H I C CNN
+DRAW
+S -350 200 350 -300 0 1 0 N
+X GND ~ 550 -200 200 L 50 50 1 1 w
+X SCK ~ 550 -100 200 L 50 50 1 1 B
+X SCL ~ 550 0 200 L 50 50 1 1 B
+X VCC ~ 550 100 200 L 50 50 1 1 w
+ENDDRAW
+ENDDEF
+#
+# ComponentBlock_ESC
+#
+DEF ComponentBlock_ESC U 0 40 Y Y 1 F N
+F0 "U" 0 -400 50 H V C CNN
+F1 "ComponentBlock_ESC" 0 -300 50 H V C CNN
+F2 "" 0 -300 50 H I C CNN
+F3 "" 0 -300 50 H I C CNN
+DRAW
+S -400 -150 400 -550 0 1 0 N
+X GND ~ -600 -500 200 R 50 50 1 1 W
+X MotorA ~ 600 -250 200 L 50 50 1 1 w
+X MotorB ~ 600 -350 200 L 50 50 1 1 w
+X MotorC ~ 600 -450 200 L 50 50 1 1 w
+X Signal ~ -600 -200 200 R 50 50 1 1 I
+X VCC ~ -600 -400 200 R 50 50 1 1 W
+ENDDRAW
+ENDDEF
+#
+# ComponentBlock_FathomX
+#
+DEF ComponentBlock_FathomX U 0 40 Y Y 1 F N
+F0 "U" 0 250 50 H V C CNN
+F1 "ComponentBlock_FathomX" 0 350 50 H V C CNN
+F2 "" 0 350 50 H I C CNN
+F3 "" 0 350 50 H I C CNN
+DRAW
+S -450 200 450 -300 0 1 0 N
+X Eathernet ~ -650 100 200 R 50 50 1 1 O
+X GND ~ 50 -500 200 U 50 50 1 1 O
+X Tether+ ~ 650 100 200 L 50 50 1 1 O
+X Tether- ~ 650 0 200 L 50 50 1 1 O
+X VCC ~ -50 -500 200 U 50 50 1 1 O
+ENDDRAW
+ENDDEF
+#
+# ComponentBlock_Lipo
+#
+DEF ComponentBlock_Lipo U 0 40 Y Y 1 F N
+F0 "U" 0 -100 50 H V C CNN
+F1 "ComponentBlock_Lipo" 0 0 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+S -400 100 400 -200 0 1 0 N
+X Batt+ ~ -600 0 200 R 50 50 1 1 w
+X Batt- ~ -600 -100 200 R 50 50 1 1 w
+ENDDRAW
+ENDDEF
+#
+# ComponentBlock_PixHawks
+#
+DEF ComponentBlock_PixHawks U 0 40 Y Y 1 F N
+F0 "U" 0 -100 50 H V C CNN
+F1 "ComponentBlock_PixHawks" 0 0 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+S -500 350 550 -900 0 1 0 N
+X Aux1 ~ -700 -650 200 R 50 50 1 1 O
+X Aux2 ~ -700 -750 200 R 50 50 1 1 O
+X GND ~ 750 150 200 L 50 50 1 1 W
+X microUSB ~ 750 -800 200 L 50 50 1 1 w
+X Motor1 ~ -700 250 200 R 50 50 1 1 O
+X Motor2 ~ -700 150 200 R 50 50 1 1 O
+X Motor3 ~ -700 50 200 R 50 50 1 1 O
+X Motor4 ~ -700 -50 200 R 50 50 1 1 O
+X Motor5 ~ -700 -150 200 R 50 50 1 1 O
+X Motor6 ~ -700 -250 200 R 50 50 1 1 O
+X Motor7 ~ -700 -350 200 R 50 50 1 1 O
+X Motor8 ~ -700 -450 200 R 50 50 1 1 O
+X Sensors ~ 750 -300 200 L 50 50 1 1 O
+X Vin_5V ~ 750 250 200 L 50 50 1 1 W
+ENDDRAW
+ENDDEF
+#
+# ComponentBlock_RaspPi
+#
+DEF ComponentBlock_RaspPi U 0 40 Y Y 1 F N
+F0 "U" 0 150 50 H V C CNN
+F1 "ComponentBlock_RaspPi" 0 250 50 H V C CNN
+F2 "" 0 100 50 H I C CNN
+F3 "" 0 100 50 H I C CNN
+DRAW
+S -550 300 600 -350 0 1 0 N
+X Eathernet ~ -750 -250 200 R 50 50 1 1 B
+X GND ~ 800 100 200 L 50 50 1 1 W
+X USB1 ~ -750 200 200 R 50 50 1 1 B
+X USB2 ~ -750 100 200 R 50 50 1 1 B
+X USB3 ~ -750 0 200 R 50 50 1 1 B
+X USB4 ~ -750 -100 200 R 50 50 1 1 B
+X Vin_5V ~ 800 200 200 L 50 50 1 1 W
+ENDDRAW
+ENDDEF
+#
+# Device_C
+#
+DEF Device_C C 0 10 N Y 1 F N
+F0 "C" 25 100 50 H V L CNN
+F1 "Device_C" 25 -100 50 H V L CNN
+F2 "" 38 -150 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ C_*
+$ENDFPLIST
+DRAW
+P 2 0 1 20 -80 -30 80 -30 N
+P 2 0 1 20 -80 30 80 30 N
+X ~ 1 0 150 110 D 50 50 1 1 P
+X ~ 2 0 -150 110 U 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+# Device_R
+#
+DEF Device_R R 0 0 N Y 1 F N
+F0 "R" 80 0 50 V V C CNN
+F1 "Device_R" 0 0 50 V V C CNN
+F2 "" -70 0 50 V I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ R_*
+$ENDFPLIST
+DRAW
+S -40 -100 40 100 0 1 10 N
+X ~ 1 0 150 50 D 50 50 1 1 P
+X ~ 2 0 -150 50 U 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+# Switch_SW_Reed
+#
+DEF Switch_SW_Reed SW 0 0 N N 1 F N
+F0 "SW" 0 100 50 H V C CNN
+F1 "Switch_SW_Reed" 0 -100 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+A -85 0 55 901 -901 0 0 10 N -85 55 -85 -55
+A 85 0 55 -899 899 0 0 10 N 85 -55 85 55
+P 2 0 0 0 -100 0 50 30 N
+P 2 0 0 10 -85 -55 90 -55 N
+P 2 0 0 10 85 55 -85 55 N
+P 2 0 0 0 100 0 -50 -30 N
+X 1 1 -200 0 100 R 50 50 1 1 P
+X 2 2 200 0 100 L 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+#End Library
