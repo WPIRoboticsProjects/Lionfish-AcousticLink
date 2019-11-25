@@ -17,8 +17,7 @@ ft30c = 21.9*10^(6 - (1520/ (30 + 273) ) ) ; %khz at 30C
 
 finsP30ft30c =[];
 MSlossP30ft30clist = [];
-step = 5;
-for fin = 10:step:100
+for fin = 10:100
     finsP30ft30c =[finsP30ft30c fin]; %Khz 
     ft = ft30c; P = P30;
     MSlossP30ft30c = 8.68*10^3*( ( S*A*ft*fin^2 )/(ft^2+fin^2) + (B*fin^2)/ft ) * (1- 6.54*10^(-4) * P);
@@ -27,7 +26,7 @@ end
 
 finsP30ft10c =[];
 MSlossP30ft10clist = [];
-for fin = 10:step:100
+for fin = 10:100
     finsP30ft10c =[finsP30ft10c fin]; %Khz 
     ft = ft10c; P = P100;
     MSlossP30ft10c = 8.68*10^3*( ( S*A*ft*fin^2 )/(ft^2+fin^2) + (B*fin^2)/ft ) * (1- 6.54*10^(-4) * P);
@@ -36,7 +35,7 @@ end
 
 finsP100ft10c =[];
 MSlossP100ft10clist = [];
-for fin = 10:step:100
+for fin = 10:100
     finsP100ft10c =[finsP100ft10c fin]; %Khz 
     ft = ft10c; P = P100;
     MSlossP100ft10c = 8.68*10^3*( ( S*A*ft*fin^2 )/(ft^2+fin^2) + (B*fin^2)/ft ) * (1- 6.54*10^(-4) * P);
@@ -45,19 +44,19 @@ end
 
 finsP100ft30c =[];
 MSlossP100ft30clist = [];
-for fin = 10:step:100
+for fin = 10:100
     finsP100ft30c =[finsP100ft30c fin]; %Khz 
     ft = ft30c; P = P100;
     MSlossP100ft30c = 8.68*10^3*( ( S*A*ft*fin^2 )/(ft^2+fin^2) + (B*fin^2)/ft ) * (1- 6.54*10^(-4) * P);
     MSlossP100ft30clist = [MSlossP100ft30clist MSlossP100ft30c ] ;
 end 
 figure(1)
-p3030 = plot(finsP30ft30c , MSlossP30ft30clist , 'r');
 hold on 
+p3030 = plot(finsP30ft30c , MSlossP30ft30clist , 'r');
 p3010 = plot(finsP30ft10c , MSlossP30ft10clist , 'b' );
 p10030 = plot(finsP100ft30c , MSlossP100ft30clist , '*' );
 p10010 = plot(finsP100ft10c , MSlossP100ft10clist , 'o' );
-title("Transmission Loss")
+title("Marsh and Schulkin formula with different depth and temperature")
 legend([p3030 p3010 p10030 p10010 ],'30m 30C','30m 10c','100m 30c','100m 10c')
 xlabel("f [Khz]")
 ylabel("dB/km")
@@ -96,27 +95,22 @@ xlabel("distance [m]")
 ylabel("dB")
 
 %% ambient noise
-figure(4)
-Nt =[] ;
-Ns = [];
-Nw =[];
-Nth =[];
-Ntotal =[];
-fins = [];
-for fin = 10:step:100
-   % Turbulence 
-    Nt = [Nt ; 17-30*log10(fin)];
-    % Shipping factor
-    s = 0.5; % medium shipping activity of 0.5
-    Ns = [Ns ; 40+20*(s-0.5) + 26*log10(fin)];
-    % Wind-driven waves
-    w = 5; % wind speed of 10m/s (average max wind speed at 20Kts)
-    Nw = [Nw ; 50+7.5 * sqrt(w) + 20*log10(fin)];
-    % Thermal noise
-    Nth =[Nth ; -15+20*log10(fin)]
-   
-    fins = [fins ; fin];
-end
- Ntotal = Nt+Ns+Nw+Nth;
-plot(fins,Ntotal,'o')
+
+
+
+%% Power for transdusor
+% Calculation based on Benthowave website
+% https://www.benthowave.com/products/Specs/How%20to%20determine%20PW%20and%20D%20with%20IPP.pdf
+
+% Source level dB uPa
+SL = 140 ;
+
+% Component related values are picked using BII-7700 as for now. 
+% TVR Transmitting voltage response dB uPa*m/V 
+TVR =145 ; % average value. 
+% Conductance of the transudsor in ohm^-1
+Gp 
+
+% IPP is the input pulse power in RMS W
+IPPinlog = SL + 10*log(Gp) -TVR
 
