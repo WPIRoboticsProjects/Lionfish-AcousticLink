@@ -1,7 +1,7 @@
 clear
 
 fs = 200000;                                % sample frequency (Hz)
-timeLength = 5 ; % 5 second time span
+timeLength = 2 ; % 5 second time span
 
 %% generate origional X
 t = 0:1/fs:timeLength-1/fs ;                      % 10 second span time vector
@@ -23,13 +23,21 @@ xlabel('Frequency')
 ylabel('Power')
 % plot(f0,ftX0,'b')
 
+% output this to file
+xv = vec2mat(x,1);
+tv =vec2mat(t,1);
+csvwrite("output.csv",[tv xv]);
 
 %% fir Fitler X
 
 firOrder = 20 ;
-highFeq = 20000 ;
-lowFeq = 10000;
+highFeq = 50000 ;
+lowFeq = 40000;
 b = fir1(firOrder,[ (lowFeq/(fs/2)) , (highFeq/(fs/2)) ]);
+b2String = sprintf('%f,' , b);
+b2String = b2String(1:end-1); % strip final comma
+disp("string for b is :");
+disp(b2String);
 
 firX = x*0; % zeros can't be used (too big) and just leave the first few blank
 
@@ -41,7 +49,7 @@ for ii = length(b):length(x)
 %         disp("inside")
 %         disp(ii);
 %         disp(jj);
-        localY = localY + b(length(b)-jj)*x(ii-jj);
+        localY = localY + b(jj+1)*x(ii-jj);
     end
     firX(ii)=localY;
 end
