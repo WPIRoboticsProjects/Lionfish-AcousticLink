@@ -14,7 +14,7 @@ double phase_angle(int index);
 /*                             Definitions                                       */
 
 //48K samples every second
-#define SAMPLE_RATE 48000 
+#define SAMPLE_RATE 100000 
 
 //1000 bits per second, 1 bit every ms.
 #define BIT_RATE 1000 
