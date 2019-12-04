@@ -16,10 +16,17 @@ double period = (double) (1 / FREQUENCY);
 int main()
 {
     int payload_size = num_characters * 8; //8 bits per character
+    int mod_payload_size = payload_size * (int) SAMPLES_PER_BIT; //total samples = num_samples_per_bit * num_payload_bits
+    printf("message length:%d\n", num_characters);
+    printf("binary length:%d\n", payload_size);
+    printf("signal length:%d\n", mod_payload_size);
+
     int * payload = malloc(payload_size *  sizeof(int)); //message in binary
+    float * modulated = malloc(mod_payload_size * sizeof(float));
     payload = message_to_binary(message, num_characters);
-    
-    printf("binary message:  ");
+    modulated = modulate_binary(payload, payload_size);
+
+    printf("\nbinary message\n");
     for (int i = 0; i < payload_size; i++)
     {
       printf("%d ", payload[i]);
@@ -32,22 +39,11 @@ int main()
 
     char binary_file_name[] = "encoded_binary.csv";
     int bin_file_res = write_binary_to_csv(binary_file_name, payload, payload_size);
-    printf("%d\n", bin_file_res);
-
-    int mod_payload_size = payload_size * (int) SAMPLES_PER_BIT;
-    float * modulated_payload = malloc(mod_payload_size * sizeof(float));
-    modulated_payload = modulate_binary(payload, payload_size);
-
-    printf("modulated message:  ");
-    for (int i = 0; i < mod_payload_size; i++)
-    {
-      printf("%f\n", modulated_payload[i]);
-    }
-    printf("\n");
+    printf("file_binary: %d\n", bin_file_res);
 
     char mod_file_name[] = "modulated_binary.csv";
-    int mod_file_res = write_modulated_to_csv(mod_file_name, modulated_payload, mod_payload_size);
-    printf("%d\n", mod_file_res);
+    int mod_file_res = write_modulated_to_csv(mod_file_name, modulated, mod_payload_size);
+    printf("file_modulated: %d\n", mod_file_res);
 
     return 0;
 }
@@ -84,36 +80,45 @@ int * message_to_binary(char *input, int input_length)
 /**
  * Convert the binary int array into a float array of samples to be transmitted 
  * **/
-float * modulate_binary(int *payload, int payload_size)
+float * modulate_binary(int * binary_payload, int bin_payload_size)
 {
-  float * ans = malloc(payload_size * sizeof(float));
-  int bool_ook = 0; // Start in off (no transmit)
+  float * ans = malloc(bin_payload_size * (int) SAMPLES_PER_BIT * sizeof(float));
+  int i, j = 0;
   int head = 0; //start index
-  int tail = head + (int) SAMPLES_PER_BIT; //end index
+  int tail = (int) SAMPLES_PER_BIT; //end index
+  printf("size: %d\n", bin_payload_size);
 
-  for(int i = 0; i < payload_size; i++) //loop through payload array
+  for(i = 0; i < bin_payload_size; i++) //loop through payload array
   {
-    printf("head: %d, tail %d\n", head, tail);
-    if(payload[i] == 0) // 0 bit
+    // printf("bit: %d, head: %d, tail %d, \n", binary_payload[i], head, tail);
+    if(binary_payload[i] == 0) // 0 bit
     {
-      for(int j = head; j < tail; j++)
+      for(j = head; j < tail; j++)
       {
         ans[j] = (float) 0;
       }
-      head += (int) SAMPLES_PER_BIT;
-      tail += (int) SAMPLES_PER_BIT;
     }
-    else if(payload[i] == 1) // 1 bit
+    else if(binary_payload[i] == 1) // 1 bit
     {
-      for(int j = head; j < tail; j++)
+      for(j = head; j < tail; j++)
       {
-        ans[j] = (float) sin(2 * M_PI * (int) ((j%SAMPLES_PER_BIT) / SAMPLES_PER_BIT));
+        ans[j] = (float) sin((double) (2 * M_PI * FREQUENCY * phase_angle((i*(int)SAMPLES_PER_BIT)+j)));
       }
-      head += (int) SAMPLES_PER_BIT;
-      tail += (int) SAMPLES_PER_BIT;
     }
+    head = head + (int) SAMPLES_PER_BIT + 1; //bring head to next slot after tail
+    tail = tail + (int) SAMPLES_PER_BIT + 1; //bring tail to next slot afer
   }
   return ans;
+}
+
+/**
+ * HELPER FUNCTION
+ * returns the phase angle of the sine function 
+ * **/
+double phase_angle(int index)
+{
+  int degrees = index % 360;
+  return (double) (degrees * M_PI) / 180;  
 }
 
 /**
@@ -152,7 +157,7 @@ int32_t write_binary_to_csv(char *fName, int *payload , int length)
  * param: fName, name of the file to write to, length: length of the sample. 
  * return -1 if file open failed. 
  * **/
-int32_t write_modulated_to_csv(char *fName, int *payload , int length)
+int32_t write_modulated_to_csv(char *fName, float *payload , int length)
 {
 	FILE *fp;
 	fp = fopen(fName,"w+");
@@ -162,17 +167,18 @@ int32_t write_modulated_to_csv(char *fName, int *payload , int length)
 		return -1;
 	}
 
-	for(int i=0;i<length;++i)
+	for(int i=0;i<length-1;++i)
 	{
     if(i != (length-1)) 
     {
-      fprintf(fp , "%d,", payload[i]);
+      fprintf(fp , "%f,", payload[i]);
     }	
-    if((i+1)%10 == 0)
+    if(i%10 == 0)
     {
       fprintf(fp , "\n");
     }
 	}
+  fprintf(fp , "%f,", payload[length-1]);
 	fclose(fp);
 	return 0;
 

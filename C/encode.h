@@ -8,6 +8,8 @@
 
 //Function Definitions
 int * message_to_binary(char *input, int input_length);
+float * modulate_binary(int * binary_payload, int bin_payload_size);
+double phase_angle(int index);
 
 /*                             Definitions                                       */
 
