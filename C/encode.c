@@ -37,9 +37,9 @@ int main()
     }
     printf("\n");
 
-    char binary_file_name[] = "encoded_binary.csv";
-    int bin_file_res = write_binary_to_csv(binary_file_name, payload, payload_size);
-    printf("file_binary: %d\n", bin_file_res);
+    // char binary_file_name[] = "encoded_binary.csv";
+    // int bin_file_res = write_binary_to_csv(binary_file_name, payload, payload_size);
+    // printf("file_binary: %d\n", bin_file_res);
 
     char mod_file_name[] = "modulated_binary.csv";
     int mod_file_res = write_modulated_to_csv(mod_file_name, modulated, mod_payload_size);
@@ -171,14 +171,10 @@ int32_t write_modulated_to_csv(char *fName, float *payload , int length)
 	{
     if(i != (length-1)) 
     {
-      fprintf(fp , "%f,", payload[i]);
+      fprintf(fp , "%f,%f\n", (float) ( ((double) i)/SAMPLE_RATE ), payload[i]);
     }	
-    if(i%10 == 0)
-    {
-      fprintf(fp , "\n");
-    }
 	}
-  fprintf(fp , "%f,", payload[length-1]);
+  fprintf(fp , "%f,%f\n", (float) ( ((double) length-1)/SAMPLE_RATE ), payload[length-1]);
 	fclose(fp);
 	return 0;
 
