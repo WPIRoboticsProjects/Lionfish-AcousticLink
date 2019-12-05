@@ -35,7 +35,7 @@ int32_t readSamplesFromCsv( char *fName )
 	
 	int32_t i=0;
 	// for(; i< maxSampleLength ; ++i)
-	for(; i< 12 ; ++i)
+	for(; i<maxSampleLength ; ++i)
 	{
 		if( fscanf(fp, "%lf,%lf" , &times[i], &samples[i] )== EOF )
 		{
@@ -47,6 +47,7 @@ int32_t readSamplesFromCsv( char *fName )
 	fclose (fp);
 	return i;
 }
+
 
 /**
  * write the content in filteredSamples into csv 
