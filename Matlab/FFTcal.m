@@ -31,8 +31,8 @@ csvwrite("output.csv",[tv xv]);
 %% fir Fitler X
 
 firOrder = 20 ;
-highFeq = 50000 ;
-lowFeq = 40000;
+highFeq = 30000 ;
+lowFeq  = 20000;
 b = fir1(firOrder,[ (lowFeq/(fs/2)) , (highFeq/(fs/2)) ]);
 b2String = sprintf('%f,' , b);
 b2String = b2String(1:end-1); % strip final comma
