@@ -6,6 +6,12 @@ encode.c is a program which represents ASCII text as binary bits.
 to encode a message, change the 'message' variable on line 11
 
 */
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <math.h> 
+#include <float.h>
+#include <string.h>
 #include "encode.h" // reference for defines, includes, etc.
 
 char message[] = "test"; // string of message
@@ -17,12 +23,14 @@ int main()
 {
     int payload_size = num_characters * 8; //8 bits per character
     int mod_payload_size = payload_size * (int) SAMPLES_PER_BIT; //total samples = num_samples_per_bit * num_payload_bits
+
     printf("message length:%d\n", num_characters);
     printf("binary length:%d\n", payload_size);
     printf("signal length:%d\n", mod_payload_size);
 
     int * payload = malloc(payload_size *  sizeof(int)); //message in binary
     float * modulated = malloc(mod_payload_size * sizeof(float));
+
     payload = message_to_binary(message, num_characters);
     modulated = modulate_binary(payload, payload_size);
 
@@ -37,13 +45,8 @@ int main()
     }
     printf("\n");
 
-    // char binary_file_name[] = "encoded_binary.csv";
-    // int bin_file_res = write_binary_to_csv(binary_file_name, payload, payload_size);
-    // printf("file_binary: %d\n", bin_file_res);
-
     char mod_file_name[] = "modulated_binary.csv";
-    int mod_file_res = write_modulated_to_csv(mod_file_name, modulated, mod_payload_size);
-    printf("file_modulated: %d\n", mod_file_res);
+    write_modulated_to_csv(mod_file_name, modulated, mod_payload_size);
 
     return 0;
 }
@@ -102,7 +105,7 @@ float * modulate_binary(int * binary_payload, int bin_payload_size)
     {
       for(j = head; j < tail; j++)
       {
-        ans[j] = (float) sin((double) (2 * M_PI * FREQUENCY * phase_angle((i*(int)SAMPLES_PER_BIT)+j)));
+        ans[j] = (float) sin((double) (2 * M_PI * FREQUENCY + phase_angle((i*(int)SAMPLES_PER_BIT)+j)));
       }
     }
     head = head + (int) SAMPLES_PER_BIT + 1; //bring head to next slot after tail
