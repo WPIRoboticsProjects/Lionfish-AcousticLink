@@ -66,7 +66,7 @@ int32_t writeResultToCsv( char *fName , int32_t length)
 
 	for(int i=0;i<length;++i)
 	{
-		fprintf(fp , "%f,%f\n" ,filteredSamples[i] , times[i]);
+		fprintf(fp , "%f,%f\n" ,times[i], filteredSamples[i]);
 	}
 	fclose(fp);
 	return 0;
@@ -99,15 +99,10 @@ void FIRsamples(uint32_t maxLength)
 	}
 }
 
-
-
-
-
-
-void main()
+int main()
 {
 	printf("main.c");
-	char finName[] = "samples.csv";
+	char finName[] = "modulated_binary.csv";
 	char foutName[] = "processedSamples.csv";
 	// read in sample points
 	int32_t length = readSamplesFromCsv(finName);	
