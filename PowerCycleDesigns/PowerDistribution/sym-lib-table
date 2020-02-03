@@ -1,4 +1,0 @@
-(sym_lib_table
-  (lib (name ComponentBlock)(type Legacy)(uri ${KIPRJMOD}/ComponentBlock.lib)(options "")(descr ""))
-  (lib (name PowerDistribution-rescue)(type Legacy)(uri ${KIPRJMOD}/PowerDistribution-rescue.lib)(options "")(descr ""))
-)

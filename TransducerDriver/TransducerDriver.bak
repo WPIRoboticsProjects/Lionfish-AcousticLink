@@ -1,0 +1,274 @@
+EESchema Schematic File Version 4
+LIBS:TransducerDriver-cache
+EELAYER 26 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Transistor_FET:IRF540N Q1
+U 1 1 5E2765D7
+P 3650 2550
+F 0 "Q1" H 3856 2596 50  0000 L CNN
+F 1 "IRF540N" H 3856 2505 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 3900 2475 50  0001 L CIN
+F 3 "http://www.irf.com/product-info/datasheets/data/irf540n.pdf" H 3650 2550 50  0001 L CNN
+	1    3650 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_FET:IRF540N Q2
+U 1 1 5E276AB6
+P 4150 3200
+F 0 "Q2" H 4356 3246 50  0000 L CNN
+F 1 "IRF540N" H 4356 3155 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 4400 3125 50  0001 L CIN
+F 3 "http://www.irf.com/product-info/datasheets/data/irf540n.pdf" H 4150 3200 50  0001 L CNN
+	1    4150 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Transformer_SP_1S T1
+U 1 1 5E277BCE
+P 5750 2500
+F 0 "T1" H 5750 2881 50  0000 C CNN
+F 1 "Transformer_SP_1S 1:10" H 5750 2950 50  0000 C CNN
+F 2 "Transformer_THT:Transformer_Toroid_Tapped_Horizontal_D10.5mm_Amidon-T37" H 5750 2500 50  0001 C CNN
+F 3 "~" H 5750 2500 50  0001 C CNN
+	1    5750 2500
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VCC #PWR0101
+U 1 1 5E279F66
+P 4800 2050
+F 0 "#PWR0101" H 4800 1900 50  0001 C CNN
+F 1 "VCC" H 4817 2223 50  0000 C CNN
+F 2 "" H 4800 2050 50  0001 C CNN
+F 3 "" H 4800 2050 50  0001 C CNN
+	1    4800 2050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5350 2500 4800 2500
+Wire Wire Line
+	4800 2500 4800 2050
+Wire Wire Line
+	3750 2300 3750 2350
+Wire Wire Line
+	4250 2700 4250 3000
+$Comp
+L power:GND #PWR0102
+U 1 1 5E27B642
+P 4250 3500
+F 0 "#PWR0102" H 4250 3250 50  0001 C CNN
+F 1 "GND" H 4255 3327 50  0000 C CNN
+F 2 "" H 4250 3500 50  0001 C CNN
+F 3 "" H 4250 3500 50  0001 C CNN
+	1    4250 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4250 3400 4250 3500
+$Comp
+L power:GND #PWR0103
+U 1 1 5E27C3D5
+P 3750 2800
+F 0 "#PWR0103" H 3750 2550 50  0001 C CNN
+F 1 "GND" H 3755 2627 50  0000 C CNN
+F 2 "" H 3750 2800 50  0001 C CNN
+F 3 "" H 3750 2800 50  0001 C CNN
+	1    3750 2800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3750 2750 3750 2800
+Text Label 3250 2550 0    50   ~ 0
+SigA
+Text Label 3250 3200 0    50   ~ 0
+SigB
+Wire Wire Line
+	3450 2550 3250 2550
+Wire Wire Line
+	3950 3200 3250 3200
+$Comp
+L Device:R Rtrans1
+U 1 1 5E27CC99
+P 6250 2500
+F 0 "Rtrans1" V 6330 2500 50  0000 C CNN
+F 1 "10K" V 6250 2500 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 6180 2500 50  0001 C CNN
+F 3 "~" H 6250 2500 50  0001 C CNN
+	1    6250 2500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6150 2300 6250 2300
+Wire Wire Line
+	6250 2300 6250 2350
+Wire Wire Line
+	6250 2650 6250 2700
+Wire Wire Line
+	6250 2700 6150 2700
+$Comp
+L Device:R Rshut1
+U 1 1 5E27CF4B
+P 4500 2300
+F 0 "Rshut1" V 4580 2300 50  0000 C CNN
+F 1 "100" V 4500 2300 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 4430 2300 50  0001 C CNN
+F 3 "~" H 4500 2300 50  0001 C CNN
+	1    4500 2300
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R Rshut2
+U 1 1 5E27CFC4
+P 4600 2700
+F 0 "Rshut2" V 4680 2700 50  0000 C CNN
+F 1 "100" V 4600 2700 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 4530 2700 50  0001 C CNN
+F 3 "~" H 4600 2700 50  0001 C CNN
+	1    4600 2700
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4250 2700 4450 2700
+Wire Wire Line
+	4750 2700 5350 2700
+Wire Wire Line
+	3750 2300 4350 2300
+Wire Wire Line
+	4650 2300 5350 2300
+$Comp
+L Transistor_FET:IRF540N Q?
+U 1 1 5E2CAB91
+P 7900 3150
+F 0 "Q?" H 8106 3196 50  0000 L CNN
+F 1 "IRF540N" H 8106 3105 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 8150 3075 50  0001 L CIN
+F 3 "http://www.irf.com/product-info/datasheets/data/irf540n.pdf" H 7900 3150 50  0001 L CNN
+	1    7900 3150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_FET:IRF540N Q?
+U 1 1 5E2CAB98
+P 8400 3800
+F 0 "Q?" H 8606 3846 50  0000 L CNN
+F 1 "IRF540N" H 8606 3755 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 8650 3725 50  0001 L CIN
+F 3 "http://www.irf.com/product-info/datasheets/data/irf540n.pdf" H 8400 3800 50  0001 L CNN
+	1    8400 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Transformer_SP_1S T?
+U 1 1 5E2CAB9F
+P 10000 3100
+F 0 "T?" H 10000 3481 50  0000 C CNN
+F 1 "Transformer_SP_1S 1:10" H 10000 3550 50  0000 C CNN
+F 2 "Transformer_THT:Transformer_Toroid_Tapped_Horizontal_D10.5mm_Amidon-T37" H 10000 3100 50  0001 C CNN
+F 3 "~" H 10000 3100 50  0001 C CNN
+	1    10000 3100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VCC #PWR?
+U 1 1 5E2CABA6
+P 9050 2650
+F 0 "#PWR?" H 9050 2500 50  0001 C CNN
+F 1 "VCC" H 9067 2823 50  0000 C CNN
+F 2 "" H 9050 2650 50  0001 C CNN
+F 3 "" H 9050 2650 50  0001 C CNN
+	1    9050 2650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9600 3100 9500 3100
+Wire Wire Line
+	9050 3100 9050 2650
+Wire Wire Line
+	8000 2900 8000 2950
+Wire Wire Line
+	8500 3300 8500 3600
+$Comp
+L power:GND #PWR?
+U 1 1 5E2CABB0
+P 8500 4100
+F 0 "#PWR?" H 8500 3850 50  0001 C CNN
+F 1 "GND" H 8505 3927 50  0000 C CNN
+F 2 "" H 8500 4100 50  0001 C CNN
+F 3 "" H 8500 4100 50  0001 C CNN
+	1    8500 4100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8500 4000 8500 4100
+$Comp
+L power:GND #PWR?
+U 1 1 5E2CABB7
+P 8000 3400
+F 0 "#PWR?" H 8000 3150 50  0001 C CNN
+F 1 "GND" H 8005 3227 50  0000 C CNN
+F 2 "" H 8000 3400 50  0001 C CNN
+F 3 "" H 8000 3400 50  0001 C CNN
+	1    8000 3400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8000 3350 8000 3400
+Text Label 7500 3150 0    50   ~ 0
+SigA
+Text Label 7500 3800 0    50   ~ 0
+SigB
+Wire Wire Line
+	7700 3150 7500 3150
+Wire Wire Line
+	8200 3800 7500 3800
+$Comp
+L Device:R Rtrans?
+U 1 1 5E2CABC2
+P 10500 3100
+F 0 "Rtrans?" V 10580 3100 50  0000 C CNN
+F 1 "10K" V 10500 3100 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 10430 3100 50  0001 C CNN
+F 3 "~" H 10500 3100 50  0001 C CNN
+	1    10500 3100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10400 2900 10500 2900
+Wire Wire Line
+	10500 2900 10500 2950
+Wire Wire Line
+	10500 3250 10500 3300
+Wire Wire Line
+	10500 3300 10400 3300
+Wire Wire Line
+	8500 3300 9600 3300
+Wire Wire Line
+	8000 2900 9600 2900
+$Comp
+L Device:R Rshut?
+U 1 1 5E2CB82B
+P 9350 3100
+F 0 "Rshut?" V 9430 3100 50  0000 C CNN
+F 1 "0.1" V 9350 3100 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 9280 3100 50  0001 C CNN
+F 3 "~" H 9350 3100 50  0001 C CNN
+	1    9350 3100
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	9200 3100 9050 3100
+$EndSCHEMATC
