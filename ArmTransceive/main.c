@@ -15,6 +15,7 @@
 // "${SW_ROOT}/driverlib/ccs/Debug/driverlib.lib" Pre Compiled TivaWare libs needs to exist in ARM Linker file search Path
 
 #include <stdint.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
 #include <float.h>
@@ -26,28 +27,108 @@
 #include "inc/tm4c1294ncpdt.h"
 #include "driverlib/timer.h"
 #include "inc/hw_memmap.h"
+#include "buttons.h"
+#include "sampling.h"
 
 #include "hwDebug.h"
 #include "pwmDriver.h"
 
-#define BUFFER_SIZE 1024
-#define ERROR_EMPTY 0
-#define ERROR_FULL 0xFF
+#define BUFFER_SIZE 2048
+#define VIN_RANGE 3.3
+#define PIXELS_PER_DIV 20
+#define ADC_BITS 12
+#define fVoltsPerDiv 1
+
 
 //global variables
+
 uint32_t gSystemClock; // [Hz] system clock frequency
-char fifo_buffer[BUFFER_SIZE]; //to store message queued to transmit
-int fifo_head = 0, fifo_tail = 0, count = 0; //transmit fifo global variables
+uint32_t gTime = 8345; // time in hundredths of a second
 
-/**
- * Function: transmit_message
- * Arguments:
- *
- * toggles the PWM pin in accordance with the binary message, transmitting the message
- * **/
-void transmit_message()
+// CPU load counters
+volatile uint32_t count_unloaded = 0;
+volatile uint32_t count_loaded = 0;
+float cpu_load = 0.0;
+
+int main(void)
 {
+    IntMasterDisable();
 
+    // Enable the Floating Point Unit, and permit ISRs to use it
+    FPUEnable();
+    FPULazyStackingEnable();
+
+    // Initialize the system clock to 120 MHz
+    gSystemClock = SysCtlClockFreqSet(SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 120000000);
+
+    // Initialize ADC and Buttons
+    ButtonInit();
+    SamplingInit();
+
+    pwmInit();
+    debugPinsInit();
+
+    ////////////////////////////////////////////////////////////////////////////
+    //code for keeping track of CPU load
+    //initialize timer 3 in one-shot mode for polled timing
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER3);
+    TimerDisable(TIMER3_BASE, TIMER_BOTH);
+    TimerConfigure(TIMER3_BASE, TIMER_CFG_ONE_SHOT);
+    TimerLoadSet(TIMER3_BASE, TIMER_A, gSystemClock/100);
+
+    count_unloaded = cpu_load_count(); //poll before int enable
+
+    IntMasterEnable();
+
+    int ADC_OFFSET = 515; //self-measured *TO DO: Change for transducers
+    int curr_sample = 0; //current sample we are looking at in sampling loop
+    int localBuffer[LCD_HORIZONTAL_MAX];
+
+    //Main Loop
+    while(1)
+    {
+
+        //Sampling Loop
+        if(displayIndex >= (ADC_BUFFER_SIZE/2)){
+            curr_sample = gADCBuffer[displayIndex];
+
+            if(curr_sample >= ADC_OFFSET){
+                int i;
+                int j = ADC_BUFFER_WRAP(displayIndex-64);
+
+                for(i = 0; i < LCD_HORIZONTAL_MAX; i++){ //x axis is the size of the horizontal length of the LCD (the local buffer size)
+                    localBuffer[i] = gADCBuffer[j];
+                    j++;
+                }
+            }else{ //case where adc buffer is not triggered:
+                displayIndex--; //keep searching
+            }
+
+        }else{ //we have already searched half the buffer and found no trigger
+            displayIndex = ADC_BUFFER_WRAP( (ADC_BUFFER_SIZE-1) - (LCD_HORIZONTAL_MAX/2)); //reset back to init value
+        }
+
+        //get buttons state from FIFO
+        char buttons;
+        int buttons_state; //backup
+
+        if (fifo_get(&buttons)){
+            buttons_state = buttons;
+        }else{
+            buttons = ' ';
+        }
+
+        //CPU LOAD
+        int str_load = (int) (cpu_load*100000.0);
+//      snprintf(str, sizeof(str), "CPU Load = 0.%d", str_load); // convert time to string
+
+
+        count_loaded = cpu_load_count();
+        cpu_load = 1.0f - (float)count_loaded/count_unloaded; // compute CPU load
+    }
+
+
+    return 0;
 }
 
 /**
@@ -97,53 +178,13 @@ char * binary_to_message(int * binary, int bin_length)
 
 }
 
-int main(void)
+// FROM INT_LATENCY Example Code
+uint32_t cpu_load_count(void)
 {
-    IntMasterDisable();
-
-    // Enable the Floating Point Unit, and permit ISRs to use it
-    FPUEnable();
-    FPULazyStackingEnable();
-
-    // Initialize the system clock to 120 MHz
-    gSystemClock = SysCtlClockFreqSet(SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 120000000);
-
-    debugPinsInit();
-
-    IntMasterEnable();
-    pwmInit();
-
-    //Main Loop
-    while(1)
-    {
-        volatile  int a;
-        a+=1;
-    }
-
-
-    return 0;
-}
-
-///////////////////////
-/*
- * HELPER FUNCTIONS
- */
-///////////////////////
-
-// reads a byte from the buffer and return ERROR_EMPTY if buffer empty
-char fifoRead()
-{
-   if (0 == count) return ERROR_EMPTY;
-   count --;
-   fifo_tail = (fifo_tail + 1) % BUFFER_SIZE;
-   return fifo_buffer[fifo_tail];
-}
-
-// writes a byte to the buffer if not ERROR_FULL
-char fifoWrite(chat val)
-{
-   if (BUFFER_SIZE == count) return ERROR_FULL;
-   count ++;
-   fifo_head = (fifo_head) % BUFFER_SIZE;
-   return fifo_buffer[fifo_head];
+    uint32_t i = 0;
+    TimerIntClear(TIMER3_BASE, TIMER_TIMA_TIMEOUT);
+    TimerEnable(TIMER3_BASE, TIMER_A); // start one-shot timer
+    while (!(TimerIntStatus(TIMER3_BASE, false) & TIMER_TIMA_TIMEOUT))
+        i++;
+    return i;
 }
