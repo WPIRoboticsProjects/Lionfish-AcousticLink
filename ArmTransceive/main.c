@@ -33,19 +33,23 @@
 #include "hwDebug.h"
 #include "pwmDriver.h"
 
-#define BUFFER_SIZE 2048
-#define VIN_RANGE 3.3
-#define PIXELS_PER_DIV 20
-#define ADC_BITS 12
-#define fVoltsPerDiv 1
 
+#define TX_FREQ 80000 //80Khz TX
+#define SAMPLE_RATE 10000 //10Khz Sample Rate
+#define BIT_RATE 8 //8 bits per second
 
-//global variables
+#define VIN_RANGE 3.3 // 3.3 V on board
+#define ADC_BITS 12 // 12 bit ADC
 
+#define START_BITS 0xAA //start bits 10101010
+#define END_BITS 0x55 //end bits 01010101
+
+//Global Variables
 uint32_t gSystemClock; // [Hz] system clock frequency
 uint32_t gTime = 8345; // time in hundredths of a second
+int samples_per_bit = (int) SAMPLE_RATE / BIT_RATE;
 
-// CPU load counters
+//CPU load counters
 volatile uint32_t count_unloaded = 0;
 volatile uint32_t count_loaded = 0;
 float cpu_load = 0.0;
@@ -80,43 +84,41 @@ int main(void)
 
     IntMasterEnable();
 
-    int ADC_OFFSET = 515; //self-measured *TO DO: Change for transducers
-    int curr_sample = 0; //current sample we are looking at in sampling loop
-    int localBuffer[LCD_HORIZONTAL_MAX];
+    //self-measured *TO DO: adjust if needed for transducer inputs, used to reduce noise
+    int ADC_OFFSET = 515;
+
+    uint8_t localBuffer[BUFFER_SIZE]; //local buffer of 8 bits
 
     //Main Loop
     while(1)
     {
 
-        //Sampling Loop
-        if(displayIndex >= (ADC_BUFFER_SIZE/2)){
-            curr_sample = gADCBuffer[displayIndex];
-
-            if(curr_sample >= ADC_OFFSET){
-                int i;
-                int j = ADC_BUFFER_WRAP(displayIndex-64);
-
-                for(i = 0; i < LCD_HORIZONTAL_MAX; i++){ //x axis is the size of the horizontal length of the LCD (the local buffer size)
-                    localBuffer[i] = gADCBuffer[j];
-                    j++;
-                }
-            }else{ //case where adc buffer is not triggered:
-                displayIndex--; //keep searching
+        //Copy BUFFER_SIZE elements to local buffer
+        for(int i = 0; i < ADC_BUFFER_SIZE; i++){
+            if(gADCBuffer[i] < ADC_OFFSET){
+                localBuffer[i] = 0;
+            }else if(gADCBuffer[i] >= ADC_OFFSET){
+                localBuffer[i] = 1;
             }
-
-        }else{ //we have already searched half the buffer and found no trigger
-            displayIndex = ADC_BUFFER_WRAP( (ADC_BUFFER_SIZE-1) - (LCD_HORIZONTAL_MAX/2)); //reset back to init value
         }
+
+        //
+
+
 
         //get buttons state from FIFO
-        char buttons;
-        int buttons_state; //backup
+//        char buttons;
+//        int buttons_state; //backup
+//
+//        if (fifo_get(&buttons)){
+//            buttons_state = buttons;
+//        }else{
+//            buttons = ' ';
+//        }
 
-        if (fifo_get(&buttons)){
-            buttons_state = buttons;
-        }else{
-            buttons = ' ';
-        }
+        //handle button presses
+        //      pause
+
 
         //CPU LOAD
         int str_load = (int) (cpu_load*100000.0);
@@ -126,8 +128,6 @@ int main(void)
         count_loaded = cpu_load_count();
         cpu_load = 1.0f - (float)count_loaded/count_unloaded; // compute CPU load
     }
-
-
     return 0;
 }
 
