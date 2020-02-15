@@ -176,7 +176,7 @@ void ButtonISR(void) {
 
     uint32_t old_buttons = gButtons;    // save previous button state
     ButtonDebounce(gpio_buttons);       // Run the button debouncer. The result is in gButtons.
-    ButtonReadJoystick();               // Convert joystick state to button presses. The result is in gButtons.
+//    ButtonReadJoystick();               // Convert joystick state to button presses. The result is in gButtons.
     uint32_t presses = ~old_buttons & gButtons;   // detect button presses (transitions from not pressed to pressed)
     presses |= ButtonAutoRepeat();      // autorepeat presses if a button is held long enough
 

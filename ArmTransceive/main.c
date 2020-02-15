@@ -16,6 +16,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
 #include <float.h>
@@ -48,11 +49,18 @@
 uint32_t gSystemClock; // [Hz] system clock frequency
 uint32_t gTime = 8345; // time in hundredths of a second
 int samples_per_bit = (int) SAMPLE_RATE / BIT_RATE;
+uint8_t localBuffer[ADC_BUFFER_SIZE]; //local buffer of 8 bits
 
 //CPU load counters
 volatile uint32_t count_unloaded = 0;
 volatile uint32_t count_loaded = 0;
 float cpu_load = 0.0;
+
+//Function Definitions
+char * binary_to_message(int * binary, int bin_length);
+int * message_to_binary(char *input, int input_length);
+uint32_t cpu_load_count(void);
+
 
 int main(void)
 {
@@ -69,7 +77,7 @@ int main(void)
     ButtonInit();
     SamplingInit();
 
-    pwmInit();
+//    pwmInit();
     debugPinsInit();
 
     ////////////////////////////////////////////////////////////////////////////
@@ -87,24 +95,19 @@ int main(void)
     //self-measured *TO DO: adjust if needed for transducer inputs, used to reduce noise
     int ADC_OFFSET = 515;
 
-    uint8_t localBuffer[BUFFER_SIZE]; //local buffer of 8 bits
-
     //Main Loop
     while(1)
     {
 
         //Copy BUFFER_SIZE elements to local buffer
-        for(int i = 0; i < ADC_BUFFER_SIZE; i++){
+        int i;
+        for(i = 0; i < ADC_BUFFER_SIZE; i++){
             if(gADCBuffer[i] < ADC_OFFSET){
                 localBuffer[i] = 0;
             }else if(gADCBuffer[i] >= ADC_OFFSET){
                 localBuffer[i] = 1;
             }
         }
-
-        //
-
-
 
         //get buttons state from FIFO
 //        char buttons;
@@ -144,7 +147,8 @@ int * message_to_binary(char *input, int input_length)
     int * output = malloc(input_length * 8 * sizeof(int));
     int output_index = 0;
 
-    for (int i = 0; i < input_length; i++) // loop through input characters
+    int i;
+    for (i = 0; i < input_length; i++) // loop through input characters
     {
         int dec = (int) input[i]; // decimal ASCII representation
         int remainder, j = 1; // binary rep of the current character
@@ -157,8 +161,9 @@ int * message_to_binary(char *input, int input_length)
             dec = dec / 2; j *= 10; //iterate
         }
 
-        for(int i = 0; i < 8; i++){
-            output[output_index] = temp_byte[i]; //store in correct order
+        int k;
+        for(k = 0; k < 8; k++){
+            output[output_index] = temp_byte[j]; //store in correct order
             output_index++;
         }
     }
