@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name TransducerDriver-rescue)(type Legacy)(uri ${KIPRJMOD}/TransducerDriver-rescue.lib)(options "")(descr ""))
+)

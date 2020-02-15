@@ -8,8 +8,11 @@
 #ifndef PWMDRIVER_H_
 #define PWMDRIVER_H_
 
-void pwmInit();
-void pwmOuputEnable();
+void pwm1Init();
+void pwm3Init();
+void pwmPinInit();
+void pwmOutputEnable();
+void pwmOutputDisable();
 
 
 

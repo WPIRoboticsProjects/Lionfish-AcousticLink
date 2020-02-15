@@ -47,12 +47,29 @@ int main(void)
 
 
     IntMasterEnable();
-    pwmInit();
-
+    pwm1Init();
+    pwm3Init();
     while(1)
     {
-       volatile  int a;
-       a+=1;
+        volatile uint32_t i =0;
+        for(i=0;i<1000;++i)
+        {
+            volatile  int a;
+            a+=1;
+        }
+        debugPin0 =0;
+        debugPin0 =1;
+        debugPin0 =0;
+        debugPin0 =1;
+        debugPin0 =0;
+        pwmOutputDisable();
+        for(i=0;i<4000;++i)
+        {
+            volatile  int a;
+            a+=1;
+        }
+        pwmOutputEnable();
+
     }
 
 
