@@ -48,13 +48,9 @@ F 3 "" H 5450 1800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	6850 1650 6950 1650
-Wire Wire Line
 	7150 1650 7150 1700
 Wire Wire Line
 	7150 2000 7150 2050
-Wire Wire Line
-	7150 2050 6950 2050
 $Comp
 L Device:Crystal Y1
 U 1 1 5E322B30
@@ -1177,33 +1173,6 @@ F 3 "" H 6050 4850 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	6050 4600 6050 4650
-Text GLabel 6200 1250 2    50   Input ~ 0
-PrimarySize_Prob
-Wire Wire Line
-	6200 1250 6050 1250
-Wire Wire Line
-	6050 1250 6050 1650
-Connection ~ 6050 1650
-Text GLabel 7750 1250 2    50   Input ~ 0
-SecondarySize_Prob
-Wire Wire Line
-	7750 1250 6950 1250
-Wire Wire Line
-	6950 1250 6950 1650
-Connection ~ 6950 1650
-Wire Wire Line
-	6950 1650 7150 1650
-Text GLabel 7750 2350 2    50   Input ~ 0
-SecondarySize_GND
-Wire Wire Line
-	7750 2350 6950 2350
-Wire Wire Line
-	6950 2350 6950 2050
-Connection ~ 6950 2050
-Wire Wire Line
-	6950 2050 6850 2050
-Wire Notes Line
-	7750 1300 7750 2250
 $Comp
 L Device:C_Small Cg1
 U 1 1 5E45D5F8
@@ -1242,4 +1211,8 @@ Wire Wire Line
 Connection ~ 3200 3500
 Wire Wire Line
 	3200 3500 3550 3500
+Wire Wire Line
+	6850 1650 7150 1650
+Wire Wire Line
+	6850 2050 7150 2050
 $EndSCHEMATC

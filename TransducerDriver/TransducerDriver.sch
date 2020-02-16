@@ -674,28 +674,6 @@ F 3 "~" H 2050 4750 50  0001 C CNN
 	1    2050 4750
 	1    0    0    -1  
 $EndComp
-$Comp
-L power:GND #PWR02
-U 1 1 5E45D892
-P 2050 4150
-F 0 "#PWR02" H 2050 3900 50  0001 C CNN
-F 1 "GND" H 2050 4000 50  0000 C CNN
-F 2 "" H 2050 4150 50  0001 C CNN
-F 3 "" H 2050 4150 50  0001 C CNN
-	1    2050 4150
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR03
-U 1 1 5E45D96F
-P 2050 4900
-F 0 "#PWR03" H 2050 4650 50  0001 C CNN
-F 1 "GND" H 2050 4750 50  0000 C CNN
-F 2 "" H 2050 4900 50  0001 C CNN
-F 3 "" H 2050 4900 50  0001 C CNN
-	1    2050 4900
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	1950 4500 2050 4500
 Wire Wire Line
@@ -710,12 +688,8 @@ Connection ~ 2050 3750
 Wire Wire Line
 	2750 4500 2050 4500
 Connection ~ 2050 4500
-Text GLabel 3600 4450 2    50   Input ~ 0
+Text GLabel 3550 4500 0    50   Input ~ 0
 Vref
-Wire Wire Line
-	3550 4350 3550 4450
-Wire Wire Line
-	3550 4450 3600 4450
 $Comp
 L Device:R Rbuf1
 U 1 1 5E470BDE
@@ -1215,4 +1189,18 @@ Wire Wire Line
 	6850 1650 7150 1650
 Wire Wire Line
 	6850 2050 7150 2050
+Text GLabel 2000 4200 0    50   Input ~ 0
+Vref
+Wire Wire Line
+	2050 4150 2050 4200
+Wire Wire Line
+	2050 4200 2000 4200
+Text GLabel 2000 4950 0    50   Input ~ 0
+Vref
+Wire Wire Line
+	2050 4900 2050 4950
+Wire Wire Line
+	2050 4950 2000 4950
+Wire Wire Line
+	3550 4350 3550 4500
 $EndSCHEMATC
