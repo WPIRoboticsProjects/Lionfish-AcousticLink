@@ -45,19 +45,26 @@ tDMAControlTable gDMAControlTable[64]; // uDMA control table (global)
 
 #define START_BITS 0xFA //start bits 11111010
 
-//GLOBALS
 
+//GLOBALS
 uint32_t gSystemClock; // [Hz] system clock frequency
 uint32_t gTime = 8345; // time in hundredths of a second
-uint32_t raw_rx = 0; //variable to store received messages
+
 int samples_per_bit = (int) SAMPLE_RATE / BIT_RATE;
-bool reading = false; //boolean flag for reading in bits
+
+uint32_t raw_rx = 0; //variable to store received messages
+uint32_t buffer_log[1024]; //store rx_bits in 32 bit chunks
+int buffer_index = 0; //buffer index
+
+bool READING = false; //boolean flag for READING in bits
 bool AUV_RECALL = false; //flags for Jetson
 bool AUV_DISARM = false; //flags for Jetson
 
 //FUNC DEFINITIONS
 void send_start();
 void process_buffer();
+void process_raw();
+bool check_raw_start();
 void tx_message(int * binary_payload, int binary_length);
 int * message_to_binary(char *input, int input_length);
 
@@ -107,15 +114,17 @@ int main(void)
 
     //self-measured *TO DO: adjust if needed for transducer inputs, used to reduce noise
     int ADC_OFFSET = 515;
+    uint16_t mask = (1 << 9) - 1; //binary = 11111111
 
     //Main Loop
     while(1)
     {
-        int i, on_count, off_count, avg, tx_count;
+        int i, on_count, off_count, buffer_avg, tx_count; //variables for ADC processing
 
+        //ADC SAMPLING ROUTINE
         for(i = 0; i < ADC_BUFFER_SIZE; i++)
         {
-            avg += gADCBuffer[i]; //sum up all samples
+            buffer_avg += gADCBuffer[i]; //sum up all samples
 
             //OFFSET PROCESSING
             if(gADCBuffer[i] < ADC_OFFSET){// counts as a 0
@@ -127,24 +136,46 @@ int main(void)
             //SAMPLE COUNT ROUTINE
             if(off_count >= samples_per_bit){ //found enough samples to process a 0 read
                 raw_rx = raw_rx << 1; //shift bits left 1
-                off_count = 0; //reset off count
+                off_count = 0;
+                tx_count++;
+
             }else if(on_count >= samples_per_bit){ //found enough samples to process a 1 read
                 raw_rx = raw_rx << 1; //shift bits left 1
                 raw_rx += 1; //add 1 to LSB
-                on_count = 0; //reset on count
+                on_count = 0;
+                tx_count++;
             }
 
-            //START BIT CHECKING
-            if(raw_rx ^= (uint32_t) START_BITS){//current rx has just read the start bits
-                reading = true; //flag reading
-                raw_rx = 0;
+            //START BIT CHECKING (only if not reading)
+            if((!READING) && check_raw_start()){//current rx has just read the start bits
+                raw_rx &= mask; //everything but the start bits are now 0
+                tx_count = 8; //reset count, adjusted for 8 start bits
             }
 
+            if(tx_count >= 32){
+                process_raw();
+                buffer_log[buffer_index] = raw_rx;
+                buffer_index++;
+                if(buffer_index <= 1024) buffer_index=0;
+            }
         }
-        avg = avg / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
+
+        buffer_avg = buffer_avg / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
     }
 }
 
+//uses raw_rx (contains a frame)
+void process_raw()
+{
+
+}
+
+//check raw rx for start bits
+bool check_raw_start()
+{
+    uint8_t bit_xor = (raw_rx ^ (uint8_t) START_BITS);
+    return (bit_xor == 0); //if bit_xor == 0, then all bits in rx == start bits
+}
 
 void tx_message(int * binary_payload, int binary_length)
 {
