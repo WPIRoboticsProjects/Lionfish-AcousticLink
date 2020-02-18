@@ -17,7 +17,6 @@
 #include "driverlib/interrupt.h"
 #include "driverlib/adc.h"
 #include "sysctl_pll.h"
-#include "buttons.h"
 #include "sampling.h"
 
 volatile int32_t gADCBufferIndex = ADC_BUFFER_SIZE - 1;  // latest sample index
@@ -43,23 +42,42 @@ void SamplingInit(void)
     ADCSequenceDisable(ADC1_BASE, 0); // choose ADC1 sequence 0; disable before configuring
     ADCSequenceConfigure(ADC1_BASE, 0, ADC_TRIGGER_ALWAYS, 64); // specify the "Always" trigger
     ADCSequenceStepConfigure(ADC1_BASE, 0, 0, ADC_CTL_CH3 | ADC_CTL_IE | ADC_CTL_END);// in the 0th step, sample channel 3 (AIN3)
-    // enable interrupt, and make it the end of sequence
 
+    // enable interrupt, and make it the end of sequence
     ADCSequenceEnable(ADC1_BASE, 0); // enable the sequence. it is now sampling
-    ADCIntEnable(ADC1_BASE, 0); // enable sequence 0 interrupt in the ADC1 peripheral
-    IntPrioritySet(INT_ADC1SS0, 0); // set ADC1 sequence 0 interrupt priority
-    IntEnable(INT_ADC1SS0); // enable ADC1 sequence 0 interrupt in int. controller
+//    ADCIntEnable(ADC1_BASE, 0); // enable sequence 0 interrupt in the ADC1 peripheral
+//    IntPrioritySet(INT_ADC1SS0, 0); // set ADC1 sequence 0 interrupt priority
+//    IntEnable(INT_ADC1SS0); // enable ADC1 sequence 0 interrupt in int. controller
 }
 
 // ADC ISR
 void ADC_ISR(void)
 {
-    ADC1_ISC_R = ADC_ISC_IN0;
+    ADCIntClearEx(ADC1_BASE, ADC_INT_DMA_SS0); // clear the ADC1 sequence 0 DMA interrupt flag
 
-    if (ADC1_OSTAT_R & ADC_OSTAT_OV0) { // check for ADC FIFO overflow
-        gADCErrors++;                   // count errors
-        ADC1_OSTAT_R = ADC_OSTAT_OV0;   // clear overflow condition
+    // Check the alternate DMA channel for end of transfer, and restart if needed.
+     // Also set the gDMAPrimary global.
+    if (uDMAChannelModeGet(UDMA_SEC_CHANNEL_ADC10 | UDMA_PRI_SELECT) == UDMA_MODE_STOP) {
+        uDMAChannelTransferSet(UDMA_SEC_CHANNEL_ADC10 | UDMA_PRI_SELECT, UDMA_MODE_PINGPONG, (void*)&ADC1_SSFIFO0_R, (void*)&gADCBuffer[0], ADC_BUFFER_SIZE>>1); // restart main channel
+        gDMAPrimary = false; // set flag for gDMAPrimary global
     }
 
-    gADCBuffer[gADCBufferIndex = ADC_BUFFER_WRAP(gADCBufferIndex + 1)] = ADC1_SSFIFO0_R; // read sample from the ADC1 sequence 0 FIFO
+    if (uDMAChannelModeGet(UDMA_SEC_CHANNEL_ADC10 | UDMA_ALT_SELECT) == UDMA_MODE_STOP) {
+        // restart the alternate channel (same as setup)
+        uDMAChannelTransferSet(UDMA_SEC_CHANNEL_ADC10 | UDMA_ALT_SELECT, UDMA_MODE_PINGPONG, (void*)&ADC1_SSFIFO0_R, (void*)&gADCBuffer[ADC_BUFFER_SIZE>>1], ADC_BUFFER_SIZE>>1);
+        gDMAPrimary = true;
+    }
+
+    // The DMA channel may be disabled if the CPU is paused by the debugger.
+    if (!uDMAChannelIsEnabled(UDMA_SEC_CHANNEL_ADC10)) {
+        uDMAChannelEnable(UDMA_SEC_CHANNEL_ADC10); // re-enable the DMA channel
+    }
+//    ADC1_ISC_R = ADC_ISC_IN0;
+//
+//    if (ADC1_OSTAT_R & ADC_OSTAT_OV0) { // check for ADC FIFO overflow
+//        gADCErrors++;                   // count errors
+//        ADC1_OSTAT_R = ADC_OSTAT_OV0;   // clear overflow condition
+//    }
+//
+//    gADCBuffer[gADCBufferIndex = ADC_BUFFER_WRAP(gADCBufferIndex + 1)] = ADC1_SSFIFO0_R; // read sample from the ADC1 sequence 0 FIFO
 }
