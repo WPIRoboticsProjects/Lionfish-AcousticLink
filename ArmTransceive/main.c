@@ -43,7 +43,12 @@ tDMAControlTable gDMAControlTable[64]; // uDMA control table (global)
 #define ADC_BITS 12 // 12 bit ADC
 #define SAMPLE_RATE 5000 //Samples Per Second
 
-#define START_BITS 0xFA //start bits 11111010
+#define START_BITS 0xFA //1111 1010
+#define ID_COMMAND 0x88 //1000 1000
+#define ID_INFO 0x8F    //1000 1111
+#define COMMAND_ARM 1   //xxxx xx01
+#define COMMAND_DISARM 0//xxxx xx00
+#define COMMAND_RECALL 3//xxxx xx11
 
 
 //GLOBALS
@@ -52,21 +57,22 @@ uint32_t gTime = 8345; // time in hundredths of a second
 
 int samples_per_bit = (int) SAMPLE_RATE / BIT_RATE;
 
-uint32_t raw_rx = 0; //variable to store received messages
-uint32_t buffer_log[1024]; //store rx_bits in 32 bit chunks
-int buffer_index = 0; //buffer index
-
 bool READING = false; //boolean flag for READING in bits
 bool AUV_RECALL = false; //flags for Jetson
-bool AUV_DISARM = false; //flags for Jetson
+bool AUV_ARM = false; //flags for Jetson
 
 //FUNC DEFINITIONS
-void send_start();
-void process_buffer();
 void process_raw();
-bool check_raw_start();
+void process_command(uint8_t payload);
+void log_packet(uint8_t payload);
+
 void tx_message(int * binary_payload, int binary_length);
+void send_start();
+
+bool crc_check(uint32_t packet);
+bool check_raw_start();
 int * message_to_binary(char *input, int input_length);
+
 
 
 int main(void)
@@ -112,9 +118,12 @@ int main(void)
 
     IntMasterEnable();
 
-    //self-measured *TO DO: adjust if needed for transducer inputs, used to reduce noise
-    int ADC_OFFSET = 515;
-    uint16_t mask = (1 << 9) - 1; //binary = 11111111
+    //RX VARIABLES
+    uint32_t raw_rx = 0; //variable to store received messages
+    uint32_t buffer_log[1024]; //store rx_bits in 32 bit chunks
+    int buffer_index = 0; //buffer index
+    int ADC_OFFSET = 515; //threshold for 0/1 TODO: measure and change
+    uint16_t crc_mask = (1 << 9) - 1; //binary = 0000 0000 0000 0000 0000 0000 1111 1111
 
     //Main Loop
     while(1)
@@ -138,7 +147,6 @@ int main(void)
                 raw_rx = raw_rx << 1; //shift bits left 1
                 off_count = 0;
                 tx_count++;
-
             }else if(on_count >= samples_per_bit){ //found enough samples to process a 1 read
                 raw_rx = raw_rx << 1; //shift bits left 1
                 raw_rx += 1; //add 1 to LSB
@@ -147,16 +155,22 @@ int main(void)
             }
 
             //START BIT CHECKING (only if not reading)
-            if((!READING) && check_raw_start()){//current rx has just read the start bits
-                raw_rx &= mask; //everything but the start bits are now 0
+            if((!READING) && check_raw_start(raw_rx)){//current rx has just read the start bits
+                raw_rx &= crc_mask; //everything but the start bits are now 0
                 tx_count = 8; //reset count, adjusted for 8 start bits
             }
 
+            //LOGGING + PACKET PROCESS
             if(tx_count >= 32){
-                process_raw();
-                buffer_log[buffer_index] = raw_rx;
-                buffer_index++;
-                if(buffer_index <= 1024) buffer_index=0;
+                READING = false; //done reading packet
+
+                if(crc_check(raw_rx)){ //check the packed for errors
+                    process_raw(raw_rx); //look at packet frame as whole
+                }
+
+                buffer_log[buffer_index] = raw_rx; //add to log
+                buffer_index++; //update index
+                if(buffer_index == 1024) buffer_index=0; //wrap index back if at last element
             }
         }
 
@@ -164,16 +178,58 @@ int main(void)
     }
 }
 
-//uses raw_rx (contains a frame)
-void process_raw()
+//uses scheduler to log payload appropriately
+void log_packet(uint8_t payload) //TODO: this + Scheduler
 {
+}
 
+//processes command payload and set appropriate pins
+void process_command(uint8_t payload) //TODO: add code to write GPIO HIGH OR LOW + define ARM/RECALL PINS
+{
+    int mask = (1 << 3) - 1; // 0011 mask for LS 2 bits
+    payload = (uint8_t) (mask && payload);
+
+    if((int) payload == (int) COMMAND_ARM){
+        AUV_ARM = true;
+        //set ARM pin to HIGH
+    }
+    if((int) payload == (int) COMMAND_DISARM){
+        AUV_ARM = false;
+        //set ARM pin to LOW
+    }
+    if((int) payload == (int) COMMAND_RECALL){
+        AUV_RECALL = true;
+        //set RECALL pin to HIGH
+    }
+}
+
+//uses raw_rx (contains a frame)
+void process_raw(uint32_t packet)
+{
+    uint32_t payload_mask = (1 << 17) - 1; //binary =  0000 0000 0000 0000 1111 1111 0000 0000
+    uint32_t id_mask = (1 << 25) - 1; //binary =       0000 0000 1111 1111 0000 0000 0000 0000
+
+    uint32_t id = (id_mask && packet) >> 16; //shift id to most significant 8 bit
+    uint32_t payload = (payload_mask && packet) >> 8; //shift payload to most significant 8 bit
+
+    if((int) id == (int) ID_COMMAND){ //command
+        process_command(payload); //perform appropriate command
+    }
+    if((int) id == (int) ID_INFO){ //info
+        log_packet(payload); //use scheduler to record log of payload
+    }
+}
+
+bool crc_check(uint32_t packet) //TODO: this
+{
+    bool errors = false;
+    return errors;
 }
 
 //check raw rx for start bits
-bool check_raw_start()
+bool check_raw_start(uint32_t packet)
 {
-    uint8_t bit_xor = (raw_rx ^ (uint8_t) START_BITS);
+    uint8_t bit_xor = (packet ^ (uint8_t) START_BITS);
     return (bit_xor == 0); //if bit_xor == 0, then all bits in rx == start bits
 }
 
