@@ -3,3 +3,7 @@
 *.png
 *.bmp
 *.pdf
+ArmTransceive/targetConfigs/Tiva TM4C1294NCPDT.ccxml
+ArmTransceive/.cproject
+ArmTransceive/.launches/AcousticLINK.launch
+ArmTransceive/.project
