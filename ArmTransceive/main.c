@@ -1,6 +1,22 @@
 /**
  */
 
+
+
+//--------------------------        PIN ASSIGNMENT       --------------------------//
+/* Port L: PL0:PL3: Hardware Debug Pin
+ * Port PF0:PF3 : PWM module 0 generator 0 and 1 // note:PF0 is not available on booster back breakout.
+ * Port PK4:PK5 : PWM module 0 generator 3
+ */
+
+//--------------------------        TIMER ASSIGNMENT     --------------------------//
+/* TIMER 1 : TX bit modulation
+ * TIMER 2 : ADC trigger timer
+ *
+ */
+
+
+
 /* Port Assigement:
  * Port L : Debug
  * Port PF0:PF3 : PWM
@@ -28,7 +44,6 @@
 #include "driverlib/timer.h"
 #include "inc/tm4c1294ncpdt.h"
 #include "inc/hw_memmap.h"
-//#include "buttons.h"
 #include "sampling.h"
 #include "hwDebug.h"
 #include "pwmDriver.h"
@@ -72,7 +87,6 @@ void send_start();
 bool crc_check(uint32_t packet);
 bool check_raw_start();
 int * message_to_binary(char *input, int input_length);
-
 
 
 int main(void)
