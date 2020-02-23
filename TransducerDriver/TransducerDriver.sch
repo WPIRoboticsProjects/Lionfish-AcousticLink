@@ -7,7 +7,7 @@ encoding utf-8
 Sheet 1 1
 Title "Acoustic Link Analog circuits"
 Date "2020-02-11"
-Rev "2.1"
+Rev "2.3"
 Comp ""
 Comment1 "Leo Chen"
 Comment2 "Lionfish MQP / Acoustic Link"
@@ -518,8 +518,8 @@ F 3 "~" H 5850 4300 50  0001 C CNN
 $EndComp
 Text Notes 6500 5050 0    50   ~ 0
 X cgnd1<<Rg2 \nF = 20Khz\nC = 0.47uF \nXc = 17ohm
-Text Notes 5050 3850 0    50   ~ 0
-Rin2 same as R2 \nlimit input bias current 
+Text Notes 5450 3800 0    50   ~ 0
+low Rin2 to force \na Vref DC bias 
 $Comp
 L TransducerDriver-rescue:INA217-Amplifier_Instrumentation U2
 U 1 1 5E439FD5
@@ -1257,23 +1257,23 @@ Connection ~ 7700 2300
 $Comp
 L Device:Transformer_SP_1S T2
 U 1 1 5E55647C
-P 8900 1100
-F 0 "T2" H 8900 650 50  0000 C CNN
-F 1 "Transformer_SP_1S 1:10" H 8900 800 50  0000 C CNN
-F 2 "Transformers_THT:Transformer_Toroid_Tapped_Horizontal_D14.0mm_Amidon-T50" H 8900 1100 50  0001 C CNN
-F 3 "~" H 8900 1100 50  0001 C CNN
-	1    8900 1100
+P 8900 1250
+F 0 "T2" H 8900 800 50  0000 C CNN
+F 1 "Transformer_SP_1S 1:10" H 8900 950 50  0000 C CNN
+F 2 "Transformers_THT:Transformer_Toroid_Tapped_Horizontal_D14.0mm_Amidon-T50" H 8900 1250 50  0001 C CNN
+F 3 "~" H 8900 1250 50  0001 C CNN
+	1    8900 1250
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:Crystal Y3
 U 1 1 5E556485
-P 10350 1150
-F 0 "Y3" V 10304 1281 50  0000 L CNN
-F 1 "FishFinder" V 10395 1281 50  0000 L CNN
-F 2 "Wire_Connections_Bridges:WireConnection_2.50mmDrill" H 10350 1150 50  0001 C CNN
-F 3 "~" H 10350 1150 50  0001 C CNN
-	1    10350 1150
+P 10350 1300
+F 0 "Y3" V 10304 1431 50  0000 L CNN
+F 1 "FishFinder" V 10395 1431 50  0000 L CNN
+F 2 "Wire_Connections_Bridges:WireConnection_2.50mmDrill" H 10350 1300 50  0001 C CNN
+F 3 "~" H 10350 1300 50  0001 C CNN
+	1    10350 1300
 	0    1    1    0   
 $EndComp
 Wire Notes Line
@@ -1287,44 +1287,44 @@ Wire Notes Line
 Wire Notes Line
 	6350 450  6350 3250
 Wire Notes Line
-	9500 750  9600 750 
+	9500 900  9600 900 
 Wire Notes Line
-	9600 750  9600 1450
+	9600 900  9600 1600
 Wire Notes Line
-	9600 1450 9500 1450
-Text Notes 9300 850  0    50   ~ 0
+	9600 1600 9500 1600
+Text Notes 9300 1000 0    50   ~ 0
 Zsource
 Wire Notes Line
-	9850 750  9750 750 
+	9850 900  9750 900 
 Wire Notes Line
-	9750 750  9750 1450
+	9750 900  9750 1600
 Wire Notes Line
-	9750 1450 9850 1450
-Text Notes 9800 850  0    50   ~ 0
+	9750 1600 9850 1600
+Text Notes 9800 1000 0    50   ~ 0
 Zload=Zfish+Zmatch
 Wire Wire Line
-	10350 900  10350 1000
+	10350 1050 10350 1150
 Wire Wire Line
-	9300 1300 10350 1300
-Text Notes 9250 1600 0    50   ~ 0
+	9300 1450 10350 1450
+Text Notes 9250 1750 0    50   ~ 0
 Zmatch = Zsource - Zfish
 Text Notes 6900 3100 0    39   ~ 0
 Impedance Measure Circuit
 $Comp
 L Device:R Rm4
 U 1 1 5E59E5EC
-P 10050 900
-F 0 "Rm4" V 10050 850 50  0000 L CNN
-F 1 "Zmatch" V 10150 750 50  0000 L CNN
-F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 9980 900 50  0001 C CNN
-F 3 "~" H 10050 900 50  0001 C CNN
-	1    10050 900 
+P 10050 1050
+F 0 "Rm4" V 10050 1000 50  0000 L CNN
+F 1 "Zmatch" V 10150 900 50  0000 L CNN
+F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 9980 1050 50  0001 C CNN
+F 3 "~" H 10050 1050 50  0001 C CNN
+	1    10050 1050
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	10350 900  10200 900 
+	10350 1050 10200 1050
 Wire Wire Line
-	9900 900  9300 900 
+	9900 1050 9300 1050
 Wire Notes Line
 	8150 450  8150 3250
 $Comp
@@ -1371,8 +1371,6 @@ Wire Wire Line
 	9300 2600 9950 2600
 Text Notes 8750 3000 0    50   ~ 0
 Zmatch = (Zsource * Zfish) / (Zfish - Zsource)
-Text Notes 8200 650  0    50   Italic 0
-Z is imagenary part\n  of impedance
 $Comp
 L Device:R Rm3
 U 1 1 5E60037B
@@ -1396,4 +1394,10 @@ Wire Wire Line
 Connection ~ 9950 2600
 Wire Wire Line
 	9950 2600 10350 2600
+Text Notes 4950 4350 0    50   ~ 0
+0.8Khz HP filter\n0.1uF 2Kohm
+Text GLabel 6750 4150 2    50   Input ~ 0
+Stage2Out
+Text Notes 8200 700  0    157  ~ 31
+Impedance Match
 $EndSCHEMATC

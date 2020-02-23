@@ -1,4 +1,4 @@
-update=2020/2/15 22:37:00
+update=2020/2/19 7:52:56
 version=1
 last_client=kicad
 [general]
@@ -239,7 +239,7 @@ dPairViaGap=0.25
 [schematic_editor]
 version=1
 PageLayoutDescrFile=
-PlotDirectoryName=./acousticLinkV2.2
+PlotDirectoryName=./acousticLinkV2.3
 SubpartIdSeparator=0
 SubpartFirstId=65
 NetFmtName=Pcbnew
