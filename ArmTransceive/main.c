@@ -51,8 +51,8 @@
 #pragma DATA_ALIGN(gDMAControlTable, 1024) // address alignment required
 tDMAControlTable gDMAControlTable[64]; // uDMA control table (global)
 
-#define TX_FREQ 80000 //80Khz TX
-#define BIT_RATE 8 //Bits Per Second
+
+
 
 #define VIN_RANGE 3.3 // 3.3 V on board
 #define ADC_BITS 12 // 12 bit ADC

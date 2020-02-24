@@ -26,7 +26,7 @@
 
 // (120Mhz/2) / (200Khz) = 300
 // (120Mhz/2) / (80Khz) = 750
-uint16_t tickPeriod = 300;
+uint16_t tickPeriod = 735;
 
 // Setup PF0:PF3 for pwm output
 void pwm1Init()
