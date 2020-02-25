@@ -17,7 +17,11 @@
 #define StartFrame 0xFA // exact bit sequence for start frame 1111 1010
 
 #define SchedulerLength 4 //4 different log values; Battery/Status/Temperature/Fish Count
-
+//  SCHEDULER
+//      1) Battery Level (integer number)
+//      2) AUV Status (Searching-00, Targetting-01, Shot-02, Reloading-03, Recalling-04)
+//      3) Temperature (integer number in C)
+//      4) Fish Count (integer number)
 
 
 #endif /* ALINKPROTOCAL_H_ */

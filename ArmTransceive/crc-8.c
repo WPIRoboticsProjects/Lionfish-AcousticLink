@@ -7,18 +7,19 @@
 #include <inttypes.h>
 #include <math.h>
 #include <string.h>
-#include "CRC.h"
+#include "crc-8.h"
 
 
 //returns the packet with generated CRC in LSB
 uint32_t generate_packet_crc(uint32_t packet){
-    uint8_t * buffer[4];
+    uint8_t buffer[3];
     int i;
     for(i = 0; i < 3; i++){
-        buffer[i] = (uint8_t) ((packet & (0xFF << (i*8)) >> (i*8)));
+        uint32_t byte = ((packet & (0xFF << (i*8)) >> (i*8)));
+        buffer[i] = (uint8_t) byte;
     }
 
-    uint8_t crc = CRC_CalculateCRC8(buffer, (uint8_t) 4);
+    uint8_t crc = CRC_CalculateCRC8(buffer, 3);
     uint32_t new_packet = (packet << 8);
     new_packet |= crc;
     return new_packet;
@@ -30,22 +31,11 @@ bool verify_packet(uint32_t packet){
     if(rem != 0){
         return false;
     }else{
-        return false;
+        return true;
     }
 }
 
 
-int main(){
-    int packet = 0x88EECE;
-    int crc_packet = generate_packet_crc(packet);
-
-    printf("packet: %04x\ncrc_packet: %04x\n", packet, crc_packet);
-
-    if (verify_packet(crc_packet)){
-        printf("TRUE!\n");
-    }else{
-        printf("FALSE!\n");
-    }
-
-}
+//int main(){
+//}
 

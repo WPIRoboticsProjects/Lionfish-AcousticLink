@@ -50,6 +50,7 @@
 #include "pwmDriver.h"
 #include "ALinkProtocal.h"
 #include "TimerTX.h"
+#include "crc-8.h"
 
 #define VIN_RANGE 3.3 // 3.3 V on board
 #define ADC_BITS 12 // 12 bit ADC
@@ -69,14 +70,8 @@ uint32_t gTime = 8345; // time in hundredths of a second
 
 int samples_per_bit = (int) SAMPLE_RATE / BitRate;
 
-int schedule_length = 4;
-int schedule_index = 0;
-uint32_t * scheduler[schedule_length];
-//  SCHEDULER
-//      1) Battery Level (integer number)
-//      2) AUV Status (Searching-00, Targetting-01, Shot-02, Reloading-03, Recalling-04)
-//      3) Temperature (integer number in C)
-//      4) Fish Count (integer number)
+uint32_t scheduler[SchedulerLength];
+int schedule_index = 0;//keep track of what variable we are logging
 
 bool READING = false; //boolean flag for READING in bits
 bool AUV_RECALL = false; //flags for Jetson
@@ -107,11 +102,23 @@ int main(void)
     // Initialize the system clock to 120 MHz
     gSystemClock = SysCtlClockFreqSet(SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 120000000);
 
+    uint32_t packet = 0x88EECE;
+    uint32_t crc_packet = generate_packet_crc(packet);
+
+    printf("packet: %04x\ncrc_packet: %04x\n", packet, crc_packet);
+
+    if (verify_packet(crc_packet)){
+        printf("TRUE!\n");
+    }else{
+        printf("FALSE!\n");
+    }
+
+
     // Initialize
-//    SamplingInit();
-//    debugPinsInit();
-//    pwm1Init();
-//    pwm3Init();
+    SamplingInit();
+    debugPinsInit();
+    pwm1Init();
+    pwm3Init();
     timer1Init();
 
     IntMasterEnable();
@@ -180,10 +187,10 @@ int main(void)
 //uses scheduler to log payload appropriately
 void log_packet(uint8_t payload) //TODO: this + Scheduler
 {
-    scheduler[schedule_index] = payload;
+    scheduler[schedule_index] = (uint32_t) payload;
     schedule_index++;
 
-    if(schedule_index >= schedule_length){
+    if(schedule_index >= SchedulerLength){
         schedule_index = 0;
     }
 }
