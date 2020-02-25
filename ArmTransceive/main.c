@@ -44,9 +44,12 @@
 #include "driverlib/timer.h"
 #include "inc/tm4c1294ncpdt.h"
 #include "inc/hw_memmap.h"
+
 #include "sampling.h"
 #include "hwDebug.h"
 #include "pwmDriver.h"
+#include "ALinkProtocal.h"
+#include "TimerTX.h"
 
 #pragma DATA_ALIGN(gDMAControlTable, 1024) // address alignment required
 tDMAControlTable gDMAControlTable[64]; // uDMA control table (global)
@@ -70,7 +73,7 @@ tDMAControlTable gDMAControlTable[64]; // uDMA control table (global)
 uint32_t gSystemClock; // [Hz] system clock frequency
 uint32_t gTime = 8345; // time in hundredths of a second
 
-int samples_per_bit = (int) SAMPLE_RATE / BIT_RATE;
+int samples_per_bit = (int) SAMPLE_RATE / BitRate;
 
 bool READING = false; //boolean flag for READING in bits
 bool AUV_RECALL = false; //flags for Jetson
@@ -98,13 +101,19 @@ int main(void)
     FPULazyStackingEnable();
 
     // Initialize the system clock to 120 MHz
-    gSystemClock = SysCtlClockFreqSet(SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 120000000);
+//    gSystemClock = SysCtlClockFreqSet(SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 120000000);
 
     // Initialize
-    SamplingInit();
-    debugPinsInit();
-    pwm1Init();
-    pwm3Init();
+//    SamplingInit();
+//    debugPinsInit();
+//    pwm1Init();
+//    pwm3Init();
+    timer1Init();
+
+    while(1)
+    {
+
+    }
 
     //----------------------------DMA SETUP FOR ADC1---------------------------------------------
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UDMA);
