@@ -1,7 +1,7 @@
 /*
  * ALinkProtocal.h
  *
- *  Created on: 2020Äê2ÔÂ24ÈÕ
+ *  Created on: 2020ï¿½ï¿½2ï¿½ï¿½24ï¿½ï¿½
  *      Author: leogr
  */
 
@@ -15,6 +15,9 @@
 #define DATAFrameLength 8 // number of bits in DATA frame
 #define CRCFrameLength 2 // number of bits in CRC section
 #define StartFrame 0xFA // exact bit sequence for start frame 1111 1010
+
+#define SchedulerLength 4 //4 different log values; Battery/Status/Temperature/Fish Count
+
 
 
 #endif /* ALINKPROTOCAL_H_ */

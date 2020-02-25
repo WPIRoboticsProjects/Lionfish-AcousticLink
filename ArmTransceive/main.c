@@ -51,12 +51,6 @@
 #include "ALinkProtocal.h"
 #include "TimerTX.h"
 
-#pragma DATA_ALIGN(gDMAControlTable, 1024) // address alignment required
-tDMAControlTable gDMAControlTable[64]; // uDMA control table (global)
-
-
-
-
 #define VIN_RANGE 3.3 // 3.3 V on board
 #define ADC_BITS 12 // 12 bit ADC
 #define SAMPLE_RATE 5000 //Samples Per Second
@@ -75,6 +69,15 @@ uint32_t gTime = 8345; // time in hundredths of a second
 
 int samples_per_bit = (int) SAMPLE_RATE / BitRate;
 
+int schedule_length = 4;
+int schedule_index = 0;
+uint32_t * scheduler[schedule_length];
+//  SCHEDULER
+//      1) Battery Level (integer number)
+//      2) AUV Status (Searching-00, Targetting-01, Shot-02, Reloading-03, Recalling-04)
+//      3) Temperature (integer number in C)
+//      4) Fish Count (integer number)
+
 bool READING = false; //boolean flag for READING in bits
 bool AUV_RECALL = false; //flags for Jetson
 bool AUV_ARM = false; //flags for Jetson
@@ -89,6 +92,7 @@ void send_start();
 
 bool crc_check(uint32_t packet);
 bool check_raw_start();
+void delayMS(int ms);
 int * message_to_binary(char *input, int input_length);
 
 
@@ -96,12 +100,12 @@ int main(void)
 {
     IntMasterDisable();
 
-    // Enable the Floating Point Unit, and permit ISRs to use it
+    // Enable the Floating Point Unit, and permit ISRa`````11qqqqqqqqqqqqqq``ws to use it
     FPUEnable();
     FPULazyStackingEnable();
 
     // Initialize the system clock to 120 MHz
-//    gSystemClock = SysCtlClockFreqSet(SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 120000000);
+    gSystemClock = SysCtlClockFreqSet(SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 120000000);
 
     // Initialize
 //    SamplingInit();
@@ -109,35 +113,6 @@ int main(void)
 //    pwm1Init();
 //    pwm3Init();
     timer1Init();
-
-    while(1)
-    {
-
-    }
-
-    //----------------------------DMA SETUP FOR ADC1---------------------------------------------
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_UDMA);
-    uDMAEnable();
-    uDMAControlBaseSet(gDMAControlTable);
-    uDMAChannelAssign(UDMA_CH24_ADC1_0); // assign DMA channel 24 to ADC1 sequence 0
-    uDMAChannelAttributeDisable(UDMA_SEC_CHANNEL_ADC10, UDMA_ATTR_ALL);
-    // primary DMA channel = first half of the ADC buffer
-    uDMAChannelControlSet(UDMA_SEC_CHANNEL_ADC10 | UDMA_PRI_SELECT,
-     UDMA_SIZE_16 | UDMA_SRC_INC_NONE | UDMA_DST_INC_16 | UDMA_ARB_4);
-    uDMAChannelTransferSet(UDMA_SEC_CHANNEL_ADC10 | UDMA_PRI_SELECT,
-     UDMA_MODE_PINGPONG, (void*)&ADC1_SSFIFO0_R,
-     (void*)&gADCBuffer[0], ADC_BUFFER_SIZE/2);
-    // alternate DMA channel = second half of the ADC buffer
-    uDMAChannelControlSet(UDMA_SEC_CHANNEL_ADC10 | UDMA_ALT_SELECT,
-     UDMA_SIZE_16 | UDMA_SRC_INC_NONE | UDMA_DST_INC_16 | UDMA_ARB_4);
-    uDMAChannelTransferSet(UDMA_SEC_CHANNEL_ADC10 | UDMA_ALT_SELECT,
-     UDMA_MODE_PINGPONG, (void*)&ADC1_SSFIFO0_R,
-     (void*)&gADCBuffer[ADC_BUFFER_SIZE/2], ADC_BUFFER_SIZE/2);
-    uDMAChannelEnable(UDMA_SEC_CHANNEL_ADC10);
-
-    //ADC SETUP WITH DMA
-    ADCSequenceDMAEnable(ADC1_BASE, 0); // enable DMA for ADC1 sequence 0
-    ADCIntEnableEx(ADC1_BASE, ADC_INT_DMA_SS0); // enable ADC1 sequence 0 DMA interrupt
 
     IntMasterEnable();
 
@@ -147,6 +122,7 @@ int main(void)
     int buffer_index = 0; //buffer index
     int ADC_OFFSET = 515; //threshold for 0/1 TODO: measure and change
     uint16_t crc_mask = (1 << 9) - 1; //binary = 0000 0000 0000 0000 0000 0000 1111 1111
+
 
     //Main Loop
     while(1)
@@ -204,6 +180,12 @@ int main(void)
 //uses scheduler to log payload appropriately
 void log_packet(uint8_t payload) //TODO: this + Scheduler
 {
+    scheduler[schedule_index] = payload;
+    schedule_index++;
+
+    if(schedule_index >= schedule_length){
+        schedule_index = 0;
+    }
 }
 
 //processes command payload and set appropriate pins
@@ -286,6 +268,10 @@ void send_start()
         }
         bits = bits >> 1;
     }
+}
+
+void delayMS(int ms) {
+    SysCtlDelay( (SysCtlClockGet()/(3*1000))*ms ) ;
 }
 
 /**
