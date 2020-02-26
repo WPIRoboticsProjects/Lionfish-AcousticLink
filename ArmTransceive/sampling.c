@@ -20,10 +20,15 @@
 #include "sysctl_pll.h"
 #include "sampling.h"
 
+#pragma DATA_ALIGN(gDMAControlTable, 1024) // address alignment required
+tDMAControlTable gDMAControlTable[64]; // uDMA control table (global)
+
 volatile int32_t gADCBufferIndex = ADC_BUFFER_SIZE - 1;  // latest sample index
 volatile uint16_t gADCBuffer[ADC_BUFFER_SIZE];           // circular buffer
 volatile uint32_t gADCErrors;                       // number of missed ADC deadlines
 volatile bool gDMAPrimary = true; // is DMA occurring in the primary channel?
+
+
 
 
 // initialize sampling ADC
@@ -50,6 +55,30 @@ void SamplingInit(void)
 //    ADCIntEnable(ADC1_BASE, 0); // enable sequence 0 interrupt in the ADC1 peripheral
 //    IntPrioritySet(INT_ADC1SS0, 0); // set ADC1 sequence 0 interrupt priority
 //    IntEnable(INT_ADC1SS0); // enable ADC1 sequence 0 interrupt in int. controller
+
+    //----------------------------DMA SETUP FOR ADC1---------------------------------------------
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UDMA);
+    uDMAEnable();
+    uDMAControlBaseSet(gDMAControlTable);
+    uDMAChannelAssign(UDMA_CH24_ADC1_0); // assign DMA channel 24 to ADC1 sequence 0
+    uDMAChannelAttributeDisable(UDMA_SEC_CHANNEL_ADC10, UDMA_ATTR_ALL);
+    // primary DMA channel = first half of the ADC buffer
+    uDMAChannelControlSet(UDMA_SEC_CHANNEL_ADC10 | UDMA_PRI_SELECT,
+     UDMA_SIZE_16 | UDMA_SRC_INC_NONE | UDMA_DST_INC_16 | UDMA_ARB_4);
+    uDMAChannelTransferSet(UDMA_SEC_CHANNEL_ADC10 | UDMA_PRI_SELECT,
+     UDMA_MODE_PINGPONG, (void*)&ADC1_SSFIFO0_R,
+     (void*)&gADCBuffer[0], ADC_BUFFER_SIZE/2);
+    // alternate DMA channel = second half of the ADC buffer
+    uDMAChannelControlSet(UDMA_SEC_CHANNEL_ADC10 | UDMA_ALT_SELECT,
+     UDMA_SIZE_16 | UDMA_SRC_INC_NONE | UDMA_DST_INC_16 | UDMA_ARB_4);
+    uDMAChannelTransferSet(UDMA_SEC_CHANNEL_ADC10 | UDMA_ALT_SELECT,
+     UDMA_MODE_PINGPONG, (void*)&ADC1_SSFIFO0_R,
+     (void*)&gADCBuffer[ADC_BUFFER_SIZE/2], ADC_BUFFER_SIZE/2);
+    uDMAChannelEnable(UDMA_SEC_CHANNEL_ADC10);
+
+    //ADC SETUP WITH DMA
+    ADCSequenceDMAEnable(ADC1_BASE, 0); // enable DMA for ADC1 sequence 0
+    ADCIntEnableEx(ADC1_BASE, ADC_INT_DMA_SS0); // enable ADC1 sequence 0 DMA interrupt
 }
 
 // ADC ISR
