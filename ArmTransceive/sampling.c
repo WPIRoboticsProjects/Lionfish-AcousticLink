@@ -1,4 +1,4 @@
-/*
+ /*
  * buttons.c
  *
  *  Created on: Aug 12, 2012, modified 9/8/2017
@@ -19,6 +19,8 @@
 #include "driverlib/udma.h"
 #include "sysctl_pll.h"
 #include "sampling.h"
+
+
 
 #pragma DATA_ALIGN(gDMAControlTable, 1024) // address alignment required
 tDMAControlTable gDMAControlTable[64]; // uDMA control table (global)

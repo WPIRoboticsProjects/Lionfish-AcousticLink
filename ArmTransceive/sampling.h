@@ -20,6 +20,7 @@ extern volatile int32_t gADCBufferIndex;  // latest sample index
 extern volatile uint16_t gADCBuffer[ADC_BUFFER_SIZE];           // circular buffer
 extern volatile uint32_t gADCErrors;                       // number of missed ADC deadlines
 
+
 #define ADC_SAMPLING_RATE 20000   // [samples/sec] desired ADC sampling rate
 #define CRYSTAL_FREQUENCY 120000000  // [Hz] crystal oscillator frequency used to calculate clock rates
 

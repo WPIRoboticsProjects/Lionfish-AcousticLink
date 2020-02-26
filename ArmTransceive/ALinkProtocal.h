@@ -11,17 +11,34 @@
 #define CarrierFeq 81500 // 81.5Khz TX
 #define BitRate 100 // 100 bit per second
 
-#define IDFrameLength 8 // number of bits in ID frame
+#define STARTFrameLength 8 // number of bits in start frame
+#define IDFrameLength 4 // number of bits in ID frame
 #define DATAFrameLength 8 // number of bits in DATA frame
-#define CRCFrameLength 2 // number of bits in CRC section
-#define StartFrame 0xFA // exact bit sequence for start frame 1111 1010
+#define CRCFrameLength 2 // number of bits in CRC frame
 
-#define SchedulerLength 4 //4 different log values; Battery/Status/Temperature/Fish Count
-//  SCHEDULER
-//      1) Battery Level (integer number)
-//      2) AUV Status (Searching-00, Targetting-01, Shot-02, Reloading-03, Recalling-04)
-//      3) Temperature (integer number in C)
-//      4) Fish Count (integer number)
+typedef struct{
+    uint8_t COMMAND_STATUS;
+    uint8_t REQUEST;
+    uint8_t SCHEDULER_INFO[14];
+} ID;
+
+typedef struct{
+    uint8_t ARM;
+    uint8_t DISARM;
+    uint8_t RECALL;
+} COMMAND;
+
+//SCHEDULER
+#define SchedulerLength 6
+//1) RX Command Status
+//2) Prev Command Status
+//3) Battery
+//4) Temperature
+//5) Pressure
+//6) Fish Count
+
+//FRAME
+#define StartFrame 0xFA // exact bit sequence for start frame 1111 1010
 
 
 #endif /* ALINKPROTOCAL_H_ */

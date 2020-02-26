@@ -68,10 +68,14 @@
 uint32_t gSystemClock; // [Hz] system clock frequency
 uint32_t gTime = 8345; // time in hundredths of a second
 
-int samples_per_bit = (int) SAMPLE_RATE / BitRate;
+int samples_per_bit = (int) ADC_SAMPLING_RATE / BitRate;
 
-uint32_t scheduler[SchedulerLength];
+uint8_t data_buffer[16];
 int schedule_index = 0;//keep track of what variable we are logging
+int schedule_max = SchedulerLength;
+
+ID id; //used to find 8 bit values for ID's
+COMMAND command; //used to find 8-bit values for commands
 
 bool READING = false; //boolean flag for READING in bits
 bool AUV_RECALL = false; //flags for Jetson
@@ -79,16 +83,14 @@ bool AUV_ARM = false; //flags for Jetson
 
 //FUNC DEFINITIONS
 void process_raw();
+void process_request(uint8_t payload);
 void process_command(uint8_t payload);
-void log_packet(uint8_t payload);
-
-void tx_message(int * binary_payload, int binary_length);
-void send_start();
-
+void process_info(uint8_t payload);
 bool crc_check(uint32_t packet);
 bool check_raw_start();
 void delayMS(int ms);
 int * message_to_binary(char *input, int input_length);
+void init_keys(ID * id, COMMAND * command);
 
 
 int main(void)
@@ -131,14 +133,6 @@ int main(void)
         printf("FALSE!\n");
     }
 
-
-    // Initialize
-    SamplingInit();
-    debugPinsInit();
-    pwm1Init();
-    pwm3Init();
-    timer1Init();
-
     IntMasterEnable();
 
     //RX VARIABLES
@@ -147,6 +141,7 @@ int main(void)
     int buffer_index = 0; //buffer index
     int ADC_OFFSET = 515; //threshold for 0/1 TODO: measure and change
     uint16_t crc_mask = (1 << 9) - 1; //binary = 0000 0000 0000 0000 0000 0000 1111 1111
+    init_keys(&id, &command);
 
 
     //Main Loop
@@ -203,12 +198,12 @@ int main(void)
 }
 
 //uses scheduler to log payload appropriately
-void log_packet(uint8_t payload) //TODO: this + Scheduler
+void process_info(uint8_t payload) //TODO: this + Scheduler
 {
-    scheduler[schedule_index] = (uint32_t) payload;
+    data_buffer[schedule_index] = payload;
     schedule_index++;
 
-    if(schedule_index >= SchedulerLength){
+    if(schedule_index > SchedulerLength){
         schedule_index = 0;
     }
 }
@@ -219,18 +214,24 @@ void process_command(uint8_t payload) //TODO: add code to write GPIO HIGH OR LOW
     int mask = (1 << 3) - 1; // 0011 mask for LS 2 bits
     payload = (uint8_t) (mask && payload);
 
-    if((int) payload == (int) COMMAND_ARM){
+    if((int) payload == (int) command.ARM){
         AUV_ARM = true;
         //set ARM pin to HIGH
     }
-    if((int) payload == (int) COMMAND_DISARM){
+    if((int) payload == (int) command.DISARM){
         AUV_ARM = false;
         //set ARM pin to LOW
     }
-    if((int) payload == (int) COMMAND_RECALL){
+    if((int) payload == (int) command.RECALL){
         AUV_RECALL = true;
         //set RECALL pin to HIGH
     }
+}
+
+//use payload to find and resend the information based on the ID
+void process_request(uint8_t payload) //TODO: add code to write GPIO HIGH OR LOW + define ARM/RECALL PINS
+{
+
 }
 
 //uses raw_rx (contains a frame)
@@ -239,14 +240,15 @@ void process_raw(uint32_t packet)
     uint32_t payload_mask = (1 << 17) - 1; //binary =  0000 0000 0000 0000 1111 1111 0000 0000
     uint32_t id_mask = (1 << 25) - 1; //binary =       0000 0000 1111 1111 0000 0000 0000 0000
 
-    uint32_t id = (id_mask && packet) >> 16; //shift id to most significant 8 bit
+    uint32_t packet_id = (id_mask && packet) >> 16; //shift id to most significant 8 bit
     uint32_t payload = (payload_mask && packet) >> 8; //shift payload to most significant 8 bit
 
-    if((int) id == (int) ID_COMMAND){ //command
+    if((int) packet_id == (int) id.COMMAND_STATUS){
         process_command(payload); //perform appropriate command
-    }
-    if((int) id == (int) ID_INFO){ //info
-        log_packet(payload); //use scheduler to record log of payload
+    }else if((int) packet_id == (int) id.REQUEST){
+        process_request(payload); //resend data provided by the payload being the ID
+    }else{ //log packet
+        process_info(payload);
     }
 }
 
@@ -263,37 +265,6 @@ bool check_raw_start(uint32_t packet)
     return (bit_xor == 0); //if bit_xor == 0, then all bits in rx == start bits
 }
 
-void tx_message(int * binary_payload, int binary_length)
-{
-    send_start(); //sends START BITS
-    int i;
-    for(i = 0; i < binary_length; i++){
-        if(binary_payload[i] == 1){
-            pwmOutputEnable();
-            //delay x time
-            pwmOutputDisable();
-        }else if(binary_payload[i] == 0){
-            //delay x time
-        }
-    }
-}
-
-void send_start()
-{
-    uint8_t bits = (uint8_t) START_BITS;
-    int i;
-    for(i = 0; i < 8; i++){
-        if(bits % 1 == 0){ //LSB is 1
-            pwmOutputEnable();
-            //delay x time
-            pwmOutputDisable();
-
-        }else if(bits % 1 == 1){ //LSB is 0
-            //delay x time
-        }
-        bits = bits >> 1;
-    }
-}
 
 void delayMS(int ms) {
     SysCtlDelay( (SysCtlClockGet()/(3*1000))*ms ) ;
@@ -333,4 +304,20 @@ int * message_to_binary(char *input, int input_length)
         }
     }
     return output;
+}
+
+//init values for COMMAND and ID lookups
+void init_keys(ID * id_key, COMMAND * command_key){
+    id_key->COMMAND_STATUS = 0x01;
+    id_key->REQUEST = 0x02;
+
+    int i, num = 0x03;
+    for(i = 0; i < 14; i++){
+        id_key->SCHEDULER_INFO[i] = num;
+        num ++;
+    }
+
+    command_key->ARM = 0x01;
+    command_key->DISARM = 0x02;
+    command_key->RECALL = 0x03;
 }
