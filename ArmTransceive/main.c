@@ -104,15 +104,21 @@ int main(void)
 //    gSystemClock = SysCtlClockFreqSet(SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 120000000);
 
     // Initialize
-//    SamplingInit();
-//    debugPinsInit();
-//    pwm1Init();
-//    pwm3Init();
-    timer1Init();
+    SamplingInit();
+    debugPinsInit();
+    pwm1Init();
+    pwm3Init();
+//    timer1Init();
 
+    volatile int temp=0;
     while(1)
     {
+        int i ;
+        for( i=0;i<10000;i++)
+        {
+            temp +=1;
 
+        }
     }
 
     //----------------------------DMA SETUP FOR ADC1---------------------------------------------
