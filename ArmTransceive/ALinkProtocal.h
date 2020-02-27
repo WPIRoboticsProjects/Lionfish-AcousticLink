@@ -15,6 +15,8 @@
 #define IDFrameLength 4 // number of bits in ID frame
 #define DATAFrameLength 8 // number of bits in DATA frame
 #define CRCFrameLength 2 // number of bits in CRC frame
+#define PacketLength (int) (STARTFrameLength+IDFrameLength+DATAFrameLength+CRCFrameLength)
+
 
 typedef struct{
     uint8_t COMMAND_STATUS;

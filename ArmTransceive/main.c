@@ -50,18 +50,11 @@
 #include "pwmDriver.h"
 #include "ALinkProtocal.h"
 #include "TimerTX.h"
-#include "crc-8.h"
+#include "CRC.h"
 
 #define VIN_RANGE 3.3 // 3.3 V on board
 #define ADC_BITS 12 // 12 bit ADC
 #define SAMPLE_RATE 5000 //Samples Per Second
-
-#define START_BITS 0xFA //1111 1010
-#define ID_COMMAND 0x88 //1000 1000
-#define ID_INFO 0x8F    //1000 1111
-#define COMMAND_ARM 1   //xxxx xx01
-#define COMMAND_DISARM 0//xxxx xx00
-#define COMMAND_RECALL 3//xxxx xx11
 
 
 //GLOBALS
@@ -86,7 +79,6 @@ void process_raw();
 void process_request(uint8_t payload);
 void process_command(uint8_t payload);
 void process_info(uint8_t payload);
-bool crc_check(uint32_t packet);
 bool check_raw_start();
 void delayMS(int ms);
 int * message_to_binary(char *input, int input_length);
@@ -109,50 +101,46 @@ int main(void)
     debugPinsInit();
     pwm1Init();
     pwm3Init();
+
+    init_keys(&id, &command); //set all id/command keys for reference
 //    timer1Init();
 
-    volatile int temp=0;
-    while(1)
-    {
-        int i ;
-        for( i=0;i<10000;i++)
-        {
-            temp +=1;
-
-        }
-    }
-
-    uint32_t packet = 0x88EECE;
-    uint32_t crc_packet = generate_packet_crc(packet);
-
-    printf("packet: %04x\ncrc_packet: %04x\n", packet, crc_packet);
-
-    if (verify_packet(crc_packet)){
-        printf("TRUE!\n");
-    }else{
-        printf("FALSE!\n");
-    }
+//    volatile int temp=0;
+//    while(1)
+//    {
+//        int i ;
+//        for( i=0;i<10000;i++)
+//        {
+//            temp +=1;
+//
+//        }
+//    }
 
     IntMasterEnable();
 
-    //RX VARIABLES
+    //SAMPLING / MAIN VARIABLES
     uint32_t raw_rx = 0; //variable to store received messages
     uint32_t buffer_log[1024]; //store rx_bits in 32 bit chunks
     int buffer_index = 0; //buffer index
     int ADC_OFFSET = 515; //threshold for 0/1 TODO: measure and change
-    uint16_t crc_mask = (1 << 9) - 1; //binary = 0000 0000 0000 0000 0000 0000 1111 1111
-    init_keys(&id, &command);
+    uint16_t crc_mask = (1 << 9) - 1; //binary = 0000 0000 1111 1111
 
 
     //Main Loop
     while(1)
     {
-        int i, on_count, off_count, buffer_avg, tx_count; //variables for ADC processing
+        //variables for ADC processing / Threshold
+        int i;
+        int on_count = 0, off_count = 0, buffer_avg = 0, tx_count = 0, curr_max = 0;
 
         //ADC SAMPLING ROUTINE
         for(i = 0; i < ADC_BUFFER_SIZE; i++)
         {
             buffer_avg += gADCBuffer[i]; //sum up all samples
+
+            if((int) gADCBuffer[i] > curr_max){ //compare curr_max to current sample and adjust
+                curr_max = (int) gADCBuffer[i];
+            }
 
             //OFFSET PROCESSING
             if(gADCBuffer[i] < ADC_OFFSET){// counts as a 0
@@ -175,25 +163,32 @@ int main(void)
 
             //START BIT CHECKING (only if not reading)
             if((!READING) && check_raw_start(raw_rx)){//current rx has just read the start bits
+                READING = true;
                 raw_rx &= crc_mask; //everything but the start bits are now 0
                 tx_count = 8; //reset count, adjusted for 8 start bits
             }
 
             //LOGGING + PACKET PROCESS
-            if(tx_count >= 32){
+            if(tx_count >= PacketLength){
                 READING = false; //done reading packet
 
-                if(crc_check(raw_rx)){ //check the packed for errors
+                if(check_crc(raw_rx)){ //check the packed for errors
                     process_raw(raw_rx); //look at packet frame as whole
                 }
 
-                buffer_log[buffer_index] = raw_rx; //add to log
+                //Reset and Log Raw_RX
+                buffer_log[buffer_index] = ~raw_rx; //add to log
                 buffer_index++; //update index
                 if(buffer_index == 1024) buffer_index=0; //wrap index back if at last element
+                raw_rx = 0;
             }
         }
 
+        //AVG RECALC
         buffer_avg = buffer_avg / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
+
+
+
     }
 }
 
@@ -203,7 +198,7 @@ void process_info(uint8_t payload) //TODO: this + Scheduler
     data_buffer[schedule_index] = payload;
     schedule_index++;
 
-    if(schedule_index > SchedulerLength){
+    if(schedule_index > SchedulerLength){ //wrap
         schedule_index = 0;
     }
 }
@@ -229,8 +224,10 @@ void process_command(uint8_t payload) //TODO: add code to write GPIO HIGH OR LOW
 }
 
 //use payload to find and resend the information based on the ID
-void process_request(uint8_t payload) //TODO: add code to write GPIO HIGH OR LOW + define ARM/RECALL PINS
+void process_request(uint8_t payload) //TODO: search for ID data and resend (payload contains an ID)
 {
+    uint8_t request_id = payload;
+
 
 }
 
@@ -238,47 +235,36 @@ void process_request(uint8_t payload) //TODO: add code to write GPIO HIGH OR LOW
 void process_raw(uint32_t packet)
 {
     uint32_t payload_mask = (1 << 17) - 1; //binary =  0000 0000 0000 0000 1111 1111 0000 0000
-    uint32_t id_mask = (1 << 25) - 1; //binary =       0000 0000 1111 1111 0000 0000 0000 0000
+    uint32_t id_mask = (1 << 21) - 1; //binary =       0000 0000 0000 1111 0000 0000 0000 0000
 
-    uint32_t packet_id = (id_mask && packet) >> 16; //shift id to most significant 8 bit
+    uint32_t packet_id = (id_mask && packet) >> 16; //shift id to most significant 4 bit
     uint32_t payload = (payload_mask && packet) >> 8; //shift payload to most significant 8 bit
 
     if((int) packet_id == (int) id.COMMAND_STATUS){
-        process_command(payload); //perform appropriate command
-    }else if((int) packet_id == (int) id.REQUEST){
-        process_request(payload); //resend data provided by the payload being the ID
-    }else{ //log packet
-        process_info(payload);
-    }
-}
+        process_command(payload);                   //perform appropriate command
 
-bool crc_check(uint32_t packet) //TODO: this
-{
-    bool errors = false;
-    return errors;
+    }else if((int) packet_id == (int) id.REQUEST){
+        process_request(payload);                   //resend data provided by the payload being the ID
+
+    }else{
+        process_info(payload);                      //log packet using scheduler
+    }
 }
 
 //check raw rx for start bits
 bool check_raw_start(uint32_t packet)
 {
-    uint8_t bit_xor = (packet ^ (uint8_t) START_BITS);
+    uint8_t bit_xor = (packet ^ (uint8_t) StartFrame);
     return (bit_xor == 0); //if bit_xor == 0, then all bits in rx == start bits
 }
 
-
+//used to delay processes
 void delayMS(int ms) {
     SysCtlDelay( (SysCtlClockGet()/(3*1000))*ms ) ;
 }
 
-/**
- * Function: message_to_binary
- * Arguments:
- *      -char *input: pointer to array of message characters
- *      -int input_length: size of the char array
- *
- * Returns: a integer array of the characters message in binary
- * **/
-int * message_to_binary(char *input, int input_length)
+//converts char message from user into binary
+int * message_to_binary(char *input, int input_length) //TODO: FIX FOR uINT32_t
 {
     int * output = malloc(input_length * 8 * sizeof(int));
     int output_index = 0;
