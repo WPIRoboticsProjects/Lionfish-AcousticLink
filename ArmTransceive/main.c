@@ -40,6 +40,7 @@
 #include "driverlib/interrupt.h"
 #include "driverlib/gpio.h"
 #include "driverlib/udma.h"
+#include "driverlib/emac.h"
 #include "driverlib/adc.h"
 #include "driverlib/timer.h"
 #include "inc/tm4c1294ncpdt.h"
@@ -74,7 +75,7 @@ bool READING = false; //boolean flag for READING in bits
 bool AUV_RECALL = false; //flags for Jetson
 bool AUV_ARM = false; //flags for Jetson
 
-//FUNC DEFINITIONS
+//PROTOTYPES
 void process_raw();
 void process_request(uint8_t payload);
 void process_command(uint8_t payload);
@@ -82,6 +83,7 @@ void process_info(uint8_t payload);
 bool check_raw_start();
 void delayMS(int ms);
 int * message_to_binary(char *input, int input_length);
+uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload);
 void init_keys(ID * id, COMMAND * command);
 
 
@@ -186,9 +188,6 @@ int main(void)
 
         //AVG RECALC
         buffer_avg = buffer_avg / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
-
-
-
     }
 }
 
@@ -204,7 +203,7 @@ void process_info(uint8_t payload) //TODO: this + Scheduler
 }
 
 //processes command payload and set appropriate pins
-void process_command(uint8_t payload) //TODO: add code to write GPIO HIGH OR LOW + define ARM/RECALL PINS
+void process_command(uint8_t payload) //TODO: send ethernet packet to jetson with payload
 {
     int mask = (1 << 3) - 1; // 0011 mask for LS 2 bits
     payload = (uint8_t) (mask && payload);
@@ -227,8 +226,17 @@ void process_command(uint8_t payload) //TODO: add code to write GPIO HIGH OR LOW
 void process_request(uint8_t payload) //TODO: search for ID data and resend (payload contains an ID)
 {
     uint8_t request_id = payload;
+    uint32_t request_information, ans;
 
+    int i;
+    for(i = 0; i < 14; i++){
+        if((int) request_id == (int) id.SCHEDULER_INFO[i]){ //resend this information
+            request_information = data_buffer[i+2];
+            ans = construct_packet(id.SCHEDULER_INFO[i], request_information);
+        }
+    }
 
+    //TODO: trigger PWM isr to send this message???
 }
 
 //uses raw_rx (contains a frame)
@@ -256,6 +264,20 @@ bool check_raw_start(uint32_t packet)
 {
     uint8_t bit_xor = (packet ^ (uint8_t) StartFrame);
     return (bit_xor == 0); //if bit_xor == 0, then all bits in rx == start bits
+}
+
+//construct a full packet with the 8-bit ID and PAYLOAD
+uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload){
+    uint32_t ans = StartFrame;
+    ans <<= STARTFrameLength;
+
+    ans |= packet_id;
+    ans <<= IDFrameLength;
+
+    ans |= packet_payload;
+    ans <<= DATAFrameLength;
+
+    return crc_8(ans);
 }
 
 //used to delay processes

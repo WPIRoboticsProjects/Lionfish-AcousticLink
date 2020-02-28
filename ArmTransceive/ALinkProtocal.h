@@ -14,7 +14,7 @@
 #define STARTFrameLength 8 // number of bits in start frame
 #define IDFrameLength 4 // number of bits in ID frame
 #define DATAFrameLength 8 // number of bits in DATA frame
-#define CRCFrameLength 2 // number of bits in CRC frame
+#define CRCFrameLength 8 // number of bits in CRC frame
 #define PacketLength (int) (STARTFrameLength+IDFrameLength+DATAFrameLength+CRCFrameLength)
 
 
@@ -39,7 +39,6 @@ typedef struct{
 //5) Pressure
 //6) Fish Count
 
-//FRAME
 #define StartFrame 0xFA // exact bit sequence for start frame 1111 1010
 
 
