@@ -1,13 +1,14 @@
 /*
  * TimerTX.c
  *
- *  Created on: 2020Äê2ÔÂ23ÈÕ
+ *  Created on: 2020ï¿½ï¿½2ï¿½ï¿½23ï¿½ï¿½
  *      Author: leogr
  */
 
 //TIMER 1 : TX bit modulation
 
 
+#include <ALinkProtocol.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -22,7 +23,6 @@
 #include "inc/tm4c1294ncpdt.h"
 //#include "inc/hw_ints.h"
 
-#include "ALinkProtocal.h"
 #include "hwDebug.h"
 
 

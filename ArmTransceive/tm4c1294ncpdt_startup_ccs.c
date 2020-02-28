@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include "TimerTX.h"
 #include "sampling.h"
+#include "pwmDriver.h"
 
 //*****************************************************************************
 //
@@ -35,7 +36,6 @@ void ResetISR(void);
 static void NmiSR(void);
 static void FaultISR(void);
 static void IntDefaultHandler(void);
-void ADC_ISR(void);
 
 //*****************************************************************************
 //
@@ -57,7 +57,9 @@ extern uint32_t __STACK_TOP;
 // External declarations for the interrupt handlers used by the application.
 //
 //*****************************************************************************
-// To be added by user
+void ADC_ISR(void);
+void PWM_ISR_FUNC(void);
+void timer1OverFlowISR();
 
 //*****************************************************************************
 //

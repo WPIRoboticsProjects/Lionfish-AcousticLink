@@ -11,7 +11,7 @@ uint32_t crc_8(uint32_t packet){
     unsigned char poly = (unsigned char) CRC_8_POLYNOMIAL;
     unsigned char data[4];
     int i;
-    for(i = 0; i < 4; i++){
+    for(i = 4; i; i--){
         data[i] = (unsigned char) ((packet & (0xFF << (i*8))) >> (i*8));
     }
 
@@ -27,19 +27,18 @@ bool check_crc(uint32_t packet){
     unsigned char poly = (unsigned char) CRC_8_POLYNOMIAL;
     unsigned char data[4];
     int i;
-    for(i = 0; i < 4; i++){
+    for(i = 4; i; i--){
         data[i] = (unsigned char) ((packet & (0xFF << (i*8))) >> (i*8));
     }
 
     unsigned char crc = crc8_lsb(poly, data, 4);
 
     if((uint8_t) crc == 0){
-        ans =  true;
+        ans =  true; //crc was correct when done again
     }else{
-        ans =  false;
+        ans =  false;//crc failed
     }
     return ans;
-
 }
 
 unsigned char crc8_lsb(unsigned char poly, unsigned char* data, int size)

@@ -1,7 +1,7 @@
 /*
  * pwmDriver.c
  *
- *  Created on: 2020Äê2ÔÂ3ÈÕ
+ *  Created on: 2020ï¿½ï¿½2ï¿½ï¿½3ï¿½ï¿½
  *      Author: leogr
  */
 
@@ -154,5 +154,17 @@ void pwmOutputEnable()
 void pwmOutputDisable()
 {
     PWM0_ENABLE_R =0;
+}
+
+//TODO: this
+void PWM_ISR_FUNC(void) { //should look for the outgoing message to send and
+
+//    PWMGenIntClear(PWM0_BASE, PWM_GEN_0, PWM_INT_CNT_ZERO); // clear PWM interrupt flag
+//
+//    gPhase += gPhaseIncrement;
+//
+//    // write directly to the Compare B register that determines the duty cycle
+//    PWM0_0_CMPB_R = 1 + gPWMWaveformTable[gPhase >> (32 - PWM_WAVEFORM_INDEX_BITS)];
+
 }
 

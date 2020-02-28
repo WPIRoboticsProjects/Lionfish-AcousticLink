@@ -5,11 +5,14 @@
  *      Author: leogr
  */
 
-#ifndef ALINKPROTOCAL_H_
-#define ALINKPROTOCAL_H_
+#ifndef ALINKPROTOCOL_H_
+#define ALINKPROTOCOL_H_
+
+#include <inttypes.h>
 
 #define CarrierFeq 81500 // 81.5Khz TX
 #define BitRate 100 // 100 bit per second
+#define SampleRate 20000
 
 #define STARTFrameLength 8 // number of bits in start frame
 #define IDFrameLength 4 // number of bits in ID frame
@@ -32,14 +35,14 @@ typedef struct{
 
 //SCHEDULER
 #define SchedulerLength 6
-//1) RX Command Status
-//2) Prev Command Status
-//3) Battery
-//4) Temperature
-//5) Pressure
-//6) Fish Count
+//      1) RX Command Status (what this dev recieves)
+//      2) Prev Command Status (last logged C.S)
+//      3) Battery
+//      4) Temperature
+//      5) Pressure
+//      6) Fish Count
 
 #define StartFrame 0xFA // exact bit sequence for start frame 1111 1010
 
 
-#endif /* ALINKPROTOCAL_H_ */
+#endif /* ALINKPROTOCOL_H_ */

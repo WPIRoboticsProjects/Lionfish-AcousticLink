@@ -28,6 +28,7 @@
 
 // "${SW_ROOT}/driverlib/ccs/Debug/driverlib.lib" Pre Compiled TivaWare libs needs to exist in ARM Linker file search Path
 
+#include <ALinkProtocol.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,7 +50,6 @@
 #include "sampling.h"
 #include "hwDebug.h"
 #include "pwmDriver.h"
-#include "ALinkProtocal.h"
 #include "TimerTX.h"
 #include "CRC.h"
 
@@ -63,15 +63,15 @@ uint32_t gSystemClock; // [Hz] system clock frequency
 uint32_t gTime = 8345; // time in hundredths of a second
 
 int samples_per_bit = (int) ADC_SAMPLING_RATE / BitRate;
+int ADC_THRESHOLD = 515; //threshold for 0/1 TODO: measure and change
 
 uint8_t data_buffer[16];
 int schedule_index = 0;//keep track of what variable we are logging
-int schedule_max = SchedulerLength;
 
 ID id; //used to find 8 bit values for ID's
 COMMAND command; //used to find 8-bit values for commands
 
-bool READING = false; //boolean flag for READING in bits
+bool READING, SENDING = false; //boolean flag for READING in bits
 bool AUV_RECALL = false; //flags for Jetson
 bool AUV_ARM = false; //flags for Jetson
 
@@ -81,6 +81,7 @@ void process_request(uint8_t payload);
 void process_command(uint8_t payload);
 void process_info(uint8_t payload);
 bool check_raw_start();
+void adjust_threshold(int avg, int max);
 void delayMS(int ms);
 int * message_to_binary(char *input, int input_length);
 uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload);
@@ -103,34 +104,27 @@ int main(void)
     debugPinsInit();
     pwm1Init();
     pwm3Init();
-
     init_keys(&id, &command); //set all id/command keys for reference
-//    timer1Init();
 
-//    volatile int temp=0;
-//    while(1)
-//    {
-//        int i ;
-//        for( i=0;i<10000;i++)
-//        {
-//            temp +=1;
-//
-//        }
-//    }
+//    timer1Init();
 
     IntMasterEnable();
 
     //SAMPLING / MAIN VARIABLES
-    uint32_t raw_rx = 0; //variable to store received messages
-    uint32_t buffer_log[1024]; //store rx_bits in 32 bit chunks
+    uint32_t raw_rx = 0; //variable to store raw bits
+    uint32_t buffer_log[1024]; //store rx_bits messages as a log (debug tool)
     int buffer_index = 0; //buffer index
-    int ADC_OFFSET = 515; //threshold for 0/1 TODO: measure and change
     uint16_t crc_mask = (1 << 9) - 1; //binary = 0000 0000 1111 1111
 
 
     //Main Loop
     while(1)
     {
+        //Test for CRC
+        uint32_t test_rx = 0x881E500;
+        uint32_t crc_test = crc_8(test_rx);
+        bool test_check = check_crc(crc_test);
+
         //variables for ADC processing / Threshold
         int i;
         int on_count = 0, off_count = 0, buffer_avg = 0, tx_count = 0, curr_max = 0;
@@ -145,9 +139,9 @@ int main(void)
             }
 
             //OFFSET PROCESSING
-            if(gADCBuffer[i] < ADC_OFFSET){// counts as a 0
+            if(gADCBuffer[i] < ADC_THRESHOLD){// counts as a 0
                 off_count++;
-            }else if(gADCBuffer[i] > ADC_OFFSET){//counts as a 1
+            }else if(gADCBuffer[i] > ADC_THRESHOLD){//counts as a 1
                 on_count++;
             }
 
@@ -187,7 +181,10 @@ int main(void)
         }
 
         //AVG RECALC
-        buffer_avg = buffer_avg / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
+        buffer_avg = (int) buffer_avg / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
+
+        //ADJUST THRESHOLD
+        adjust_threshold(buffer_avg, curr_max);
     }
 }
 
@@ -210,15 +207,18 @@ void process_command(uint8_t payload) //TODO: send ethernet packet to jetson wit
 
     if((int) payload == (int) command.ARM){
         AUV_ARM = true;
+        //Ethernet ISR?
         //set ARM pin to HIGH
     }
     if((int) payload == (int) command.DISARM){
         AUV_ARM = false;
         //set ARM pin to LOW
+        //Ethernet ISR?
     }
     if((int) payload == (int) command.RECALL){
         AUV_RECALL = true;
         //set RECALL pin to HIGH
+        //Ethernet ISR?
     }
 }
 
@@ -235,8 +235,8 @@ void process_request(uint8_t payload) //TODO: search for ID data and resend (pay
             ans = construct_packet(id.SCHEDULER_INFO[i], request_information);
         }
     }
-
-    //TODO: trigger PWM isr to send this message???
+    //HELP!
+    //TODO: trigger PWM ISR to send this message???
 }
 
 //uses raw_rx (contains a frame)
@@ -278,6 +278,11 @@ uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload){
     ans <<= DATAFrameLength;
 
     return crc_8(ans);
+}
+
+//takes the buffer avg and max and adjusts the current ADC_THRESHOLD
+void adjust_threshold(int avg, int max){
+    int prev_offset =  ADC_THRESHOLD;
 }
 
 //used to delay processes

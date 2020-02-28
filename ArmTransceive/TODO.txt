@@ -1,0 +1,28 @@
+TO DO (Priority High --> Low):
+	-PWM ISR
+	-ACK Protocol
+	-Transmitting state logic
+	-Ethernet/Serial ISR
+	-Scheduler.txt (data_array order) (could be in ALinkProtocal.h)
+	-Signal Threshold Calculations (based on tests with transducers)
+
+
+Problems:
+	-DMA with ADC?
+	-
+
+Work in Progress:
+	-CRC8
+	-
+
+
+Completed:
+	-processing routine for recieved bits from ADC
+	-main loop sampling routine
+	-logic to process + behave with different messages
+	
+	
+Goal:
+	-get RX and TX working
+	-get two wire comm to work between the two boards.
+	-test comm with transducers next
