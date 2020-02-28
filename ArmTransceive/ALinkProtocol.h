@@ -35,14 +35,23 @@ typedef struct{
 
 //SCHEDULER
 #define SchedulerLength 6
-//      1) RX Command Status (what this dev recieves)
-//      2) Prev Command Status (last logged C.S)
-//      3) Battery
-//      4) Temperature
-//      5) Pressure
-//      6) Fish Count
+/*
+ * Schedueler (and data_buffer):
+ *
+    1)Last RX Command Status (8 bit ID)
+    2)Current Status (AUV):
+        -Searching/Navigating
+        -Hunting/Targetting
+        -Shooting
+        -Resetting/Reloading
+        -Recalling
+    3)INFO Battery (int)
+    4)INFO Temperature (int in F or C)
+    5)INFO Pressure (units?)
+    6)INFO Fish Count (int)
+ *
+ */
 
 #define StartFrame 0xFA // exact bit sequence for start frame 1111 1010
-
 
 #endif /* ALINKPROTOCOL_H_ */
