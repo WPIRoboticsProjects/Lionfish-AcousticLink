@@ -1,4 +1,4 @@
-/*
+ /*
  * buttons.c
  *
  *  Created on: Aug 12, 2012, modified 9/8/2017
@@ -27,8 +27,6 @@ volatile int32_t gADCBufferIndex = ADC_BUFFER_SIZE - 1;  // latest sample index
 volatile uint16_t gADCBuffer[ADC_BUFFER_SIZE];           // circular buffer
 volatile uint32_t gADCErrors;                       // number of missed ADC deadlines
 volatile bool gDMAPrimary = true; // is DMA occurring in the primary channel?
-
-
 
 
 // initialize sampling ADC

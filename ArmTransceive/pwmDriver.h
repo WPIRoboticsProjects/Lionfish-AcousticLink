@@ -1,7 +1,7 @@
 /*
  * pwmDriver.h
  *
- *  Created on: 2020Äê2ÔÂ3ÈÕ
+ *  Created on: 2020ï¿½ï¿½2ï¿½ï¿½3ï¿½ï¿½
  *      Author: leogr
  */
 
@@ -14,7 +14,7 @@ void pwmPinInit();
 void pwmOutputEnable();
 void pwmOutputDisable();
 
-
+void PWM_ISR_FUNC(void);
 
 
 
