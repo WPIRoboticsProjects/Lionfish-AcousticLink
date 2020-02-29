@@ -311,8 +311,6 @@ Wire Wire Line
 Wire Wire Line
 	2200 2200 1900 2200
 Wire Wire Line
-	3500 2000 3600 2000
-Wire Wire Line
 	3600 2000 3600 1800
 Wire Wire Line
 	3500 2200 3600 2200
@@ -905,68 +903,57 @@ Text GLabel 10250 3900 2    50   Input ~ 0
 ADCinput
 Wire Wire Line
 	10150 4100 10150 3800
-Text GLabel 8700 5150 0    50   Input ~ 0
+Text GLabel 8700 5500 0    50   Input ~ 0
 ADCinput
 $Comp
 L Device:R Radc1
 U 1 1 5E653FDE
-P 8950 5150
-F 0 "Radc1" V 8850 5050 50  0000 L CNN
-F 1 "2.5K" V 9050 5050 50  0000 L CNN
-F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 8880 5150 50  0001 C CNN
-F 3 "~" H 8950 5150 50  0001 C CNN
-	1    8950 5150
+P 8950 5500
+F 0 "Radc1" V 8850 5400 50  0000 L CNN
+F 1 "2.5K" V 9050 5400 50  0000 L CNN
+F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 8880 5500 50  0001 C CNN
+F 3 "~" H 8950 5500 50  0001 C CNN
+	1    8950 5500
 	0    1    1    0   
 $EndComp
 $Comp
 L Device:C Cadc1
 U 1 1 5E654634
-P 9200 5400
-F 0 "Cadc1" H 9085 5354 50  0000 R CNN
-F 1 "10pf" H 9085 5445 50  0000 R CNN
-F 2 "Capacitors_THT:C_Disc_D8.0mm_W5.0mm_P7.50mm" H 9238 5250 50  0001 C CNN
-F 3 "~" H 9200 5400 50  0001 C CNN
-	1    9200 5400
+P 9200 5750
+F 0 "Cadc1" H 9085 5704 50  0000 R CNN
+F 1 "10pf" H 9085 5795 50  0000 R CNN
+F 2 "Capacitors_THT:C_Disc_D8.0mm_W5.0mm_P7.50mm" H 9238 5600 50  0001 C CNN
+F 3 "~" H 9200 5750 50  0001 C CNN
+	1    9200 5750
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	9100 5150 9200 5150
+	9100 5500 9200 5500
 Wire Wire Line
-	9200 5150 9200 5250
+	9200 5500 9200 5600
 Wire Wire Line
-	8800 5150 8700 5150
+	8800 5500 8700 5500
 $Comp
 L power:GND #PWR012
 U 1 1 5E65CE66
-P 9200 5550
-F 0 "#PWR012" H 9200 5300 50  0001 C CNN
-F 1 "GND" H 9205 5377 50  0000 C CNN
-F 2 "" H 9200 5550 50  0001 C CNN
-F 3 "" H 9200 5550 50  0001 C CNN
-	1    9200 5550
+P 9200 5900
+F 0 "#PWR012" H 9200 5650 50  0001 C CNN
+F 1 "GND" H 9205 5727 50  0000 C CNN
+F 2 "" H 9200 5900 50  0001 C CNN
+F 3 "" H 9200 5900 50  0001 C CNN
+	1    9200 5900
 	1    0    0    -1  
 $EndComp
 Wire Notes Line
-	8750 4950 8750 5800
+	8750 5300 8750 6150
 Wire Notes Line
-	8750 5800 9700 5800
+	8750 6150 9700 6150
 Wire Notes Line
-	9700 5800 9700 4950
+	9700 6150 9700 5300
 Wire Notes Line
-	9700 4950 8750 4950
-Text Notes 9100 5100 0    59   Italic 12
+	9700 5300 8750 5300
+Text Notes 9100 5450 0    59   Italic 12
 ADC internal
-$Comp
-L Device:C_Small Cenv1
-U 1 1 5E672EB5
-P 9250 4100
-F 0 "Cenv1" H 9260 4170 50  0000 L CNN
-F 1 "10nf" H 9260 4020 50  0000 L CNN
-F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 9250 4100 50  0001 C CNN
-F 3 "~" H 9250 4100 50  0001 C CNN
-	1    9250 4100
-	-1   0    0    -1  
-$EndComp
 Wire Wire Line
 	9250 3800 9250 4000
 Wire Wire Line
@@ -975,31 +962,27 @@ $Comp
 L Device:C_Small C2out1
 U 1 1 5E67C655
 P 8550 3800
-F 0 "C2out1" V 8750 3750 50  0000 L CNN
-F 1 "0.1u" V 8650 3750 50  0000 L CNN
+F 0 "C2out1" V 8750 3650 50  0000 L CNN
+F 1 "0.1u" V 8650 3700 50  0000 L CNN
 F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 8550 3800 50  0001 C CNN
 F 3 "~" H 8550 3800 50  0001 C CNN
 	1    8550 3800
 	0    1    -1   0   
 $EndComp
-Text Notes 8350 4550 0    50   ~ 0
-min Fcarr = 40Khz \nmax Fmod = 1Khz \n10nF 2Kohm\nFc = 8Kohm
 Wire Wire Line
 	8350 3800 8450 3800
 Wire Wire Line
-	8650 3800 8750 3800
+	8650 3800 8700 3800
 Wire Notes Line
 	9650 3850 10100 3850
 Wire Notes Line
-	10100 3850 10100 3500
+	10100 3850 10100 3450
 Wire Notes Line
-	10100 3500 9650 3500
+	10100 3450 9650 3450
 Wire Notes Line
-	9650 3850 9650 3500
+	9650 3850 9650 3450
 Text Notes 9700 3750 0    50   ~ 0
 Potential\nVariable \nGain
-Wire Wire Line
-	9250 3800 9550 3800
 Wire Wire Line
 	9550 3800 10150 3800
 Connection ~ 9550 3800
@@ -1007,13 +990,13 @@ Connection ~ 10150 3800
 Text Notes 7950 3700 0    67   Italic 13
 Envelope\nDetector
 Wire Notes Line
-	7850 3450 10650 3450
+	7850 3350 10650 3350
 Wire Notes Line
-	10650 3450 10650 4650
+	10650 3350 10650 4900
 Wire Notes Line
-	10650 4650 7850 4650
+	10650 4900 7850 4900
 Wire Notes Line
-	7850 4650 7850 3450
+	7850 4900 7850 3350
 $Comp
 L Connector:Conn_01x01_Male Jadc1
 U 1 1 5E73AA78
@@ -1161,8 +1144,6 @@ Wire Wire Line
 Connection ~ 3200 3700
 Wire Wire Line
 	3200 3700 3550 3700
-Wire Wire Line
-	5300 1850 5600 1850
 Wire Wire Line
 	5300 2250 5600 2250
 Text GLabel 2000 4400 0    50   Input ~ 0
@@ -1400,4 +1381,54 @@ Text GLabel 6750 4150 2    50   Input ~ 0
 Stage2Out
 Text Notes 8200 700  0    157  ~ 31
 Impedance Match
+Wire Wire Line
+	3500 2000 3600 2000
+Wire Wire Line
+	5300 1850 5600 1850
+$Comp
+L Device:C_Small Cenv1
+U 1 1 5E672EB5
+P 9250 4100
+F 0 "Cenv1" H 9260 4170 50  0000 L CNN
+F 1 "0.1uF" H 9260 4020 50  0000 L CNN
+F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 9250 4100 50  0001 C CNN
+F 3 "~" H 9250 4100 50  0001 C CNN
+	1    9250 4100
+	-1   0    0    -1  
+$EndComp
+Text Notes 8000 4800 0    50   ~ 0
+1/80Khz = 12.5us\n1/1Khz = 1ms\npick 200us as time constant
+$Comp
+L Device:R Rdown
+U 1 1 5E5726AC
+P 8700 4150
+F 0 "Rdown" H 8770 4196 50  0000 L CNN
+F 1 "10K" H 8770 4105 50  0000 L CNN
+F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 8630 4150 50  0001 C CNN
+F 3 "~" H 8700 4150 50  0001 C CNN
+	1    8700 4150
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E57295E
+P 8700 4300
+F 0 "#PWR?" H 8700 4050 50  0001 C CNN
+F 1 "GND" H 8705 4127 50  0000 C CNN
+F 2 "" H 8700 4300 50  0001 C CNN
+F 3 "" H 8700 4300 50  0001 C CNN
+	1    8700 4300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8700 3800 8700 4000
+Connection ~ 8700 3800
+Wire Wire Line
+	8700 3800 8750 3800
+Text GLabel 8700 3500 1    50   Input ~ 0
+Prob
+Wire Wire Line
+	9250 3800 9550 3800
+Wire Wire Line
+	8700 3500 8700 3800
 $EndSCHEMATC

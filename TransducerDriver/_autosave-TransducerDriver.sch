@@ -1,6 +1,6 @@
 EESchema Schematic File Version 4
 LIBS:TransducerDriver-cache
-EELAYER 26 0
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -74,7 +74,7 @@ Wire Notes Line
 	800  4800 800  3750
 Wire Notes Line
 	800  3750 1500 3750
-Text Notes 750  4250 0    50   ~ 0
+Text Notes 850  4200 0    50   ~ 0
 Fish Finder
 $Comp
 L pspice:DIODE D1
@@ -596,7 +596,7 @@ L Device:R Rb1
 U 1 1 5E44B20F
 P 2300 6050
 F 0 "Rb1" H 2370 6096 50  0000 L CNN
-F 1 "5K" H 2370 6005 50  0000 L CNN
+F 1 "500ohm" H 2370 6005 50  0000 L CNN
 F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 2230 6050 50  0001 C CNN
 F 3 "~" H 2300 6050 50  0001 C CNN
 	1    2300 6050
@@ -803,8 +803,6 @@ F 3 "~" H 6350 5800 50  0001 C CNN
 	1    6350 5800
 	0    1    1    0   
 $EndComp
-Text Notes 3800 4100 0    50   ~ 0
-6Kohm Internal \nR. Is it High \noutput Impedance?
 Text Notes 5350 5550 0    50   ~ 0
 10Khz HP filter\n0.1uF 1Kohm
 Wire Wire Line
@@ -877,32 +875,6 @@ Text Notes 3800 5100 0    67   Italic 13
 First Stage \nDiff Amp
 Text Notes 4850 3550 0    67   Italic 13
 Two Options for second stage
-$Comp
-L Device:D_Zener Dz1
-U 1 1 5E645861
-P 10150 4250
-F 0 "Dz1" V 10150 4400 50  0000 C CNN
-F 1 "3.3V" V 10250 4400 50  0000 C CNN
-F 2 "" H 10150 4250 50  0001 C CNN
-F 3 "~" H 10150 4250 50  0001 C CNN
-	1    10150 4250
-	0    1    1    0   
-$EndComp
-$Comp
-L power:GND #PWR014
-U 1 1 5E64625D
-P 10150 4400
-F 0 "#PWR014" H 10150 4150 50  0001 C CNN
-F 1 "GND" H 10155 4227 50  0000 C CNN
-F 2 "" H 10150 4400 50  0001 C CNN
-F 3 "" H 10150 4400 50  0001 C CNN
-	1    10150 4400
-	1    0    0    -1  
-$EndComp
-Text GLabel 10250 3900 2    50   Input ~ 0
-ADCinput
-Wire Wire Line
-	10150 4100 10150 3800
 Text GLabel 8700 5500 0    50   Input ~ 0
 ADCinput
 $Comp
@@ -983,10 +955,7 @@ Wire Notes Line
 	9650 3850 9650 3450
 Text Notes 9700 3750 0    50   ~ 0
 Potential\nVariable \nGain
-Wire Wire Line
-	9550 3800 10150 3800
 Connection ~ 9550 3800
-Connection ~ 10150 3800
 Text Notes 7950 3700 0    67   Italic 13
 Envelope\nDetector
 Wire Notes Line
@@ -1008,15 +977,6 @@ F 3 "~" H 10550 3800 50  0001 C CNN
 	1    10550 3800
 	-1   0    0    1   
 $EndComp
-Wire Wire Line
-	10150 3800 10200 3800
-Wire Wire Line
-	10250 3900 10200 3900
-Wire Wire Line
-	10200 3900 10200 3800
-Connection ~ 10200 3800
-Wire Wire Line
-	10200 3800 10350 3800
 Wire Wire Line
 	4450 1250 4450 2050
 $Comp
@@ -1400,4 +1360,39 @@ Text Notes 8050 4400 0    50   ~ 0
 1/80Khz = 12.5us\n1/1Khz = 1ms\npick 200us as time constant
 Wire Wire Line
 	9250 3800 9550 3800
+Wire Wire Line
+	10200 3800 10350 3800
+Connection ~ 10200 3800
+$Comp
+L Device:D_Zener Dz1
+U 1 1 5E645861
+P 11000 4750
+F 0 "Dz1" V 11000 4900 50  0000 C CNN
+F 1 "3.3V" V 11100 4900 50  0000 C CNN
+F 2 "" H 11000 4750 50  0001 C CNN
+F 3 "~" H 11000 4750 50  0001 C CNN
+	1    11000 4750
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR014
+U 1 1 5E64625D
+P 11000 4900
+F 0 "#PWR014" H 11000 4650 50  0001 C CNN
+F 1 "GND" H 11005 4727 50  0000 C CNN
+F 2 "" H 11000 4900 50  0001 C CNN
+F 3 "" H 11000 4900 50  0001 C CNN
+	1    11000 4900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	11000 4600 11000 4300
+Wire Wire Line
+	10200 3900 10200 3800
+Wire Wire Line
+	10250 3900 10200 3900
+Text GLabel 10250 3900 2    50   Input ~ 0
+ADCinput
+Wire Wire Line
+	9550 3800 10200 3800
 $EndSCHEMATC
