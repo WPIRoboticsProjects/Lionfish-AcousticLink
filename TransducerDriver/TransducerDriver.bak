@@ -962,8 +962,8 @@ $Comp
 L Device:C_Small C2out1
 U 1 1 5E67C655
 P 8550 3800
-F 0 "C2out1" V 8750 3750 50  0000 L CNN
-F 1 "0.1u" V 8650 3750 50  0000 L CNN
+F 0 "C2out1" V 8750 3650 50  0000 L CNN
+F 1 "0.1u" V 8650 3700 50  0000 L CNN
 F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 8550 3800 50  0001 C CNN
 F 3 "~" H 8550 3800 50  0001 C CNN
 	1    8550 3800
@@ -972,7 +972,7 @@ $EndComp
 Wire Wire Line
 	8350 3800 8450 3800
 Wire Wire Line
-	8650 3800 8750 3800
+	8650 3800 8700 3800
 Wire Notes Line
 	9650 3850 10100 3850
 Wire Notes Line
@@ -1396,8 +1396,39 @@ F 3 "~" H 9250 4100 50  0001 C CNN
 	1    9250 4100
 	-1   0    0    -1  
 $EndComp
-Text Notes 8050 4400 0    50   ~ 0
+Text Notes 8000 4800 0    50   ~ 0
 1/80Khz = 12.5us\n1/1Khz = 1ms\npick 200us as time constant
+$Comp
+L Device:R Rdown
+U 1 1 5E5726AC
+P 8700 4150
+F 0 "Rdown" H 8770 4196 50  0000 L CNN
+F 1 "10K" H 8770 4105 50  0000 L CNN
+F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 8630 4150 50  0001 C CNN
+F 3 "~" H 8700 4150 50  0001 C CNN
+	1    8700 4150
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E57295E
+P 8700 4300
+F 0 "#PWR?" H 8700 4050 50  0001 C CNN
+F 1 "GND" H 8705 4127 50  0000 C CNN
+F 2 "" H 8700 4300 50  0001 C CNN
+F 3 "" H 8700 4300 50  0001 C CNN
+	1    8700 4300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8700 3800 8700 4000
+Connection ~ 8700 3800
+Wire Wire Line
+	8700 3800 8750 3800
+Text GLabel 8700 3500 1    50   Input ~ 0
+Prob
 Wire Wire Line
 	9250 3800 9550 3800
+Wire Wire Line
+	8700 3500 8700 3800
 $EndSCHEMATC

@@ -27,7 +27,7 @@
 	<variableList>
 		<variable>
 			<name>SW_ROOT</name>
-			<value>file:/C:/ti/tivaware_c_series_2_1_4_178</value>
+			<value>file:/C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b</value>
 		</variable>
 	</variableList>
 </projectDescription>
