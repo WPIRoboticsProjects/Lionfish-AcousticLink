@@ -1,11 +1,3 @@
- /*
- * buttons.c
- *
- *  Created on: Aug 12, 2012, modified 9/8/2017
- *      Author: Gene Bogdanov
- *
- * ECE 3849 Lab button handling
- */
 #include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"

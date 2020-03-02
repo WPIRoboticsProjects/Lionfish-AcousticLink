@@ -37,6 +37,7 @@ void timer1Init()
 //    TimerLoadSet( TIMER1_BASE, TIMER_A , 24000 ) ; // 24000 for 500Hz, no prescale.
 //    TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT); //
 
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER4);
     TimerDisable(TIMER4_BASE, TIMER_BOTH);
     TimerConfigure(TIMER4_BASE, TIMER_CFG_PERIODIC); //want TIMER_CFG_PERIODIC ?
     TimerLoadSet(TIMER4_BASE, TIMER_A, (120000000/400000) - 1); // 10 ms interval (timeScale/20)

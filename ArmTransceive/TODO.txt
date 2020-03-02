@@ -8,6 +8,8 @@ TO DO (Priority High --> Low):
 
 Problems:
 	-DMA with ADC?
+	-ADC Timer not setup?
+	-
 
 Work in Progress:
 	-CRC8 (to test)

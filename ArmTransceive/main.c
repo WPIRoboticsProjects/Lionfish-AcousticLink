@@ -42,6 +42,7 @@
 #include "driverlib/gpio.h"
 #include "driverlib/udma.h"
 #include "driverlib/emac.h"
+#include "inc/hw_emac.h"
 #include "driverlib/adc.h"
 #include "driverlib/timer.h"
 #include "inc/tm4c1294ncpdt.h"
@@ -60,12 +61,12 @@ void process_request(uint8_t payload);
 void process_command(uint8_t payload);
 void process_info(uint8_t payload);
 void process_request_info(uint8_t info_payload, uint8_t info_id);
+uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload);
+void init_keys(ID * id, COMMAND * command);
 bool check_raw_start();
 void adjust_threshold(int avg, int max);
 void delayMS(int ms);
 int * message_to_binary(char *input, int input_length);
-uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload);
-void init_keys(ID * id, COMMAND * command);
 
 #define VIN_RANGE 3.3 // 3.3 V on board
 #define ADC_BITS 12 // 12 bit ADC
@@ -78,14 +79,17 @@ uint32_t gTime = 8345; // time in hundredths of a second
 int samples_per_bit = (int) ADC_SAMPLING_RATE / BitRate;
 int ADC_THRESHOLD = 515; //threshold for 0/1 TODO: measure and change
 
-uint8_t data_buffer[16]; //holds scheduler data in order
-int schedule_index = 0;//keep track of what variable we are logging
+//holds scheduler data in order
+uint8_t data_buffer[16];
+int schedule_index = 0;
 
-uint32_t buffer_log[1024]; //store rx_bits messages as a log (debug tool)
-int buffer_index = 0; //buffer index
+//store rx_bits messages as a log (debug tool)
+uint32_t buffer_log[1024];
+int buffer_index = 0;
 
-ID id; //used to find 8 bit values for ID's
-COMMAND command; //used to find 8-bit values for commands
+//used to find 8-bit values for commands/IDs
+ID id;
+COMMAND command;
 
 //used to verify a response / request sent.
 //Will contain an ID if listening for certain response. 0 if not listening
@@ -108,13 +112,13 @@ int main(void)
     gSystemClock = SysCtlClockFreqSet(SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 120000000);
 
     // Initialize
+    init_keys(&id, &command); //set all id/command keys for reference
     SamplingInit();
     debugPinsInit();
     pwm1Init();
     pwm3Init();
-    init_keys(&id, &command); //set all id/command keys for reference
-
-//    timer1Init();
+    timer1Init();
+    //EthernetInit();
 
     IntMasterEnable();
 
@@ -122,15 +126,14 @@ int main(void)
     uint32_t raw_rx = 0; //variable to store raw bits
     uint16_t crc_mask = (1 << 9) - 1; //binary = 0000 0000 1111 1111
 
+    //Test for CRC
+    uint32_t test_rx = 0x881E500;
+    uint32_t crc_test = crc_8(test_rx);
+    bool test_check = check_crc(crc_test);
 
     //Main Loop
     while(1)
     {
-        //Test for CRC
-        uint32_t test_rx = 0x881E500;
-        uint32_t crc_test = crc_8(test_rx);
-        bool test_check = check_crc(crc_test);
-
         //variables for ADC processing / Threshold
         int i;
         int on_count = 0, off_count = 0, buffer_avg = 0, tx_count = 0, curr_max = 0;
@@ -186,6 +189,12 @@ int main(void)
                 }
                 raw_rx = 0; //clear
             }
+
+
+            //TODO: ISR's based on state
+            //if we have a message to send, trigger PWM ISR
+            //if we have a recieved packet from ETH, ISR triggers
+            //if we have a packet to transmit over ETH, ISR triggers
         }
 
         //AVG RECALC
@@ -320,7 +329,7 @@ bool check_raw_start(uint32_t packet)
 
 //construct a full packet with the 8-bit ID and PAYLOAD
 uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload){
-    int id_mask = (1 << 5) - 1; // 1111
+    uint8_t id_mask = ((1 << (IDFrameLength+1)) - 1);     //binary =  1111
 
     //start frame
     uint32_t ans = StartFrame;
