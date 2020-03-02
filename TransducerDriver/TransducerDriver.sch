@@ -17,40 +17,40 @@ $EndDescr
 $Comp
 L Transistor_FET:IRF540N Q3
 U 1 1 5E2CAB91
-P 3800 1800
-F 0 "Q3" H 4006 1846 50  0000 L CNN
-F 1 "IRF540N" H 4006 1755 50  0000 L CNN
-F 2 "TO_SOT_Packages_THT:TO-220-3_Vertical" H 4050 1725 50  0001 L CIN
-F 3 "http://www.irf.com/product-info/datasheets/data/irf540n.pdf" H 3800 1800 50  0001 L CNN
-	1    3800 1800
+P 3950 1800
+F 0 "Q3" H 4156 1846 50  0000 L CNN
+F 1 "IRF540N" H 4156 1755 50  0000 L CNN
+F 2 "TO_SOT_Packages_THT:TO-220-3_Vertical" H 4200 1725 50  0001 L CIN
+F 3 "http://www.irf.com/product-info/datasheets/data/irf540n.pdf" H 3950 1800 50  0001 L CNN
+	1    3950 1800
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:Transformer_SP_1S T1
 U 1 1 5E2CAB9F
-P 4900 2050
-F 0 "T1" H 4900 1600 50  0000 C CNN
-F 1 "Transformer_SP_1S 1:10" H 4900 1750 50  0000 C CNN
-F 2 "Transformers_THT:Transformer_Toroid_Tapped_Horizontal_D14.0mm_Amidon-T50" H 4900 2050 50  0001 C CNN
-F 3 "~" H 4900 2050 50  0001 C CNN
-	1    4900 2050
+P 5050 2050
+F 0 "T1" H 5050 1600 50  0000 C CNN
+F 1 "Transformer_SP_1S 1:10" H 5050 1750 50  0000 C CNN
+F 2 "Transformers_THT:Transformer_Toroid_Tapped_Horizontal_D14.0mm_Amidon-T50" H 5050 2050 50  0001 C CNN
+F 3 "~" H 5050 2050 50  0001 C CNN
+	1    5050 2050
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR0106
 U 1 1 5E2CABB7
-P 3900 2000
-F 0 "#PWR0106" H 3900 1750 50  0001 C CNN
-F 1 "GND" H 3900 1850 50  0000 C CNN
-F 2 "" H 3900 2000 50  0001 C CNN
-F 3 "" H 3900 2000 50  0001 C CNN
-	1    3900 2000
+P 4050 2000
+F 0 "#PWR0106" H 4050 1750 50  0001 C CNN
+F 1 "GND" H 4050 1850 50  0000 C CNN
+F 2 "" H 4050 2000 50  0001 C CNN
+F 3 "" H 4050 2000 50  0001 C CNN
+	1    4050 2000
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5600 1850 5600 1900
+	5750 1850 5750 1900
 Wire Wire Line
-	5600 2200 5600 2250
+	5750 2200 5750 2250
 $Comp
 L Device:Crystal Y1
 U 1 1 5E322B30
@@ -128,12 +128,12 @@ Receiver
 $Comp
 L power:+BATT #PWR0112
 U 1 1 5E39A4A0
-P 4450 1250
-F 0 "#PWR0112" H 4450 1100 50  0001 C CNN
-F 1 "+BATT" H 4450 1390 50  0000 C CNN
-F 2 "" H 4450 1250 50  0001 C CNN
-F 3 "" H 4450 1250 50  0001 C CNN
-	1    4450 1250
+P 4600 1050
+F 0 "#PWR0112" H 4600 900 50  0001 C CNN
+F 1 "+BATT" H 4600 1190 50  0000 C CNN
+F 2 "" H 4600 1050 50  0001 C CNN
+F 3 "" H 4600 1050 50  0001 C CNN
+	1    4600 1050
 	1    0    0    -1  
 $EndComp
 Text GLabel 1700 1950 0    50   Input ~ 0
@@ -141,42 +141,40 @@ ModSig+
 $Comp
 L Transistor_FET:IRF540N Q4
 U 1 1 5E3D6FE3
-P 3800 2500
-F 0 "Q4" H 4006 2546 50  0000 L CNN
-F 1 "IRF540N" H 4006 2455 50  0000 L CNN
-F 2 "TO_SOT_Packages_THT:TO-220-3_Vertical" H 4050 2425 50  0001 L CIN
-F 3 "http://www.irf.com/product-info/datasheets/data/irf540n.pdf" H 3800 2500 50  0001 L CNN
-	1    3800 2500
+P 3950 2500
+F 0 "Q4" H 4156 2546 50  0000 L CNN
+F 1 "IRF540N" H 4156 2455 50  0000 L CNN
+F 2 "TO_SOT_Packages_THT:TO-220-3_Vertical" H 4200 2425 50  0001 L CIN
+F 3 "http://www.irf.com/product-info/datasheets/data/irf540n.pdf" H 3950 2500 50  0001 L CNN
+	1    3950 2500
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR0113
 U 1 1 5E3D6FEA
-P 3900 2700
-F 0 "#PWR0113" H 3900 2450 50  0001 C CNN
-F 1 "GND" H 3900 2550 50  0000 C CNN
-F 2 "" H 3900 2700 50  0001 C CNN
-F 3 "" H 3900 2700 50  0001 C CNN
-	1    3900 2700
+P 4050 2700
+F 0 "#PWR0113" H 4050 2450 50  0001 C CNN
+F 1 "GND" H 4050 2550 50  0000 C CNN
+F 2 "" H 4050 2700 50  0001 C CNN
+F 3 "" H 4050 2700 50  0001 C CNN
+	1    4050 2700
 	1    0    0    -1  
 $EndComp
 Text GLabel 1700 2250 0    50   Input ~ 0
 ModSig-
 Wire Wire Line
-	3900 1600 4350 1600
+	4050 1600 4500 1600
 Wire Wire Line
-	4350 1600 4350 1850
-Wire Wire Line
-	4350 1850 4500 1850
+	4500 1600 4500 1850
 $Comp
 L Device:Crystal Y2
 U 1 1 5E3EC002
-P 5600 2050
-F 0 "Y2" V 5554 2181 50  0000 L CNN
-F 1 "Fish Finder" V 5645 2181 50  0000 L CNN
-F 2 "Wire_Connections_Bridges:WireConnection_2.50mmDrill" H 5600 2050 50  0001 C CNN
-F 3 "~" H 5600 2050 50  0001 C CNN
-	1    5600 2050
+P 5750 2050
+F 0 "Y2" V 5704 2181 50  0000 L CNN
+F 1 "Fish Finder" V 5795 2181 50  0000 L CNN
+F 2 "Wire_Connections_Bridges:WireConnection_2.50mmDrill" H 5750 2050 50  0001 C CNN
+F 3 "~" H 5750 2050 50  0001 C CNN
+	1    5750 2050
 	0    1    1    0   
 $EndComp
 $Comp
@@ -276,23 +274,23 @@ $EndComp
 $Comp
 L power:+BATT #PWR0111
 U 1 1 5E4247E1
-P 2850 1250
-F 0 "#PWR0111" H 2850 1100 50  0001 C CNN
-F 1 "+BATT" H 2850 1390 50  0000 C CNN
-F 2 "" H 2850 1250 50  0001 C CNN
-F 3 "" H 2850 1250 50  0001 C CNN
-	1    2850 1250
+P 2850 1050
+F 0 "#PWR0111" H 2850 900 50  0001 C CNN
+F 1 "+BATT" H 2850 1190 50  0000 C CNN
+F 2 "" H 2850 1050 50  0001 C CNN
+F 3 "" H 2850 1050 50  0001 C CNN
+	1    2850 1050
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:D D2
 U 1 1 5E4249CF
-P 2850 1400
-F 0 "D2" H 2850 1500 50  0000 C CNN
-F 1 "1N4007" H 2850 1300 50  0000 C CNN
-F 2 "Diodes_THT:D_DO-35_SOD27_P10.16mm_Horizontal" H 2850 1400 50  0001 C CNN
-F 3 "~" H 2850 1400 50  0001 C CNN
-	1    2850 1400
+P 2850 1200
+F 0 "D2" H 2850 1300 50  0000 C CNN
+F 1 "1N4007" H 2850 1100 50  0000 C CNN
+F 2 "Diodes_THT:D_DO-35_SOD27_P10.16mm_Horizontal" H 2850 1200 50  0001 C CNN
+F 3 "~" H 2850 1200 50  0001 C CNN
+	1    2850 1200
 	0    -1   -1   0   
 $EndComp
 $Comp
@@ -311,11 +309,11 @@ Wire Wire Line
 Wire Wire Line
 	2200 2200 1900 2200
 Wire Wire Line
-	3600 2000 3600 1800
+	3750 2000 3750 1800
 Wire Wire Line
-	3500 2200 3600 2200
+	3500 2200 3550 2200
 Wire Wire Line
-	3600 2200 3600 2500
+	3750 2200 3750 2500
 $Comp
 L Connector:Conn_01x01_Male J2
 U 1 1 5E4375EA
@@ -393,131 +391,59 @@ Wire Wire Line
 	6550 1500 6550 1550
 $Comp
 L Amplifier_Operational:LM4562 U4
-U 1 1 5E41E9D1
-P 6400 4150
-F 0 "U4" H 6400 4517 50  0000 C CNN
-F 1 "LM4562" H 6400 4426 50  0000 C CNN
-F 2 "" H 6400 4150 50  0001 C CNN
-F 3 "http://www.ti.com/lit/ds/symlink/lm4562.pdf" H 6400 4150 50  0001 C CNN
-	1    6400 4150
-	1    0    0    -1  
-$EndComp
-$Comp
-L Amplifier_Operational:LM4562 U4
 U 3 1 5E41FD78
-P 7450 4150
-F 0 "U4" H 7408 4196 50  0000 L CNN
-F 1 "LM4562" H 7408 4105 50  0000 L CNN
-F 2 "" H 7450 4150 50  0001 C CNN
-F 3 "http://www.ti.com/lit/ds/symlink/lm4562.pdf" H 7450 4150 50  0001 C CNN
-	3    7450 4150
+P 7200 4150
+F 0 "U4" H 7158 4196 50  0000 L CNN
+F 1 "LM4562" H 7158 4105 50  0000 L CNN
+F 2 "" H 7200 4150 50  0001 C CNN
+F 3 "http://www.ti.com/lit/ds/symlink/lm4562.pdf" H 7200 4150 50  0001 C CNN
+	3    7200 4150
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:+BATT #PWR010
 U 1 1 5E42A3DB
-P 7350 3850
-F 0 "#PWR010" H 7350 3700 50  0001 C CNN
-F 1 "+BATT" H 7350 3990 50  0000 C CNN
-F 2 "" H 7350 3850 50  0001 C CNN
-F 3 "" H 7350 3850 50  0001 C CNN
-	1    7350 3850
+P 7100 3850
+F 0 "#PWR010" H 7100 3700 50  0001 C CNN
+F 1 "+BATT" H 7100 3990 50  0000 C CNN
+F 2 "" H 7100 3850 50  0001 C CNN
+F 3 "" H 7100 3850 50  0001 C CNN
+	1    7100 3850
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR011
 U 1 1 5E42A52F
-P 7350 4450
-F 0 "#PWR011" H 7350 4200 50  0001 C CNN
-F 1 "GND" H 7350 4300 50  0000 C CNN
-F 2 "" H 7350 4450 50  0001 C CNN
-F 3 "" H 7350 4450 50  0001 C CNN
-	1    7350 4450
+P 7100 4450
+F 0 "#PWR011" H 7100 4200 50  0001 C CNN
+F 1 "GND" H 7100 4300 50  0000 C CNN
+F 2 "" H 7100 4450 50  0001 C CNN
+F 3 "" H 7100 4450 50  0001 C CNN
+	1    7100 4450
 	1    0    0    -1  
-$EndComp
-$Comp
-L Device:C_Small C2In1
-U 1 1 5E42E7D6
-P 5600 4050
-F 0 "C2In1" V 5750 4050 50  0000 L CNN
-F 1 "0.1u" V 5650 4100 50  0000 L CNN
-F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 5600 4050 50  0001 C CNN
-F 3 "~" H 5600 4050 50  0001 C CNN
-	1    5600 4050
-	0    1    -1   0   
-$EndComp
-$Comp
-L Device:R Rg1
-U 1 1 5E42EEA0
-P 6050 4650
-F 0 "Rg1" H 6120 4696 50  0000 L CNN
-F 1 "2K" H 6120 4605 50  0000 L CNN
-F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 5980 4650 50  0001 C CNN
-F 3 "~" H 6050 4650 50  0001 C CNN
-	1    6050 4650
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R Rf2
-U 1 1 5E42EFF2
-P 6450 4500
-F 0 "Rf2" V 6350 4450 50  0000 L CNN
-F 1 "200K" V 6550 4400 50  0000 L CNN
-F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 6380 4500 50  0001 C CNN
-F 3 "~" H 6450 4500 50  0001 C CNN
-	1    6450 4500
-	0    1    1    0   
 $EndComp
 $Comp
 L Device:C_Small Cgnd2
 U 1 1 5E42F28D
-P 5950 6500
-F 0 "Cgnd2" H 6000 6550 50  0000 L CNN
-F 1 "0.1u" H 6000 6450 50  0000 L CNN
-F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 5950 6500 50  0001 C CNN
-F 3 "~" H 5950 6500 50  0001 C CNN
-	1    5950 6500
+P 5600 4900
+F 0 "Cgnd2" H 5650 4950 50  0000 L CNN
+F 1 "0.1u" H 5650 4850 50  0000 L CNN
+F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 5600 4900 50  0001 C CNN
+F 3 "~" H 5600 4900 50  0001 C CNN
+	1    5600 4900
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:GND #PWR09
 U 1 1 5E43060C
-P 5950 6600
-F 0 "#PWR09" H 5950 6350 50  0001 C CNN
-F 1 "GND" H 5955 6427 50  0000 C CNN
-F 2 "" H 5950 6600 50  0001 C CNN
-F 3 "" H 5950 6600 50  0001 C CNN
-	1    5950 6600
+P 5600 5000
+F 0 "#PWR09" H 5600 4750 50  0001 C CNN
+F 1 "GND" H 5605 4827 50  0000 C CNN
+F 2 "" H 5600 5000 50  0001 C CNN
+F 3 "" H 5600 5000 50  0001 C CNN
+	1    5600 5000
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	6700 4150 6750 4150
-Wire Wire Line
-	6750 4150 6750 4500
-Wire Wire Line
-	6750 4500 6600 4500
-Wire Wire Line
-	6300 4500 6050 4500
-Wire Wire Line
-	6100 4250 6050 4250
-Wire Wire Line
-	6050 4250 6050 4500
-Connection ~ 6050 4500
-$Comp
-L Device:R Rin2
-U 1 1 5E4387B9
-P 5850 4300
-F 0 "Rin2" H 5920 4346 50  0000 L CNN
-F 1 "2K" H 5920 4255 50  0000 L CNN
-F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 5780 4300 50  0001 C CNN
-F 3 "~" H 5850 4300 50  0001 C CNN
-	1    5850 4300
-	-1   0    0    -1  
-$EndComp
-Text Notes 6500 5050 0    50   ~ 0
-X cgnd1<<Rg2 \nF = 20Khz\nC = 0.47uF \nXc = 17ohm
-Text Notes 5450 3800 0    50   ~ 0
-low Rin2 to force \na Vref DC bias 
 $Comp
 L TransducerDriver-rescue:INA217-Amplifier_Instrumentation U2
 U 1 1 5E439FD5
@@ -713,130 +639,86 @@ Text GLabel 4050 4300 2    50   Input ~ 0
 Stage1Out
 Wire Wire Line
 	3900 4300 4050 4300
-Text GLabel 5400 4050 0    50   Input ~ 0
-Stage1Out
-Wire Wire Line
-	5400 4050 5500 4050
-Wire Wire Line
-	6100 4050 5850 4050
-Wire Wire Line
-	5850 4050 5850 4150
-Connection ~ 5850 4050
-Wire Wire Line
-	5850 4050 5700 4050
-Text GLabel 5650 4550 0    50   Input ~ 0
-Vref
-Wire Wire Line
-	5850 4450 5850 4550
-Wire Wire Line
-	5850 4550 5650 4550
-$Comp
-L Device:C_Small Cref2
-U 1 1 5E4B1BF2
-P 5850 4700
-F 0 "Cref2" H 5860 4770 50  0000 L CNN
-F 1 "0.1u" H 5860 4620 50  0000 L CNN
-F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 5850 4700 50  0001 C CNN
-F 3 "~" H 5850 4700 50  0001 C CNN
-	1    5850 4700
-	-1   0    0    1   
-$EndComp
-$Comp
-L power:GND #PWR08
-U 1 1 5E4B1F6D
-P 5850 4850
-F 0 "#PWR08" H 5850 4600 50  0001 C CNN
-F 1 "GND" H 5855 4677 50  0000 C CNN
-F 2 "" H 5850 4850 50  0001 C CNN
-F 3 "" H 5850 4850 50  0001 C CNN
-	1    5850 4850
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	5850 4550 5850 4600
-Connection ~ 5850 4550
-Wire Wire Line
-	5850 4800 5850 4850
 $Comp
 L Amplifier_Operational:LM4562 U4
 U 2 1 5E4C56D5
-P 6400 6250
-F 0 "U4" H 6400 6450 50  0000 L CNN
-F 1 "LM4562" H 6350 6550 50  0000 L CNN
-F 2 "" H 6400 6250 50  0001 C CNN
-F 3 "http://www.ti.com/lit/ds/symlink/lm4562.pdf" H 6400 6250 50  0001 C CNN
-	2    6400 6250
+P 6050 4650
+F 0 "U4" H 6050 4850 50  0000 L CNN
+F 1 "LM4562" H 6000 4950 50  0000 L CNN
+F 2 "" H 6050 4650 50  0001 C CNN
+F 3 "http://www.ti.com/lit/ds/symlink/lm4562.pdf" H 6050 4650 50  0001 C CNN
+	2    6050 4650
 	1    0    0    1   
 $EndComp
-Text GLabel 5400 5900 0    50   Input ~ 0
+Text GLabel 5050 4300 0    50   Input ~ 0
 Stage1Out
 $Comp
 L Device:C_Small C2In2
 U 1 1 5E4C92CC
-P 5550 5900
-F 0 "C2In2" V 5750 5850 50  0000 L CNN
-F 1 "0.1u" V 5650 5850 50  0000 L CNN
-F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 5550 5900 50  0001 C CNN
-F 3 "~" H 5550 5900 50  0001 C CNN
-	1    5550 5900
+P 5200 4300
+F 0 "C2In2" V 5400 4250 50  0000 L CNN
+F 1 "0.1u" V 5300 4250 50  0000 L CNN
+F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 5200 4300 50  0001 C CNN
+F 3 "~" H 5200 4300 50  0001 C CNN
+	1    5200 4300
 	0    1    -1   0   
 $EndComp
 $Comp
 L Device:R R2G1
 U 1 1 5E4C948E
-P 5850 5900
-F 0 "R2G1" V 5750 5800 50  0000 L CNN
-F 1 "1Kohm" V 5950 5800 50  0000 L CNN
-F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 5780 5900 50  0001 C CNN
-F 3 "~" H 5850 5900 50  0001 C CNN
-	1    5850 5900
+P 5500 4300
+F 0 "R2G1" V 5400 4200 50  0000 L CNN
+F 1 "1Kohm" V 5600 4200 50  0000 L CNN
+F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 5430 4300 50  0001 C CNN
+F 3 "~" H 5500 4300 50  0001 C CNN
+	1    5500 4300
 	0    1    1    0   
 $EndComp
 $Comp
 L Device:R R2F1
 U 1 1 5E4C95AC
-P 6350 5800
-F 0 "R2F1" V 6250 5700 50  0000 L CNN
-F 1 "100Kohm" V 6450 5650 50  0000 L CNN
-F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 6280 5800 50  0001 C CNN
-F 3 "~" H 6350 5800 50  0001 C CNN
-	1    6350 5800
+P 6000 4200
+F 0 "R2F1" V 5900 4100 50  0000 L CNN
+F 1 "100Kohm" V 6100 4050 50  0000 L CNN
+F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 5930 4200 50  0001 C CNN
+F 3 "~" H 6000 4200 50  0001 C CNN
+	1    6000 4200
 	0    1    1    0   
 $EndComp
 Text Notes 3800 4100 0    50   ~ 0
 6Kohm Internal \nR. Is it High \noutput Impedance?
-Text Notes 5350 5550 0    50   ~ 0
+Text Notes 5000 3950 0    50   ~ 0
 10Khz HP filter\n0.1uF 1Kohm
 Wire Wire Line
-	6000 5900 6050 5900
+	5650 4300 5700 4300
 Wire Wire Line
-	6050 5900 6050 6150
+	5700 4300 5700 4550
 Wire Wire Line
-	6050 6150 6100 6150
+	5700 4550 5750 4550
 Wire Wire Line
-	6050 5800 6050 5900
-Connection ~ 6050 5900
+	5700 4200 5700 4300
+Connection ~ 5700 4300
 Wire Wire Line
-	6050 5800 6200 5800
+	5700 4200 5750 4200
 Wire Wire Line
-	6500 5800 6750 5800
+	6150 4200 6250 4200
 Wire Wire Line
-	6750 5800 6750 6250
+	6400 4200 6400 4650
 Wire Wire Line
-	6750 6250 6700 6250
-Text GLabel 5750 6350 0    50   Input ~ 0
+	6400 4650 6350 4650
+Text GLabel 5400 4750 0    50   Input ~ 0
 Vref
 Text GLabel 8350 3800 0    50   Input ~ 0
 Stage2Out
-Text GLabel 6750 5800 2    50   Input ~ 0
+Text GLabel 6400 4200 2    50   Input ~ 0
 Stage2Out
 Wire Wire Line
-	5750 6350 5950 6350
+	5400 4750 5600 4750
 Wire Wire Line
-	5950 6400 5950 6350
-Connection ~ 5950 6350
+	5600 4800 5600 4750
+Connection ~ 5600 4750
 Wire Wire Line
-	5950 6350 6100 6350
+	5600 4750 5750 4750
 Wire Notes Line
 	2100 5700 2100 7050
 Wire Notes Line
@@ -847,24 +729,20 @@ Wire Notes Line
 	4100 5700 2100 5700
 Text Notes 3450 5900 0    67   Italic 13
 Vref Gen
-Text Notes 4900 5100 0    67   Italic 13
-Non-Inverting\nHigh Impedance
-Text Notes 4900 6800 0    67   Italic 13
-Inverting \nSimple Vref
+Text Notes 4600 5200 0    67   Italic 13
+Inverting
 Wire Notes Line
-	4850 5350 7200 5350
-Wire Notes Line
-	7200 3600 4850 3600
+	6950 3600 4600 3600
 Wire Wire Line
-	5650 5900 5700 5900
+	5300 4300 5350 4300
 Wire Wire Line
-	5400 5900 5450 5900
+	5050 4300 5100 4300
 Wire Notes Line
-	4850 6850 7200 6850
+	4600 6850 6950 6850
 Wire Notes Line
-	4850 3600 4850 6850
+	4600 3600 4600 6850
 Wire Notes Line
-	7200 3600 7200 6850
+	6950 3600 6950 6850
 Wire Notes Line
 	4550 3350 4550 5350
 Wire Notes Line
@@ -875,8 +753,8 @@ Wire Notes Line
 	1650 3350 4550 3350
 Text Notes 3800 5100 0    67   Italic 13
 First Stage \nDiff Amp
-Text Notes 4850 3550 0    67   Italic 13
-Two Options for second stage
+Text Notes 4600 3550 0    67   Italic 13
+Second stage
 $Comp
 L Device:D_Zener Dz1
 U 1 1 5E645861
@@ -1017,8 +895,6 @@ Wire Wire Line
 Connection ~ 10200 3800
 Wire Wire Line
 	10200 3800 10350 3800
-Wire Wire Line
-	4450 1250 4450 2050
 $Comp
 L Device:D_Zener Dz3
 U 1 1 5E778073
@@ -1086,37 +962,13 @@ Connection ~ 2000 2650
 Wire Notes Line
 	500  3250 11200 3250
 Wire Wire Line
-	4450 2050 4500 2050
+	4600 2050 4650 2050
 Wire Wire Line
-	4500 2250 3900 2250
+	4650 2250 4050 2250
 Wire Wire Line
-	3900 2250 3900 2300
+	4050 2250 4050 2300
 Text Notes 7150 1350 0    50   ~ 0
 sine wave input
-$Comp
-L power:GND #PWR013
-U 1 1 5E435BE5
-P 6050 5050
-F 0 "#PWR013" H 6050 4800 50  0001 C CNN
-F 1 "GND" H 6055 4877 50  0000 C CNN
-F 2 "" H 6050 5050 50  0001 C CNN
-F 3 "" H 6050 5050 50  0001 C CNN
-	1    6050 5050
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6050 4800 6050 4850
-$Comp
-L Device:C_Small Cg1
-U 1 1 5E45D5F8
-P 6050 4950
-F 0 "Cg1" H 6060 5020 50  0000 L CNN
-F 1 "0.47uF" H 6060 4870 50  0000 L CNN
-F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 6050 4950 50  0001 C CNN
-F 3 "~" H 6050 4950 50  0001 C CNN
-	1    6050 4950
-	1    0    0    1   
-$EndComp
 $Comp
 L Device:C_Small Cb2
 U 1 1 5E46F193
@@ -1145,7 +997,7 @@ Connection ~ 3200 3700
 Wire Wire Line
 	3200 3700 3550 3700
 Wire Wire Line
-	5300 2250 5600 2250
+	5450 2250 5750 2250
 Text GLabel 2000 4400 0    50   Input ~ 0
 Vref
 Wire Wire Line
@@ -1258,13 +1110,13 @@ F 3 "~" H 10350 1300 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 Wire Notes Line
-	5450 1800 6150 1800
+	5600 1800 6150 1800
 Wire Notes Line
 	6150 1800 6150 2300
 Wire Notes Line
-	6150 2300 5450 2300
+	6150 2300 5600 2300
 Wire Notes Line
-	5450 2300 5450 1800
+	5600 2300 5600 1800
 Wire Notes Line
 	6350 450  6350 3250
 Wire Notes Line
@@ -1375,16 +1227,10 @@ Wire Wire Line
 Connection ~ 9950 2600
 Wire Wire Line
 	9950 2600 10350 2600
-Text Notes 4950 4350 0    50   ~ 0
-0.8Khz HP filter\n0.1uF 2Kohm
-Text GLabel 6750 4150 2    50   Input ~ 0
-Stage2Out
 Text Notes 8200 700  0    157  ~ 31
 Impedance Match
 Wire Wire Line
-	3500 2000 3600 2000
-Wire Wire Line
-	5300 1850 5600 1850
+	3500 2000 3700 2000
 $Comp
 L Device:C_Small Cenv1
 U 1 1 5E672EB5
@@ -1399,10 +1245,10 @@ $EndComp
 Text Notes 8000 4800 0    50   ~ 0
 1/80Khz = 12.5us\n1/1Khz = 1ms\npick 200us as time constant
 $Comp
-L Device:R Rdown
+L Device:R Rdown1
 U 1 1 5E5726AC
 P 8700 4150
-F 0 "Rdown" H 8770 4196 50  0000 L CNN
+F 0 "Rdown1" H 8770 4196 50  0000 L CNN
 F 1 "10K" H 8770 4105 50  0000 L CNN
 F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 8630 4150 50  0001 C CNN
 F 3 "~" H 8700 4150 50  0001 C CNN
@@ -1410,10 +1256,10 @@ F 3 "~" H 8700 4150 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR?
+L power:GND #PWR016
 U 1 1 5E57295E
 P 8700 4300
-F 0 "#PWR?" H 8700 4050 50  0001 C CNN
+F 0 "#PWR016" H 8700 4050 50  0001 C CNN
 F 1 "GND" H 8705 4127 50  0000 C CNN
 F 2 "" H 8700 4300 50  0001 C CNN
 F 3 "" H 8700 4300 50  0001 C CNN
@@ -1431,4 +1277,161 @@ Wire Wire Line
 	9250 3800 9550 3800
 Wire Wire Line
 	8700 3500 8700 3800
+$Comp
+L Device:D_Small Dprot1
+U 1 1 5E5CAFD9
+P 3550 1600
+F 0 "Dprot1" H 3400 1450 50  0000 L CNN
+F 1 "1N4148" H 3400 1520 50  0000 L CNN
+F 2 "" V 3550 1600 50  0001 C CNN
+F 3 "~" V 3550 1600 50  0001 C CNN
+	1    3550 1600
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:D_Small Dprot2
+U 1 1 5E5DF526
+P 3700 1600
+F 0 "Dprot2" H 3550 1450 50  0000 L CNN
+F 1 "1N4148" H 3550 1520 50  0000 L CNN
+F 2 "" V 3700 1600 50  0001 C CNN
+F 3 "~" V 3700 1600 50  0001 C CNN
+	1    3700 1600
+	0    -1   1    0   
+$EndComp
+Wire Wire Line
+	3700 1700 3700 2000
+Connection ~ 3700 2000
+Wire Wire Line
+	3700 2000 3750 2000
+Wire Wire Line
+	3550 1700 3550 2200
+Connection ~ 3550 2200
+Wire Wire Line
+	3550 2200 3750 2200
+Wire Wire Line
+	3700 1400 3700 1500
+Wire Wire Line
+	3550 1500 3550 1400
+Wire Wire Line
+	3550 1400 3700 1400
+Wire Wire Line
+	2850 1350 2850 1400
+Wire Wire Line
+	3550 1400 2850 1400
+Connection ~ 3550 1400
+Connection ~ 2850 1400
+Wire Wire Line
+	2850 1400 2850 1550
+Wire Wire Line
+	4500 1850 4650 1850
+$Comp
+L Device:L_Small Lbatt1
+U 1 1 5E6493E3
+P 4600 1350
+F 0 "Lbatt1" H 4630 1390 50  0000 L CNN
+F 1 "300uH" H 4630 1310 50  0000 L CNN
+F 2 "" H 4600 1350 50  0001 C CNN
+F 3 "~" H 4600 1350 50  0001 C CNN
+	1    4600 1350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4600 1050 4600 1100
+Wire Wire Line
+	4600 1450 4600 2050
+$Comp
+L Device:C_Small Cbp1
+U 1 1 5E65A5E3
+P 5000 1300
+F 0 "Cbp1" H 5010 1370 50  0000 L CNN
+F 1 "0.1uF" H 5010 1220 50  0000 L CNN
+F 2 "" H 5000 1300 50  0001 C CNN
+F 3 "~" H 5000 1300 50  0001 C CNN
+	1    5000 1300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C_Small Cbp2
+U 1 1 5E65A732
+P 5300 1300
+F 0 "Cbp2" H 5310 1370 50  0000 L CNN
+F 1 "10uF" H 5310 1220 50  0000 L CNN
+F 2 "" H 5300 1300 50  0001 C CNN
+F 3 "~" H 5300 1300 50  0001 C CNN
+	1    5300 1300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR015
+U 1 1 5E671212
+P 5150 1500
+F 0 "#PWR015" H 5150 1250 50  0001 C CNN
+F 1 "GND" H 5150 1350 50  0000 C CNN
+F 2 "" H 5150 1500 50  0001 C CNN
+F 3 "" H 5150 1500 50  0001 C CNN
+	1    5150 1500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4600 1100 5000 1100
+Wire Wire Line
+	5000 1100 5000 1200
+Connection ~ 4600 1100
+Wire Wire Line
+	4600 1100 4600 1250
+Wire Wire Line
+	5000 1100 5300 1100
+Wire Wire Line
+	5300 1100 5300 1200
+Connection ~ 5000 1100
+Wire Wire Line
+	5300 1400 5300 1500
+Wire Wire Line
+	5300 1500 5150 1500
+Wire Wire Line
+	5150 1500 5000 1500
+Wire Wire Line
+	5000 1500 5000 1400
+Connection ~ 5150 1500
+$Comp
+L Device:L_Small Lbatt?
+U 1 1 5E6A00E8
+P 5600 1850
+F 0 "Lbatt?" H 5630 1890 50  0000 L CNN
+F 1 "5.72uH" H 5630 1810 50  0000 L CNN
+F 2 "" H 5600 1850 50  0001 C CNN
+F 3 "~" H 5600 1850 50  0001 C CNN
+	1    5600 1850
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5450 1850 5500 1850
+Wire Wire Line
+	5700 1850 5750 1850
+$Comp
+L Device:C_Small C2lp1
+U 1 1 5E6B1624
+P 6000 3950
+F 0 "C2lp1" V 6200 3900 50  0000 L CNN
+F 1 "?" V 6100 3900 50  0000 L CNN
+F 2 "Capacitors_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 6000 3950 50  0001 C CNN
+F 3 "~" H 6000 3950 50  0001 C CNN
+	1    6000 3950
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	5750 3950 5750 4200
+Wire Wire Line
+	5750 3950 5900 3950
+Connection ~ 5750 4200
+Wire Wire Line
+	5750 4200 5850 4200
+Wire Wire Line
+	6100 3950 6250 3950
+Wire Wire Line
+	6250 3950 6250 4200
+Connection ~ 6250 4200
+Wire Wire Line
+	6250 4200 6400 4200
 $EndSCHEMATC
