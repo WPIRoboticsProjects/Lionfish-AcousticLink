@@ -20,7 +20,6 @@
 #define CRCFrameLength 8 // number of bits in CRC frame
 #define PacketLength (int) (STARTFrameLength+IDFrameLength+DATAFrameLength+CRCFrameLength)
 
-
 typedef struct{
     uint8_t COMMAND_STATUS;
     uint8_t REQUEST;
@@ -36,7 +35,7 @@ typedef struct{
 //SCHEDULER
 #define SchedulerLength 6
 /*
- * Schedueler (and data_buffer):
+ * SCHEDULER (+ data_buffer):
  *
     1)Last RX Command Status (8 bit ID)
     2)Current Status (AUV):
