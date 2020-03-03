@@ -14,6 +14,9 @@ void pwmPinInit();
 void pwmOutputEnable();
 void pwmOutputDisable();
 
+void TXdebugPinSet(uint8_t data);
+void TXdebugPinInit();
+
 void PWM_ISR_FUNC(void);
 
 

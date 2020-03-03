@@ -14,7 +14,7 @@
 #define CarrierFeq 81500 // 81.5Khz TX
 #define BitRate 100 // 100 bit per second
 #define SamplesPerBit 10 // 10 sample per bit.
-#define SamplePerBreak 5 // 5 sample break period between bits.
+#define SamplePerBreak 0 // 5 sample break period between bits.
 
 extern const uint16_t SampleRate ;
 
@@ -57,7 +57,7 @@ COMMAND command;
  *
  */
 
-#define StartFrame 0xFA // exact bit sequence for start frame 1111 1010
+#define StartFrame 0b11110101 // exact bit sequence for start frame 1111 1010
 
 #define CRC_MASK     ((1 << (CRCFrameLength+1)) - 1)
 #define PAYLOAD_MASK (((1 << (DATAFrameLength+1)) - 1) << CRCFrameLength)

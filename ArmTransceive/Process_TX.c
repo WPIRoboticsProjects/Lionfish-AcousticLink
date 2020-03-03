@@ -33,7 +33,7 @@ uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload);
 void send_message(uint32_t packet){
     int16_t i;
 //    sending in MSB first
-    uint8_t lastBit =0;
+    uint32_t lastBit =0;
 
     for(i= PacketLength-1 ; i>-1; --i )
     {
@@ -82,15 +82,16 @@ void send_message(uint32_t packet){
 uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload){
     //start frame
     uint32_t ans = StartFrame;
-    ans <<= STARTFrameLength;
 
     //4 bits of packet ID
-    ans |= (packet_id & ID_MASK);
     ans <<= IDFrameLength;
+    ans |= (packet_id & 0b1111);
 
     //8 bits of payload
-    ans |= packet_payload;
     ans <<= DATAFrameLength;
+    ans |= packet_payload;
 
-    return crc_8(ans); //add crc with crc_8 and return
+    ans <<= CRCFrameLength;
+    return ans;
+//    return crc_8(ans); //add crc with crc_8 and return
 }

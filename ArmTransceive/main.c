@@ -8,6 +8,7 @@
  * Port PF0:PF3 : PWM module 0 generator 0 and 1 // note:PF0 is not available on booster back breakout.
  * Port PK4:PK5 : PWM module 0 generator 3
  * Port E:
+ * Port N: PN2: Timer1 fake TX pin
  */
 
 //--------------------------        TIMER ASSIGNMENT     --------------------------//
@@ -81,9 +82,13 @@ int main(void)
     init_protocol();
     SamplingInit();
     debugPinsInit();
+    TXdebugPinInit();
+
+
     pwm1Init();
     pwm3Init();
     timer1Init();
+
 
     IntMasterEnable();
 
@@ -91,8 +96,8 @@ int main(void)
     //Test for TX
     while(1)
     {
-        send_message(0xAAAAAAAA);
-        for(t1OFCount =0 ; t1OFCount < 20;)
+        send_message(construct_packet(3,0xAA));
+        for(t1OFCount =0 ; t1OFCount < 40;)
         {
         }
 
@@ -103,7 +108,24 @@ int main(void)
         }
         pwmOutputDisable();
 
-        for(t1OFCount =0 ; t1OFCount < 20;)
+        for(t1OFCount =0 ; t1OFCount < 40;)
+        {
+        }
+
+
+        send_message(construct_packet(10,0b00111001));
+        for(t1OFCount =0 ; t1OFCount < 40;)
+        {
+        }
+
+        pwmOutputEnable();
+
+        for(t1OFCount =0 ; t1OFCount < 1;)
+        {
+        }
+        pwmOutputDisable();
+
+        for(t1OFCount =0 ; t1OFCount < 40;)
         {
         }
 
