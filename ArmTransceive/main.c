@@ -28,7 +28,7 @@
 
 // "${SW_ROOT}/driverlib/ccs/Debug/driverlib.lib" Pre Compiled TivaWare libs needs to exist in ARM Linker file search Path
 
-#include <ALinkProtocol.h>
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,6 +48,7 @@
 #include "inc/tm4c1294ncpdt.h"
 #include "inc/hw_memmap.h"
 
+#include <ALinkProtocol.h>
 #include "sampling.h"
 #include "hwDebug.h"
 #include "pwmDriver.h"
@@ -70,7 +71,7 @@ int * message_to_binary(char *input, int input_length);
 
 #define VIN_RANGE 3.3 // 3.3 V on board
 #define ADC_BITS 12 // 12 bit ADC
-#define SAMPLE_RATE 5000 //Samples Per Second
+#define SAMPLE_RATE 5000 //Samples Per Second TODO: delete
 
 //GLOBALS
 uint32_t gSystemClock; // [Hz] system clock frequency
@@ -112,13 +113,13 @@ int main(void)
     gSystemClock = SysCtlClockFreqSet(SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 120000000);
 
     // Initialize
-    init_keys(&id, &command); //set all id/command keys for reference
+    //init_protocol
+    init_keys(&id, &command); //set all id/command keys for reference TODO: DELETE
     SamplingInit();
     debugPinsInit();
     pwm1Init();
     pwm3Init();
     timer1Init();
-    //EthernetInit();
 
     IntMasterEnable();
 

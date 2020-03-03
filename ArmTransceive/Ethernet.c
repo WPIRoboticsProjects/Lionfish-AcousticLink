@@ -19,7 +19,7 @@
 //mac ADDR's
 uint32_t MAC_JETSON, MAC_AUV;
 
-uint32_t base; //idk what base is in documentation
+//BASE = EMAC0_BASE;
 
 //config defines
 uint32_t max_frame_size;
@@ -28,6 +28,33 @@ uint32_t rx_burst, tx_burst;
 uint32_t desc_skip_size;
 
 void EthernetInit(){
+
+//    // Enable and reset the MAC.
+//    SysCtlPeripheralEnable(SYSCTL_PERIPH_EMAC0);
+//    SysCtlPeripheralReset(SYSCTL_PERIPH_EMAC0);
+//
+//    if(<using internal PHY>)
+//    {
+//    // Enable and reset the internal PHY.
+//    SysCtlPeripheralEnable(SYSCTL_PERIPH_EPHY0);
+//    SysCtlPeripheralReset(SYSCTL_PERIPH_EPHY0);
+//    }
+//
+//    // Ensure the MAC is completed its reset.
+//    while(!MAP_SysCtlPeripheralReady(SYSCTL_PERIPH_EMAC0))
+//    {
+//    }
+//
+//    // Set the PHY type and configuration options.
+//    EMACPHYConfigSet(EMAC0_BASE, <config>);
+//
+//    // Initialize and configure the MAC.
+//    EMACInit(EMAC0_BASE, <system clock rate>, <bus config>,
+//    <Rx burst size>, <Tx burst size>, <desc skip>);
+//
+//    EMACConfigSet(EMAC0_BASE, <parameters>);
+
+
     //All things for Initing Comm. over Ethernet to Jetson
 
 //    EMACIntDisable(); //disable intterupts
