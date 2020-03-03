@@ -14,6 +14,7 @@
 #define BitRate 100 // 100 bit per second
 #define SampleRate 20000
 #define SamplesPerBit SampleRate / BitRate;
+#define SchedulerTimeIn 60 //send scheduler information after 60 seconds no RX/TX
 
 #define STARTFrameLength 8 // number of bits in start frame
 #define IDFrameLength 4 // number of bits in ID frame

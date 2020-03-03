@@ -25,8 +25,8 @@
 static uint8_t DATA_BUFFER[16];
 
 //used to find 8-bit values for commands/IDs
-ID id;
-COMMAND command;
+static ID id;
+static COMMAND command;
 
 static bool READING, SENDING = false; //reading and sending flags for debug
 static bool AUV_RECALL = false; //flags for Debug/Jetson

@@ -25,7 +25,7 @@ static int rx_index = 0;
 //PROTOTYPES
 void process_adc();
 static void process_packet_raw(uint32_t packet);
-static bool check_raw_start(uint32_t packet);
+void adjust_threshold(int avg, int max);
 
 void process_adc(){
     int i;
@@ -57,8 +57,10 @@ void process_adc(){
             tx_count++;
         }
 
+        uint8_t bit_xor = (raw_rx ^ (uint8_t) StartFrame);
+
         //START BIT CHECKING (only if not reading)
-        if(check_raw_start(raw_rx)){//current rx has just read the start bits
+        if((bit_xor == 0)){//current rx has just read the start bits
             raw_rx &= CRC_MASK; //everything but the start bits are now 0
             tx_count = 8; //reset count, adjusted for 8 start bits
         }
@@ -89,22 +91,24 @@ static void process_packet_raw(uint32_t packet){
     uint32_t payload = (PAYLOAD_MASK && packet) >> CRCFrameLength; //shift payload to most significant 8 bit
 
     if(packet_id == id.REQUEST){ //resend the data buffer of the specific ID in payload
-//        process_request((uint8_t) payload);
-
+        //Send ID of payload with buffer log @ ID as payload
+        //log buffer request with payload ID
     }
 
     if(packet_id == id.COMMAND_STATUS){ //or = the payload to the command status data buffer
-
+        //or log data buffer @ C.S with payload
+        //Send ACK with ID C.S!!
     }
 
     if(packet_id == id.ACK){ //reciever recieved your last message, store this
-
+        //log buffer ack with ID of payload
     }
+
+    //INFO
+    //log buffer at element=ID with payload
 }
 
-//check raw rx for start bits
-static bool check_raw_start(uint32_t packet)
-{
-    uint8_t bit_xor = (packet ^ (uint8_t) StartFrame);
-    return (bit_xor == 0); //if bit_xor == 0, then all bits in rx == start bits
+//takes the buffer avg and max and adjusts the current ADC_THRESHOLD
+void adjust_threshold(int avg, int max){ //TODO: this
+    int prev_offset =  ADC_THRESHOLD;
 }
