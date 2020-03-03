@@ -26,6 +26,9 @@
 #include "AlinkProtocol.h"
 
 
+uint16_t t1OFCount =0;
+
+
 void timer1Init()
 {
     /////// Setup Timer1 to be full width perodic timer running at same frequency as bit rate.
@@ -54,5 +57,6 @@ void t1OF_ISR(void)
 
     TIMER1_ICR_R = TIMER_ICR_TATOCINT ; // used to clear interrupt status
 //    this line had to happen first. or this interrupt get double triggered.
+    t1OFCount+=1;
 
 }

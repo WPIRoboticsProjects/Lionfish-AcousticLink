@@ -19,7 +19,7 @@
 
 
 const uint16_t SampleRate = BitRate*SamplesPerBit ;  // Hz
-
+const uint16_t PacketLength = STARTFrameLength+IDFrameLength+DATAFrameLength+CRCFrameLength;
 
 /*
  * ALL VARIABLES ARE STATIC TO PREVENT BUILD ERRORS FROM DUPLICATE NAMED VARIABLES

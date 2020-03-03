@@ -12,4 +12,7 @@
 void t1OF_ISR();
 void timer1Init();
 
+extern uint16_t t1OFCount ;
+
+
 #endif /* TIMERTX_H_ */

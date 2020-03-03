@@ -87,6 +87,31 @@ int main(void)
 
     IntMasterEnable();
 
+
+    //Test for TX
+    while(1)
+    {
+        send_message(0xAAAAAAAA);
+        for(t1OFCount =0 ; t1OFCount < 20;)
+        {
+        }
+
+        pwmOutputEnable();
+
+        for(t1OFCount =0 ; t1OFCount < 1;)
+        {
+        }
+        pwmOutputDisable();
+
+        for(t1OFCount =0 ; t1OFCount < 20;)
+        {
+        }
+
+    }
+
+
+
+
     //Test for CRC
     uint32_t test_rx = 0x881E500;
     uint32_t crc_test = crc_8(test_rx);

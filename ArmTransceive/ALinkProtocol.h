@@ -13,9 +13,8 @@
 
 #define CarrierFeq 81500 // 81.5Khz TX
 #define BitRate 100 // 100 bit per second
-
-
-#define SamplesPerBit 10;
+#define SamplesPerBit 10 // 10 sample per bit.
+#define SamplePerBreak 5 // 5 sample break period between bits.
 
 extern const uint16_t SampleRate ;
 
@@ -25,7 +24,7 @@ extern const uint16_t SampleRate ;
 #define IDFrameLength 4 // number of bits in ID frame
 #define DATAFrameLength 8 // number of bits in DATA frame
 #define CRCFrameLength 8 // number of bits in CRC frame
-#define PacketLength (int) (STARTFrameLength+IDFrameLength+DATAFrameLength+CRCFrameLength)
+extern const uint16_t PacketLength;
 
 typedef struct ID{
     uint8_t ACK;
