@@ -24,10 +24,6 @@
 //HOLDS DATA RECIEVED AND TO SEND
 static uint8_t DATA_BUFFER[16];
 
-//used to find 8-bit values for commands/IDs
-static ID id;
-static COMMAND command;
-
 static bool READING, SENDING = false; //reading and sending flags for debug
 static bool AUV_RECALL = false; //flags for Debug/Jetson
 static bool AUV_ARM = false; //flags for Debug/Jetson
@@ -39,11 +35,11 @@ static void init_keys(ID * id_key, COMMAND * command_key);
 uint32_t get_data_buffer(uint32_t index);
 void set_data_buffer(uint32_t data, uint32_t index);
 void or_data_buffer(uint32_t data, uint32_t index);
-
+COMMAND * get_commands();
+ID * get_ids();
 
 void init_protocol(){
     init_keys(&id, &command);
-    //init ethernet
 }
 
 uint32_t get_data_buffer(uint32_t index){
@@ -56,6 +52,14 @@ void set_data_buffer(uint32_t data, uint32_t index){
 
 void or_data_buffer(uint32_t data, uint32_t index){
     DATA_BUFFER[index] |= data;
+}
+
+ID * get_ids(){
+    return &id;
+}
+
+COMMAND * get_commands(){
+    return &command;
 }
 
 //init values for COMMAND and ID lookups

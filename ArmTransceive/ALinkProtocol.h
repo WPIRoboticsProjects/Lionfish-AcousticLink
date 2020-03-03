@@ -22,18 +22,21 @@
 #define CRCFrameLength 8 // number of bits in CRC frame
 #define PacketLength (int) (STARTFrameLength+IDFrameLength+DATAFrameLength+CRCFrameLength)
 
-typedef struct{
+typedef struct ID{
     uint8_t ACK;
     uint8_t COMMAND_STATUS;
     uint8_t REQUEST;
-    uint8_t SCHEDULER_INFO[14];
+    uint8_t * SCHEDULER_INFO[14];
 } ID;
 
-typedef struct{
+typedef struct COMMAND{
     uint8_t ARM;
     uint8_t DISARM;
     uint8_t RECALL;
 } COMMAND;
+
+ID id;
+COMMAND command;
 
 //SCHEDULER
 #define SchedulerLength 6
@@ -55,5 +58,13 @@ typedef struct{
 #define CRC_MASK     ((1 << (CRCFrameLength+1)) - 1)
 #define PAYLOAD_MASK (((1 << (DATAFrameLength+1)) - 1) << CRCFrameLength)
 #define ID_MASK      ((1 << (IDFrameLength+1)) - 1) << (DATAFrameLength+CRCFrameLength)
+
+void init_protocol();
+static void init_keys(ID * id_key, COMMAND * command_key);
+uint32_t get_data_buffer(uint32_t index);
+void set_data_buffer(uint32_t data, uint32_t index);
+void or_data_buffer(uint32_t data, uint32_t index);
+COMMAND * get_commands();
+ID * get_ids();
 
 #endif /* ALINKPROTOCOL_H_ */

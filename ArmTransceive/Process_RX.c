@@ -5,6 +5,13 @@
  *      Author: Nick
  */
 #include <stdbool.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+#include <string.h>
 
 #include "ALinkProtocol.h"
 #include "sampling.h"
@@ -21,10 +28,9 @@ static uint32_t rx_buffer[2048]; //reasonably sized buffer to log rx messages (a
 static int rx_index = 0;
 #define RX_INDEX_WRAP(i) ((i) & (2048-1)) // index wrapping macro
 
-
 //PROTOTYPES
 void process_adc();
-static void process_packet_raw(uint32_t packet);
+void process_packet_raw(uint32_t packet);
 void adjust_threshold(int avg, int max);
 
 void process_adc(){
@@ -79,33 +85,46 @@ void process_adc(){
     }
 
     //AVG RECALC
-//    buffer_avg = (int) buffer_avg / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
+    buffer_avg = (int) buffer_avg / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
 
     //ADJUST THRESHOLD
-//    adjust_threshold(buffer_avg, curr_max);
+    adjust_threshold(buffer_avg, curr_max);
 }
 
-static void process_packet_raw(uint32_t packet){
+void process_packet_raw(uint32_t packet){
     //EXTRACT ID AND PAYLOAD OUT
     uint32_t packet_id = (ID_MASK && packet) >> (DATAFrameLength+CRCFrameLength); //shift id to most significant 4 bit
     uint32_t payload = (PAYLOAD_MASK && packet) >> CRCFrameLength; //shift payload to most significant 8 bit
 
+
     if(packet_id == id.REQUEST){ //resend the data buffer of the specific ID in payload
-        //Send ID of payload with buffer log @ ID as payload
-        //log buffer request with payload ID
+        set_data_buffer(payload, id.REQUEST);
+        uint8_t new_id = payload;
+        uint8_t new_payload = get_data_buffer(new_id);
+        uint32_t new_packet = construct_packet(new_id, new_payload);
+        //TODO: send new_packet
+        send_message(new_packet);
     }
 
     if(packet_id == id.COMMAND_STATUS){ //or = the payload to the command status data buffer
-        //or log data buffer @ C.S with payload
-        //Send ACK with ID C.S!!
+        or_data_buffer(payload, id.COMMAND_STATUS);
+        uint8_t new_id = id.ACK;
+        uint8_t new_payload = id.COMMAND_STATUS;
+        uint32_t new_packet = construct_packet(new_id, new_payload);
+        //TODO: send new_packet
+        send_message(new_packet);
     }
 
     if(packet_id == id.ACK){ //reciever recieved your last message, store this
-        //log buffer ack with ID of payload
+        set_data_buffer(payload, id.ACK);
     }
 
-    //INFO
-    //log buffer at element=ID with payload
+    int i;
+    for(i = 3; i < 15; i++){
+        if(packet_id == id.SCHEDULER_INFO[i]){
+            set_data_buffer(payload, id.SCHEDULER_INFO[i]);
+        }
+    }
 }
 
 //takes the buffer avg and max and adjusts the current ADC_THRESHOLD
