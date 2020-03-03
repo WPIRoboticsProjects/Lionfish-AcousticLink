@@ -65,9 +65,11 @@ void timer1Init()
 void t1OF_ISR(void)
 {
 
+    TIMER1_ICR_R = TIMER_ICR_TATOCINT ; // used to clear interrupt status
+//    this line had to happen first. or this interrupt get double triggered.
+
     ISRcount += 1;
     debugPort ^= 0xff;
-    TIMER1_ICR_R = TIMER_ICR_TATOCINT ; // used to clear interrupt status
 
 }
 
