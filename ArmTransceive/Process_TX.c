@@ -24,20 +24,6 @@ static uint32_t tx_index = 0;
 #define TX_INDEX_WRAP(i) ((i) & (2048-1)) // index wrapping macro
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void send_message(uint32_t packet);
 uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload);
 
@@ -45,10 +31,6 @@ uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload);
 //uses the PWM to send a packet of length PacketSize (Protocol)
 // Big endien order
 void send_message(uint32_t packet){
-    //Send message
-
-
-
     int16_t i;
 //    sending in MSB first
     uint8_t lastBit =0;

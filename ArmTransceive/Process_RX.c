@@ -19,8 +19,9 @@
 #include "Process_TX.h"
 
 //variables for ADC processing / Threshold
-static uint32_t ADC_THRESHOLD = 515; //threshold for 0/1 TODO: measure and change
-static uint32_t curr_max, tx_count, buffer_avg, on_count, off_count = 0;
+static uint32_t ADC_THRESHOLD = 50; //threshold for 0/1 TODO: measure and change
+static uint32_t curr_max, tx_count, buffer_avg, buffer_sum, on_count, off_count = 0;
+bool read_buffer = false;
 
 //Debug + Raw RX Buffer (int)
 static uint32_t raw_rx;
@@ -38,7 +39,7 @@ void process_adc(){
     //ADC SAMPLING ROUTINE
     for(i = 0; i < ADC_BUFFER_SIZE; i++)
     {
-        buffer_avg += gADCBuffer[i]; //sum up all samples
+        buffer_sum += gADCBuffer[i]; //sum up all samples
 
         if((int) gADCBuffer[i] > curr_max){ //compare curr_max to current sample and adjust
             curr_max = (int) gADCBuffer[i];
@@ -80,15 +81,16 @@ void process_adc(){
             //Reset and Log Raw_RX
             rx_buffer[rx_index] = raw_rx; //add to log
             rx_index = RX_INDEX_WRAP(rx_index);
-            raw_rx = 0; //clear
+            raw_rx, tx_count, off_count, on_count = 0; //clear
         }
     }
 
     //AVG RECALC
-    buffer_avg = (int) buffer_avg / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
+    buffer_avg = (int) buffer_sum / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
 
     //ADJUST THRESHOLD
     adjust_threshold(buffer_avg, curr_max);
+    read_buffer = true;
 }
 
 void process_packet_raw(uint32_t packet){
