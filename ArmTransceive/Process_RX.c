@@ -21,7 +21,7 @@
 //variables for ADC processing / Threshold
 static uint32_t ADC_THRESHOLD = 50; //threshold for 0/1 TODO: measure and change
 static uint32_t curr_max, tx_count, buffer_avg, buffer_sum, on_count, off_count = 0;
-bool read_buffer = false;
+bool read_buffer = false; //debug
 
 //Debug + Raw RX Buffer (int)
 static uint32_t raw_rx;
@@ -35,6 +35,7 @@ void process_packet_raw(uint32_t packet);
 void adjust_threshold(int avg, int max);
 
 void process_adc(){
+    read_buffer = false;
     int i;
     //ADC SAMPLING ROUTINE
     for(i = 0; i < ADC_BUFFER_SIZE; i++)
@@ -77,11 +78,10 @@ void process_adc(){
             if(check_crc(raw_rx)){ //check the packet for errors
                 process_packet_raw(raw_rx); //look at packet frame as whole
             }
-
-            //Reset and Log Raw_RX
-            rx_buffer[rx_index] = raw_rx; //add to log
-            rx_index = RX_INDEX_WRAP(rx_index);
-            raw_rx, tx_count, off_count, on_count = 0; //clear
+            raw_rx = 0;
+            tx_count = 0;
+            off_count = 0;
+            on_count = 0; //clear
         }
     }
 
@@ -104,7 +104,6 @@ void process_packet_raw(uint32_t packet){
         uint8_t new_id = payload;
         uint8_t new_payload = get_data_buffer(new_id);
         uint32_t new_packet = construct_packet(new_id, new_payload);
-        //TODO: send new_packet
         send_message(new_packet);
     }
 
@@ -113,7 +112,6 @@ void process_packet_raw(uint32_t packet){
         uint8_t new_id = id.ACK;
         uint8_t new_payload = id.COMMAND_STATUS;
         uint32_t new_packet = construct_packet(new_id, new_payload);
-        //TODO: send new_packet
         send_message(new_packet);
     }
 
@@ -125,8 +123,13 @@ void process_packet_raw(uint32_t packet){
     for(i = 3; i < 15; i++){
         if(packet_id == id.SCHEDULER_INFO[i]){
             set_data_buffer(payload, id.SCHEDULER_INFO[i]);
+            break;
         }
     }
+
+    //Reset and Log Raw_RX
+    rx_buffer[rx_index] = packet; //add to log
+    rx_index = RX_INDEX_WRAP(rx_index);
 }
 
 //takes the buffer avg and max and adjusts the current ADC_THRESHOLD

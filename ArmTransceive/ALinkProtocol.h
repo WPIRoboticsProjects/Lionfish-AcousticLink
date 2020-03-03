@@ -30,7 +30,7 @@ typedef struct ID{
     uint8_t ACK;
     uint8_t COMMAND_STATUS;
     uint8_t REQUEST;
-    uint8_t * SCHEDULER_INFO[14];
+    uint8_t SCHEDULER_INFO[14];
 } ID;
 
 typedef struct COMMAND{
