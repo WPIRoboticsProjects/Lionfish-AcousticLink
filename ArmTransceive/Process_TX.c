@@ -21,6 +21,21 @@ static uint32_t tx_buffer[2048]; //reasonably sized buffer to log sent messages 
 static uint32_t tx_index = 0;
 #define TX_INDEX_WRAP(i) ((i) & (2048-1)) // index wrapping macro
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void send_message(uint32_t packet);
 uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload);
 

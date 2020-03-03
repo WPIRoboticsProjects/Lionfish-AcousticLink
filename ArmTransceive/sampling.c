@@ -1,3 +1,7 @@
+
+
+
+
 #include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
@@ -11,6 +15,9 @@
 #include "driverlib/udma.h"
 #include "sysctl_pll.h"
 #include "sampling.h"
+#include "ALinkProtocol.h"
+
+
 
 #pragma DATA_ALIGN(gDMAControlTable, 1024) // address alignment required
 tDMAControlTable gDMAControlTable[64]; // uDMA control table (global)
@@ -24,6 +31,8 @@ volatile bool gDMAPrimary = true; // is DMA occurring in the primary channel?
 // initialize sampling ADC
 void SamplingInit(void)
 {
+
+
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_0); // GPIO setup for analog input AIN3
     SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0); // initialize ADC peripherals
@@ -37,7 +46,10 @@ void SamplingInit(void)
     ADCClockConfigSet(ADC1_BASE, ADC_CLOCK_SRC_PLL | ADC_CLOCK_RATE_FULL, pll_divisor);
 
     ADCSequenceDisable(ADC1_BASE, 0); // choose ADC1 sequence 0; disable before configuring
-    ADCSequenceConfigure(ADC1_BASE, 0, ADC_TRIGGER_ALWAYS, 64); // specify the "Always" trigger
+
+    ADCSequenceConfigure(ADC1_BASE, 0, ADC_TRIGGER_TIMER, 0); // Timer triggered sequencer
+//    ADCSequenceConfigure(ADC1_BASE, 0, ADC_TRIGGER_ALWAYS, 0);    // specify the "Always" trigger
+
     ADCSequenceStepConfigure(ADC1_BASE, 0, 0, ADC_CTL_CH3 | ADC_CTL_IE | ADC_CTL_END);// in the 0th step, sample channel 3 (AIN3)
 
     // enable interrupt, and make it the end of sequence
@@ -70,6 +82,23 @@ void SamplingInit(void)
     ADCSequenceDMAEnable(ADC1_BASE, 0); // enable DMA for ADC1 sequence 0
     ADCIntEnableEx(ADC1_BASE, ADC_INT_DMA_SS0); // enable ADC1 sequence 0 DMA interrupt
 }
+
+
+
+void ADCTimer4Init()
+{
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER4);    //timer 3 used for cpu stuff, let's use timer 4
+
+    TimerDisable(TIMER4_BASE, TIMER_BOTH);
+    TimerConfigure(TIMER4_BASE, TIMER_CFG_PERIODIC); //want TIMER_CFG_PERIODIC ?
+    TimerLoadSet(TIMER4_BASE, TIMER_A, 120000000 / SampleRate -1 );
+
+    TimerControlTrigger(TIMER4_BASE, TIMER_A, true); // Trigger to call ADC.
+
+}
+
+
+
 
 // ADC ISR
 void ADC_ISR(void)

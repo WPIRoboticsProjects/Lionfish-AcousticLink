@@ -7,11 +7,12 @@
 /* Port L: PL0:PL3: Hardware Debug Pin
  * Port PF0:PF3 : PWM module 0 generator 0 and 1 // note:PF0 is not available on booster back breakout.
  * Port PK4:PK5 : PWM module 0 generator 3
+ * Port E:
  */
 
 //--------------------------        TIMER ASSIGNMENT     --------------------------//
 /* TIMER 1 : TX bit modulation
- * TIMER 2 : ADC trigger timer
+ * TIMER 4 : ADC trigger timer
  *
  */
 

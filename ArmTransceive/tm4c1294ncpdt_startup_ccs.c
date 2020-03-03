@@ -23,9 +23,6 @@
 //*****************************************************************************
 
 #include <stdint.h>
-#include "TimerTX.h"
-#include "sampling.h"
-#include "pwmDriver.h"
 
 //*****************************************************************************
 //
@@ -59,7 +56,7 @@ extern uint32_t __STACK_TOP;
 //*****************************************************************************
 void ADC_ISR(void);
 void PWM_ISR_FUNC(void);
-//void timer1OverFlowISR();
+void t1OF_ISR();
 
 //*****************************************************************************
 //
@@ -109,7 +106,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Watchdog timer
     IntDefaultHandler,                      // Timer 0 subtimer A
     IntDefaultHandler,                      // Timer 0 subtimer B
-    timer1OverFlowISR,                      // Timer 1 subtimer A
+    t1OF_ISR,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
     IntDefaultHandler,                      // Timer 2 subtimer A
     IntDefaultHandler,                      // Timer 2 subtimer B

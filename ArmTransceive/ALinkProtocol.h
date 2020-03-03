@@ -9,11 +9,16 @@
 #define ALINKPROTOCOL_H_
 
 #include <inttypes.h>
+#include <stdint.h>
 
 #define CarrierFeq 81500 // 81.5Khz TX
 #define BitRate 100 // 100 bit per second
-#define SampleRate 20000
-#define SamplesPerBit SampleRate / BitRate;
+
+
+#define SamplesPerBit 10;
+
+extern const uint16_t SampleRate ;
+
 #define SchedulerTimeIn 60 //send scheduler information after 60 seconds no RX/TX
 
 #define STARTFrameLength 8 // number of bits in start frame

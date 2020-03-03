@@ -9,7 +9,7 @@
 #define TIMERTX_H_
 
 
-void timer1OverFlowISR();
+void t1OF_ISR();
 void timer1Init();
 
 #endif /* TIMERTX_H_ */

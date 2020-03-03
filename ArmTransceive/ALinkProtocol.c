@@ -16,6 +16,11 @@
 #include "ALinkProtocol.h"
 #include "sampling.h"
 
+
+
+const uint16_t SampleRate = BitRate*SamplesPerBit ;  // Hz
+
+
 /*
  * ALL VARIABLES ARE STATIC TO PREVENT BUILD ERRORS FROM DUPLICATE NAMED VARIABLES
  */
