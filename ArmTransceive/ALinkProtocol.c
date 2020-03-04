@@ -27,7 +27,7 @@ const uint16_t PacketLength = STARTFrameLength+IDFrameLength+DATAFrameLength+CRC
 
 //SCHEDULER DATA
 //HOLDS DATA RECIEVED AND TO SEND
-static uint8_t DATA_BUFFER[16];
+uint8_t DATA_BUFFER[16];
 
 static bool READING, SENDING = false; //reading and sending flags for debug
 static bool AUV_RECALL = false; //flags for Debug/Jetson

@@ -89,33 +89,38 @@ int main(void)
 
 
     //Test for TX
-    while(1)
-    {
-        send_message(0xAAAAAAAA);
-        for(t1OFCount =0 ; t1OFCount < 20;)
-        {
-        }
-
-        pwmOutputEnable();
-
-        for(t1OFCount =0 ; t1OFCount < 1;)
-        {
-        }
-        pwmOutputDisable();
-
-        for(t1OFCount =0 ; t1OFCount < 20;)
-        {
-        }
-
-    }
-
-
+//    while(1)
+//    {
+//        send_message(0xAAAAAAAA);
+//        for(t1OFCount =0 ; t1OFCount < 20;)
+//        {
+//        }
+//
+//        pwmOutputEnable();
+//
+//        for(t1OFCount =0 ; t1OFCount < 1;)
+//        {
+//        }
+//        pwmOutputDisable();
+//
+//        for(t1OFCount =0 ; t1OFCount < 20;)
+//        {
+//        }
+//
+//    }
 
 
     //Test for CRC
-    uint32_t test_rx = 0x881E500;
-    uint32_t crc_test = crc_8(test_rx);
-    bool test_check = check_crc(crc_test);
+    uint32_t test_rx = (uint32_t) 0xAAAAAA00;
+    uint32_t test_rx2 = (uint32_t) 0xFA3FA00;
+    uint32_t crc_test = gen_crc8(test_rx);
+    uint32_t crc_test2 = gen_crc8(test_rx2);
+    bool test_check = verify_crc(crc_test);
+    bool test_check2 = verify_crc(crc_test2);
+    test_check = !test_check;
+    test_check2 = !test_check2;
+
+
 
     //Main Loop
     while(1)
