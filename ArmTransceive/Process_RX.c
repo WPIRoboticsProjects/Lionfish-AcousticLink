@@ -29,6 +29,8 @@ static uint32_t rx_buffer[2048]; //reasonably sized buffer to log rx messages (a
 static int rx_index = 0;
 #define RX_INDEX_WRAP(i) ((i) & (2048-1)) // index wrapping macro
 
+#define HighBitTH 6
+
 //PROTOTYPES
 void process_adc();
 void read_for(uint32_t index, uint32_t length);
@@ -77,23 +79,31 @@ void process_adc(){
 void read_for(uint32_t index, uint32_t length){
     uint16_t tens = length / 10;
     uint32_t i; //Loop through
+    uint8_t onSample =0;
+
     for(i = index; i < (index+length); i++)
     {
-        //OFFSET PROCESSING
-        if(gADCBuffer[i] < ADC_THRESHOLD){// reading a 0 sample
-            off_count++;
-        }else if(gADCBuffer[i] > ADC_THRESHOLD){// reading a 1 sample
-            on_count++;
+        uint8_t j ;
+        // check one bit length of samples.
+        onSample =0;
+        for( j = i  ; (i-j) <SamplesPerBit ; ++j )
+        {
+            //OFFSET PROCESSING
+            if(gADCBuffer[i] > ADC_THRESHOLD)
+            {// reading a 1 sample
+                onSample++;
+            }
         }
 
-        //SAMPLE COUNT ROUTINE
-        if(off_count == (int)SamplesPerBit){ //found enough samples to process a 0 read
+        //check if that's a bit
+        if(onSample > HighBitTH )
+        { //found enough samples to be count as a one.
             raw_rx = raw_rx << 1; //shift bits left 1
-            off_count = 0;
-        }else if(on_count == (int)SamplesPerBit){ //found enough samples to process a 1 read
+            raw_rx |=1;
+        }
+        else
+        { //count as a zero
             raw_rx = raw_rx << 1; //shift bits left 1
-            raw_rx += 1; //add 1 to LSB
-            on_count = 0;
         }
     }
 }
