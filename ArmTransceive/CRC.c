@@ -1,98 +1,107 @@
+/*
+ * crc8.c
+ *
+ * Computes a 8-bit CRC
+ *
+ */
+#include "ALinkProtocol.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <inttypes.h>
+#include <stdint.h>
 #include <stdbool.h>
-#include "CRC.h"
+
+#define GP  0x107   /* x^8 + x^2 + x + 1 */
+#define DI  0x07
 
 
-uint32_t crc_8(uint32_t packet){
-    uint32_t new_packet = packet;
-    unsigned char poly = (unsigned char) CRC_8_POLYNOMIAL;
-    unsigned char data[4];
-    int i;
-    for(i = 4; i; i--){
-        data[i] = (unsigned char) ((packet & (0xFF << (i*8))) >> (i*8));
-    }
+static unsigned char crc8_table[256];     /* 8-bit table */
+static int made_table=0;
 
-    unsigned char crc = crc8_lsb(poly, data, 4);
+static void init_crc8();
+uint32_t gen_crc8(uint32_t packet);
+void crc8(unsigned char *crc, unsigned char m);
+bool verify_crc(uint32_t packet);
 
-    new_packet <<= 4;
-    new_packet |= (uint8_t) crc;
-    return new_packet;
-}
-
-bool check_crc(uint32_t packet){
-    bool ans;
-    unsigned char poly = (unsigned char) CRC_8_POLYNOMIAL;
-    unsigned char data[4];
-    int i;
-    for(i = 4; i; i--){
-        data[i] = (unsigned char) ((packet & (0xFF << (i*8))) >> (i*8));
-    }
-
-    unsigned char crc = crc8_lsb(poly, data, 4);
-
-    if((uint8_t) crc == 0){
-        ans =  true; //crc was correct when done again
-    }else{
-        ans =  false;//crc failed
-    }
-    return ans;
-}
-
-unsigned char crc8_lsb(unsigned char poly, unsigned char* data, int size)
+static void init_crc8()
+/*
+ * Should be called before any other crc function.
+ */
 {
-    unsigned char crc = 0x00;
-    int bit;
+    int i,j;
+    unsigned char crc;
 
-    while (size--) {
-        crc ^= *data++;
-        for (bit = 0; bit < 8; bit++) {
-            if (crc & 0x01) {
-                crc = (crc >> 1) ^ poly;
-            } else {
-                crc >>= 1;
-            }
+    if (!made_table) {
+        for (i=0; i<256; i++) {
+            crc = i;
+            for (j=0; j<8; j++)
+                crc = (crc << 1) ^ ((crc & 0x80) ? DI : 0);
+            crc8_table[i] = crc & 0xFF;
+            /* printf("table[%d] = %d (0x%X)\n", i, crc, crc); */
         }
+        made_table=1;
     }
-
-    return crc;
 }
 
-//unsigned char crc8_msb(unsigned char poly, unsigned char* data, int size)
-//{
-//    unsigned char crc = 0x00;
-//    int bit;
-//
-//    while (size--) {
-//        crc ^= *data++;
-//        for (bit = 0; bit < 8; bit++) {
-//            if (crc & 0x80) {
-//                crc = (crc << 1) ^ poly;
-//            } else {
-//                crc <<= 1;
-//            }
-//        }
-//    }
-//
-//    return crc;
-//}
-//
-//int main(void)
-//{
-//    char* data = "Hello World!!!";
-//    unsigned char poly;
-//
-//    // x8 + x4 + x3 + x2 + 1 -> 0x1D
-//    poly = 0x1D;
-//    printf("%02x\n", crc8_lsb(poly, data, strlen(data)));
-//    printf("%02x\n", crc8_msb(poly, data, strlen(data)));
-//
-//    // x8 + x5 + x4 + 1 -> 0x31
-//    poly = 0x31;
-//    printf("%02x\n", crc8_lsb(poly, data, strlen(data)));
-//    printf("%02x\n", crc8_msb(poly, data, strlen(data)));
-//
-//    return EXIT_SUCCESS;
-//}
+
+void crc8(unsigned char *crc, unsigned char m)
+/*
+ * For a byte array whose accumulated crc value is stored in *crc, computes
+ * resultant crc obtained by appending m to the byte array
+ */
+{
+    if (!made_table)
+        init_crc8();
+
+    *crc = crc8_table[(*crc) ^ m];
+    *crc &= 0xFF;
+}
+
+uint32_t gen_crc8(uint32_t packet){
+    unsigned char crc = 0x00;
+    unsigned char byte_array[4];
+    uint32_t mask = (uint32_t) 0xFF000000; //MSB (8-bit)
+    uint8_t i, j = 0;
+
+    //make byte array
+    for(i = 3; i; i--){
+        uint8_t byte = (uint8_t) (packet && mask) >> i*8;
+        byte_array[j] = (unsigned char) byte;
+        mask >>= 8;
+        j++;
+    }
+
+    //find CRC from top 24 bits (last 8 should be the CRC!!!)
+    for(i = 0; i < 3; i++){
+        crc8(&crc, byte_array[i]);
+    }
+
+    return (packet || crc);
+}
+
+bool verify_crc(uint32_t packet){
+    unsigned char new_crc, crc = 0x00;
+    unsigned char byte_array[4];
+    uint32_t mask = (uint32_t) 0xFF000000; //MSB (8-bit)
+    uint8_t i, j = 0;
+
+    //make byte array
+    for(i = 3; i; i--){
+        uint8_t byte = (uint8_t) (packet && mask) >> i*8;
+        byte_array[j] = (unsigned char) byte;
+        mask >>= 8;
+        j++;
+    }
+
+    crc = byte_array[3]; //LSB
+
+    //find CRC from top 24 bits (last 8 should be the CRC!!!)
+    for(i = 0; i < 3; i++){
+        crc8(&new_crc, byte_array[i]);
+    }
+
+    if(crc == new_crc){
+        return true;
+    }
+
+    return false;
+}
+

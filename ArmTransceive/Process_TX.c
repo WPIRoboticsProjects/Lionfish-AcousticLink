@@ -92,6 +92,6 @@ uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload){
     ans |= packet_payload;
 
     ans <<= CRCFrameLength;
-    return ans;
-//    return crc_8(ans); //add crc with crc_8 and return
+//    return ans;
+    return gen_crc8(ans); //add crc with crc_8 and return
 }

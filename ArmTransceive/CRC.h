@@ -3,12 +3,12 @@
 
 
 #include <stdint.h>
+#include <stdbool.h>
 
-#define CRC_8_POLYNOMIAL 0x1Du
-
-uint32_t crc_8(uint32_t packet);
-bool check_crc(uint32_t packet);
-unsigned char crc8_lsb(unsigned char poly, unsigned char* data, int size);
+static void init_crc8();
+uint32_t gen_crc8(uint32_t packet);
+void crc8(unsigned char *crc, unsigned char m);
+bool verify_crc(uint32_t packet);
 
 
 #endif // CRC_H_INCLUDED
