@@ -96,7 +96,9 @@ int main(void)
     //Test for TX
     while(1)
     {
-        send_message(construct_packet(3,0xAA));
+        send_message(construct_packet(3,0xAA)); //0b1111 0101 0011 1010 1010 0000 0000
+                                                                   //0xF53AA00
+                                                                   //Decimal: 257141248
         for(t1OFCount =0 ; t1OFCount < 40;)
         {
         }
@@ -113,7 +115,9 @@ int main(void)
         }
 
 
-        send_message(construct_packet(10,0b00111001));
+        send_message(construct_packet(10,0b00111001)); //0b1111 0101 1010 0011 1001 0000 0000
+                                                                         //0xF5A3900
+                                                                         //Decimal: 257571072
         for(t1OFCount =0 ; t1OFCount < 40;)
         {
         }
@@ -134,17 +138,17 @@ int main(void)
 
 
 
-    //Test for CRC
-    uint32_t test_rx = 0x881E500;
-    uint32_t crc_test = crc_8(test_rx);
-    bool test_check = check_crc(crc_test);
-
-    //Main Loop
-    while(1)
-    {
-        process_adc();
-
-    }
+//    //Test for CRC
+//    uint32_t test_rx = 0x881E500;
+//    uint32_t crc_test = crc_8(test_rx);
+//    bool test_check = check_crc(crc_test);
+//
+//    //Main Loop
+//    while(1)
+//    {
+//        process_adc();
+//
+//    }
 }
 
 //used to delay processes (uneeded?)

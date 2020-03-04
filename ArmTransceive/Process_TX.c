@@ -81,11 +81,11 @@ void send_message(uint32_t packet){
 //construct a full packet with the 8-bit ID and PAYLOAD
 uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload){
     //start frame
-    uint32_t ans = StartFrame;
+    uint32_t ans = (uint8_t) StartFrame;
 
     //4 bits of packet ID
     ans <<= IDFrameLength;
-    ans |= (packet_id & 0b1111);
+    ans |= (packet_id & (uint8_t)0b1111);
 
     //8 bits of payload
     ans <<= DATAFrameLength;
