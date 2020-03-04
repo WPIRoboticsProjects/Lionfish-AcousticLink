@@ -14,7 +14,7 @@
 #define CarrierFeq 81500 // 81.5Khz TX
 #define BitRate 100 // 100 bit per second
 #define SamplesPerBit 10 // 10 sample per bit.
-#define SamplePerBreak 5 // 5 sample break period between bits.
+#define SamplePerBreak 0 // 5 sample break period between bits.
 
 extern const uint16_t SampleRate ;
 

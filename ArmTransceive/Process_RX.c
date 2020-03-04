@@ -40,14 +40,15 @@ void process_adc(){
     gADCBufferIndex = 0; //start at 0
     uint32_t processing_index = 0;
 
-    uint32_t start_frame_length = (SamplesPerBit * STARTFrameLength);
-    uint32_t packet_length = (SamplesPerBit * PacketLength);
+    uint32_t start_frame_length = (SamplesPerBit * STARTFrameLength)+1;
+    uint32_t packet_length = (SamplesPerBit * PacketLength)+1;
 
-    //look for start bits until processing limit is at buffersize - packetlength
+    //look for start bits until processing index is at buffersize - packetlength
     while(processing_index < (ADC_BUFFER_SIZE - packet_length)){
 
-        //wait for at least 1 start frame to possibly be sampled
-        while((gADCBufferIndex - processing_index) < start_frame_length){}
+
+        //wait for at least 1 start frame to possibly be sampled by ADC
+        while(((uint32_t) gADCBufferIndex - (uint32_t) processing_index) < start_frame_length);
 
         read_for(processing_index, start_frame_length);
         uint8_t bit_xor = (raw_rx ^ (uint8_t) StartFrame);
@@ -67,28 +68,29 @@ void process_adc(){
             on_count = 0; //clear
             return;
         }else{ //did not read start
-            processing_index++;
+            processing_index+=start_frame_length; //progress to most currently processed sample
         }
     }
 
 }
 
 void read_for(uint32_t index, uint32_t length){
+    uint16_t tens = length / 10;
     uint32_t i; //Loop through
-    for(i = index; i < (index+length+1); i++)
+    for(i = index; i < (index+length); i++)
     {
         //OFFSET PROCESSING
-        if(gADCBuffer[i] < ADC_THRESHOLD){// counts as a 0
+        if(gADCBuffer[i] < ADC_THRESHOLD){// reading a 0 sample
             off_count++;
-        }else if(gADCBuffer[i] > ADC_THRESHOLD){//counts as a 1
+        }else if(gADCBuffer[i] > ADC_THRESHOLD){// reading a 1 sample
             on_count++;
         }
 
         //SAMPLE COUNT ROUTINE
-        if(off_count >= (int)SamplesPerBit){ //found enough samples to process a 0 read
+        if(off_count == (int)SamplesPerBit){ //found enough samples to process a 0 read
             raw_rx = raw_rx << 1; //shift bits left 1
             off_count = 0;
-        }else if(on_count >= (int)SamplesPerBit){ //found enough samples to process a 1 read
+        }else if(on_count == (int)SamplesPerBit){ //found enough samples to process a 1 read
             raw_rx = raw_rx << 1; //shift bits left 1
             raw_rx += 1; //add 1 to LSB
             on_count = 0;
