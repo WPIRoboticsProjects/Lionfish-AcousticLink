@@ -59,9 +59,9 @@ COMMAND command;
 
 #define StartFrame 0xFA // exact bit sequence for start frame 1111 1010
 
-#define CRC_MASK     ((1 << (CRCFrameLength+1)) - 1)
-#define PAYLOAD_MASK (((1 << (DATAFrameLength+1)) - 1) << CRCFrameLength)
-#define ID_MASK      ((1 << (IDFrameLength+1)) - 1) << (DATAFrameLength+CRCFrameLength)
+#define CRC_MASK     (uint32_t)                     0b11111111
+#define PAYLOAD_MASK (uint32_t)             0b1111111100000000
+#define ID_MASK      (uint32_t)         0b11110000000000000000
 
 void init_protocol();
 static void init_keys(ID * id_key, COMMAND * command_key);

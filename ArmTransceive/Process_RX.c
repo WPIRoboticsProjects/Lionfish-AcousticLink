@@ -27,9 +27,9 @@ bool read_buffer = false; //debug
 static uint32_t raw_rx;
 static uint32_t rx_buffer[2048]; //reasonably sized buffer to log rx messages (and to debug)
 static int rx_index = 0;
-#define RX_INDEX_WRAP(i) ((i) & (2048-1)) // index wrapping macro
+#define RX_INDEX_WRAP(i) ((i+1) & (2048-1)) // index wrapping macro
 
-#define HighBitTH 6
+#define HighBitTH SamplesPerBit
 
 //PROTOTYPES
 void process_adc();
@@ -46,21 +46,26 @@ void process_adc(){
     uint32_t packet_length = (SamplesPerBit * PacketLength)+1;
 
     //look for start bits until processing index is at buffersize - packetlength
-    while(processing_index < (ADC_BUFFER_SIZE - packet_length)){
+    while(processing_index <= ((uint32_t) ADC_BUFFER_SIZE - packet_length)){
 
 
         //wait for at least 1 start frame to possibly be sampled by ADC
-        while(((uint32_t) gADCBufferIndex - (uint32_t) processing_index) < start_frame_length);
+        while(((uint32_t) gADCBufferIndex - (uint32_t) processing_index) <= start_frame_length);
 
+        raw_rx = 0;
         read_for(processing_index, start_frame_length);
         uint8_t bit_xor = (raw_rx ^ (uint8_t) StartFrame);
 
         if(!bit_xor){ //read start
             processing_index += start_frame_length + 1; //move to current sample
+
             //wait for adc to sample for length of rest of packet
-            while((gADCBufferIndex - processing_index) < (packet_length-start_frame_length)){}
-            read_for(processing_index, (packet_length-start_frame_length));
-            bool check = verify_crc(raw_rx);
+            while((gADCBufferIndex - processing_index) < (packet_length-start_frame_length));
+
+            raw_rx &= (uint8_t) 0b11111111; //take only start frame
+            read_for(processing_index, ((uint32_t) packet_length-(uint32_t) start_frame_length));
+
+            bool check = verify_crc(raw_rx);//TODO: CRC
             if(!check){
                 process_packet_raw(raw_rx);
             }
@@ -70,31 +75,26 @@ void process_adc(){
             on_count = 0; //clear
             return;
         }else{ //did not read start
-            processing_index+=start_frame_length; //progress to most currently processed sample
+            processing_index+=1; //progress to most currently processed sample
         }
     }
 
 }
 
 void read_for(uint32_t index, uint32_t length){
-    uint16_t tens = length / 10;
     uint32_t i; //Loop through
     uint8_t onSample =0;
-
-    for(i = index; i < (index+length); i++)
+    for(i = 0; i < length ; )
     {
-        uint8_t j ;
-        // check one bit length of samples.
+        uint8_t j=0 ;
         onSample =0;
-        for( j = i  ; (i-j) <SamplesPerBit ; ++j )
-        {
-            //OFFSET PROCESSING
-            if(gADCBuffer[i] > ADC_THRESHOLD)
+        for( j = i  ; (i-j) <SamplesPerBit ; ++i )
+        {   // check one bit length of samples.
+            if(gADCBuffer[i + index ] > ADC_THRESHOLD)
             {// reading a 1 sample
                 onSample++;
             }
         }
-
         //check if that's a bit
         if(onSample > HighBitTH )
         { //found enough samples to be count as a one.
@@ -171,8 +171,8 @@ void read_for(uint32_t index, uint32_t length){
 
 void process_packet_raw(uint32_t packet){
     //EXTRACT ID AND PAYLOAD OUT
-    uint32_t packet_id = (ID_MASK && packet) >> (DATAFrameLength+CRCFrameLength); //shift id to most significant 4 bit
-    uint32_t payload = (PAYLOAD_MASK && packet) >> CRCFrameLength; //shift payload to most significant 8 bit
+    uint32_t packet_id = (uint32_t) ((ID_MASK & packet) >> (DATAFrameLength+CRCFrameLength)); //shift id to most significant 4 bit
+    uint32_t payload = (uint32_t) ((PAYLOAD_MASK & packet) >> CRCFrameLength); //shift payload to most significant 8 bit
 
 
     if(packet_id == id.REQUEST){ //resend the data buffer of the specific ID in payload
