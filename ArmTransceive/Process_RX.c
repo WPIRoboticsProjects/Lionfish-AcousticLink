@@ -19,17 +19,17 @@
 #include "Process_TX.h"
 
 //variables for ADC processing / Threshold
-static uint32_t ADC_THRESHOLD = 50; //threshold for 0/1 TODO: measure and change
+static uint32_t ADC_THRESHOLD = 2048; //threshold for 0/1 TODO: measure and change
 static uint32_t curr_max, tx_count, buffer_avg, buffer_sum, on_count, off_count = 0;
 bool read_buffer = false; //debug
 
 //Debug + Raw RX Buffer (int)
-static uint32_t raw_rx;
+uint32_t raw_rx;
 static uint32_t rx_buffer[2048]; //reasonably sized buffer to log rx messages (and to debug)
 static int rx_index = 0;
 #define RX_INDEX_WRAP(i) ((i+1) & (2048-1)) // index wrapping macro
 
-#define HighBitTH SamplesPerBit
+#define HighBitTH 6
 
 //PROTOTYPES
 void process_adc();
@@ -42,38 +42,33 @@ void process_adc(){
     gADCBufferIndex = 0; //start at 0
     uint32_t processing_index = 0;
 
-    uint32_t start_frame_length = (SamplesPerBit * STARTFrameLength)+1;
-    uint32_t packet_length = (SamplesPerBit * PacketLength)+1;
+    uint32_t start_frame_length = (SamplesPerBit * STARTFrameLength);
+    uint32_t packet_length = (SamplesPerBit * PacketLength);
 
     //look for start bits until processing index is at buffersize - packetlength
-    while(processing_index <= ((uint32_t) ADC_BUFFER_SIZE - packet_length)){
+    while(processing_index <= ((uint32_t) ADC_BUFFER_SIZE - packet_length + start_frame_length)){
 
 
         //wait for at least 1 start frame to possibly be sampled by ADC
-        while(((uint32_t) gADCBufferIndex - (uint32_t) processing_index) <= start_frame_length);
+        while(((uint32_t) gADCBufferIndex - processing_index) <= start_frame_length);
 
-        raw_rx = 0;
         read_for(processing_index, start_frame_length);
-        uint8_t bit_xor = (raw_rx ^ (uint8_t) StartFrame);
+        raw_rx &= (uint32_t) 0xFF; //take 8 LSB
+        uint8_t bit_xor = ((uint8_t) raw_rx ^ (uint8_t) StartFrame);
 
         if(!bit_xor){ //read start
-            processing_index += start_frame_length + 1; //move to current sample
+            processing_index += start_frame_length; //move to current sample
 
             //wait for adc to sample for length of rest of packet
-            while((gADCBufferIndex - processing_index) < (packet_length-start_frame_length));
+            while(((uint32_t) gADCBufferIndex - processing_index) < (packet_length-start_frame_length));
 
-            raw_rx &= (uint8_t) 0b11111111; //take only start frame
-            read_for(processing_index, ((uint32_t) packet_length-(uint32_t) start_frame_length));
+            read_for(processing_index, (packet_length-start_frame_length));
 
-            bool check = verify_crc(raw_rx);//TODO: CRC
-            if(!check){
+            if(!verify_crc(raw_rx)){
                 process_packet_raw(raw_rx);
+                return;
             }
-            raw_rx = 0;
-            tx_count = 0;
-            off_count = 0;
-            on_count = 0; //clear
-            return;
+
         }else{ //did not read start
             processing_index+=1; //progress to most currently processed sample
         }
@@ -88,9 +83,9 @@ void read_for(uint32_t index, uint32_t length){
     {
         uint8_t j=0 ;
         onSample =0;
-        for( j = i  ; (i-j) <SamplesPerBit ; ++i )
+        for( j = i  ; (i-j) < SamplesPerBit ; ++i )
         {   // check one bit length of samples.
-            if(gADCBuffer[i + index ] > ADC_THRESHOLD)
+            if(gADCBuffer[i + index] > ADC_THRESHOLD)
             {// reading a 1 sample
                 onSample++;
             }
@@ -98,8 +93,9 @@ void read_for(uint32_t index, uint32_t length){
         //check if that's a bit
         if(onSample > HighBitTH )
         { //found enough samples to be count as a one.
-            raw_rx = raw_rx << 1; //shift bits left 1
             raw_rx |=1;
+            raw_rx = raw_rx << 1; //shift bits left 1
+
         }
         else
         { //count as a zero
