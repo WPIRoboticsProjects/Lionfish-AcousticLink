@@ -76,6 +76,48 @@ void process_adc(){
 
 }
 
+
+//static uint32_t on_count, off_count = 0;
+void read_for(uint32_t index, uint32_t length){
+    uint32_t i = 0; //Loop through
+    uint32_t edge_state = 0; //low to start
+    uint32_t onSample = 0; //on_count for sampling
+
+    for(i = 0; i < length ; )
+    {
+
+        uint32_t j = 0;
+
+        while(!edge_state){ //edge not triggered
+            if(gADCBuffer[i + index] > ADC_THRESHOLD) //FOUND EDGE
+            {
+                edge_state = 1; //set edge trigger
+            }else{
+                i++; //advance index to next sample
+            }
+        }
+        //edge triggered, index is at trigger
+
+        for( j = i ; (i-j) < SamplesPerBit ; ++i )
+        {   // check one bit length of samples.
+            if(gADCBuffer[i + index] > ADC_THRESHOLD)
+            {// reading a 1 sample
+                onSample++;
+            }
+        }
+        //check if that's a bit
+        if(onSample > HighBitTH )
+        { //found enough samples to be count as a one.
+            raw_rx |=1;
+            raw_rx = raw_rx << 1; //shift bits left 1
+        }
+        else
+        { //count as a zero
+            raw_rx = raw_rx << 1; //shift bits left 1
+        }
+    }
+}
+
 void read_for(uint32_t index, uint32_t length){
     uint32_t i; //Loop through
     uint8_t onSample =0;
