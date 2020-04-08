@@ -63,18 +63,19 @@ uint32_t gen_crc8(uint32_t packet){
 
     //make byte array
     for(i = 3; i; i--){
-        uint8_t byte = (uint8_t) (packet && mask) >> i*8;
+        uint8_t byte = (uint8_t) ((packet & mask) >> i*8);
         byte_array[j] = (unsigned char) byte;
         mask >>= 8;
         j++;
     }
 
     //find CRC from top 24 bits (last 8 should be the CRC!!!)
-    for(i = 0; i < 3; i++){
-        crc8(&crc, byte_array[i]);
+    for(i = 0; i < 4; i++){
+        unsigned char byte = byte_array[i];
+        crc8(&crc, byte);
     }
 
-    return (packet || crc);
+    return (packet | crc);
 }
 
 bool verify_crc(uint32_t packet){
@@ -85,13 +86,14 @@ bool verify_crc(uint32_t packet){
 
     //make byte array
     for(i = 3; i; i--){
-        uint8_t byte = (uint8_t) (packet && mask) >> i*8;
+        uint8_t byte = (uint8_t) ((packet & mask) >> ((i-1)*8));
         byte_array[j] = (unsigned char) byte;
         mask >>= 8;
         j++;
     }
 
     crc = byte_array[3]; //LSB
+    byte_array[3] = 0x00; //reset CRC
 
     //find CRC from top 24 bits (last 8 should be the CRC!!!)
     for(i = 0; i < 3; i++){
@@ -100,8 +102,9 @@ bool verify_crc(uint32_t packet){
 
     if(crc == new_crc){
         return true;
+    }else{
+        return false ;
     }
-
-    return false;
+    return 0;
 }
 
