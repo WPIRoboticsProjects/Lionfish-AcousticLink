@@ -75,12 +75,12 @@ void process_adc(){
         //if the bit_xor is 0, which is a pass, then !0 --> 1 or true
         if(!bit_xor)
         {
-            processing_index += (start_frame_length-1);
+            processing_index += start_frame_length;
             //wait for packet_length * samplesperbit
             while(((uint32_t) gADCBufferIndex - processing_index) <= (packet_length - start_frame_length));
 
             //read rest of packet
-            read_for(processing_index, start_frame_length);
+            read_for(processing_index, (packet_length - start_frame_length));
 
             //check crc
             bool crc_check = verify_crc(raw_rx);
@@ -103,7 +103,7 @@ void read_for(uint32_t index, uint32_t length){
     {
         uint8_t j=0 ;
         onSample =0;
-        for( j = i  ; (i-j) < SamplesPerBit ; ++i )
+        for( j = i  ; (((i-j) < SamplesPerBit) && (i < length)) ; i++ )
         {   // check one bit length of samples.
             if(gADCBuffer[i + index] > ADC_THRESHOLD)
             {// reading a 1 sample
@@ -111,14 +111,11 @@ void read_for(uint32_t index, uint32_t length){
             }
         }
         //check if that's a bit
-        if(onSample > HighBitTH )
+        if(onSample >= HighBitTH)
         { //found enough samples to be count as a one.
             raw_rx |=1;
             raw_rx = raw_rx << 1; //shift bits left 1
-
-        }
-        else
-        { //count as a zero
+        }else{
             raw_rx = raw_rx << 1; //shift bits left 1
         }
     }
@@ -126,8 +123,8 @@ void read_for(uint32_t index, uint32_t length){
 
 void process_packet_raw(uint32_t packet){
     //EXTRACT ID AND PAYLOAD OUT
-    uint32_t packet_id = (uint32_t) ((ID_MASK & packet) >> (DATAFrameLength+CRCFrameLength)); //shift id to most significant 4 bit
-    uint32_t payload = (uint32_t) ((PAYLOAD_MASK & packet) >> CRCFrameLength); //shift payload to most significant 8 bit
+    uint32_t packet_id = (uint32_t) ((uint32_t) ID_MASK & packet) >> 16;
+    uint32_t payload = (uint32_t) ((uint32_t) PAYLOAD_MASK & packet) >> 8;
 
 
     if(packet_id == id.REQUEST){ //resend the data buffer of the specific ID in payload
@@ -152,8 +149,8 @@ void process_packet_raw(uint32_t packet){
 
     int i;
     for(i = 3; i < 15; i++){
-        if(packet_id == id.SCHEDULER_INFO[i]){
-            set_data_buffer(payload, id.SCHEDULER_INFO[i]);
+        if(packet_id == i){
+            set_data_buffer(payload, id.SCHEDULER_INFO[i-3]);
             break;
         }
     }
