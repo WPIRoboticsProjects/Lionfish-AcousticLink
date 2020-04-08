@@ -41,73 +41,81 @@ void process_adc(){
     raw_rx = 0;
     gADCBufferIndex = 0; //start at 0
     uint32_t processing_index = 0;
+    uint32_t edge_state = 0;
 
-    uint32_t start_frame_length = (SamplesPerBit * STARTFrameLength);
-    uint32_t packet_length = (SamplesPerBit * PacketLength);
+
+    uint32_t start_frame_length = ((uint32_t) SamplesPerBit * (uint32_t) STARTFrameLength);
+    uint32_t packet_length = ((uint32_t) SamplesPerBit * (uint32_t) PacketLength);
 
     //look for start bits until processing index is at buffersize - packetlength
-    while(processing_index <= ((uint32_t) ADC_BUFFER_SIZE - packet_length + start_frame_length)){
+    while(processing_index < ((uint32_t) ADC_BUFFER_SIZE - (packet_length + start_frame_length))){
 
+        //edge trigger
+        while(!edge_state){
+            if(gADCBuffer[processing_index] > ADC_THRESHOLD) //Found a rising edge sample
+            {
+                edge_state = 1;
+            }else if((processing_index + 1) <= (uint32_t) gADCBufferIndex)
+            {//next element has been read in from adc already
+                processing_index += 1; //advance index if no edge found
+            }
+        }
 
         //wait for at least 1 start frame to possibly be sampled by ADC
         while(((uint32_t) gADCBufferIndex - processing_index) <= start_frame_length);
 
+        //read start in
         read_for(processing_index, start_frame_length);
-        raw_rx &= (uint32_t) 0xFF; //take 8 LSB
-        uint8_t bit_xor = ((uint8_t) raw_rx ^ (uint8_t) StartFrame);
 
-        if(!bit_xor){ //read start
-            processing_index += start_frame_length; //move to current sample
+        //xor check
+        raw_rx &= (uint32_t) 0xFF;
+        uint8_t raw_xor = (raw_rx & (uint8_t) 0xFF);
+        uint8_t bit_xor = (raw_xor ^ (uint8_t) StartFrame);
 
-            //wait for adc to sample for length of rest of packet
-            while(((uint32_t) gADCBufferIndex - processing_index) < (packet_length-start_frame_length));
+        //if the bit_xor is 0, which is a pass, then !0 --> 1 or true
+        if(!bit_xor)
+        {
+            processing_index += (start_frame_length-1);
+            //wait for packet_length * samplesperbit
+            while(((uint32_t) gADCBufferIndex - processing_index) <= (packet_length - start_frame_length));
 
-            read_for(processing_index, (packet_length-start_frame_length));
+            //read rest of packet
+            read_for(processing_index, start_frame_length);
 
-            if(!verify_crc(raw_rx)){
+            //check crc
+            bool crc_check = verify_crc(raw_rx);
+            if(!crc_check){
                 process_packet_raw(raw_rx);
                 return;
             }
-
-        }else{ //did not read start
-            processing_index+=1; //progress to most currently processed sample
+        }else
+        {
+            processing_index += 1;
         }
     }
-
 }
 
 
-//static uint32_t on_count, off_count = 0;
 void read_for(uint32_t index, uint32_t length){
-    uint32_t i, j; //Loop through
-    uint32_t edge_state = 0; //low to start
-    uint32_t onSample = 0; //on_count for sampling
-
+    uint32_t i; //Loop through
+    uint8_t onSample =0;
     for(i = 0; i < length ; )
     {
-        while(!edge_state){ //edge not triggered
-            if(gADCBuffer[i + index] > ADC_THRESHOLD) //FOUND EDGE
-            {
-                edge_state = 1; //set edge trigger
-            }else{
-                i++; //advance index to next sample, has not found a edge trigger
-            }
-        }
-        //edge triggered, index is at trigger
-
-        for( j = i ; ((i-j) < SamplesPerBit && i < length) ; ++i )
+        uint8_t j=0 ;
+        onSample =0;
+        for( j = i  ; (i-j) < SamplesPerBit ; ++i )
         {   // check one bit length of samples.
             if(gADCBuffer[i + index] > ADC_THRESHOLD)
             {// reading a 1 sample
                 onSample++;
             }
         }
-
         //check if that's a bit
-        if(onSample >= (uint32_t) HighBitTH)
+        if(onSample > HighBitTH )
         { //found enough samples to be count as a one.
             raw_rx |=1;
             raw_rx = raw_rx << 1; //shift bits left 1
+
         }
         else
         { //count as a zero
@@ -115,95 +123,6 @@ void read_for(uint32_t index, uint32_t length){
         }
     }
 }
-
-//void read_for(uint32_t index, uint32_t length){
-//    uint32_t i; //Loop through
-//    uint8_t onSample =0;
-//    for(i = 0; i < length ; )
-//    {
-//        uint8_t j=0 ;
-//        onSample =0;
-//        for( j = i  ; (i-j) < SamplesPerBit ; ++i )
-//        {   // check one bit length of samples.
-//            if(gADCBuffer[i + index] > ADC_THRESHOLD)
-//            {// reading a 1 sample
-//                onSample++;
-//            }
-//        }
-//        //check if that's a bit
-//        if(onSample > HighBitTH )
-//        { //found enough samples to be count as a one.
-//            raw_rx |=1;
-//            raw_rx = raw_rx << 1; //shift bits left 1
-//
-//        }
-//        else
-//        { //count as a zero
-//            raw_rx = raw_rx << 1; //shift bits left 1
-//        }
-//    }
-//}
-
-
-
-//void process_adc(){
-//    read_buffer = false;
-//    int i;
-//    //ADC SAMPLING ROUTINE
-//    for(i = 0; i < ADC_BUFFER_SIZE; i++)
-//    {
-//        buffer_sum += gADCBuffer[i]; //sum up all samples
-//
-//        if((int) gADCBuffer[i] > curr_max){ //compare curr_max to current sample and adjust
-//            curr_max = (int) gADCBuffer[i];
-//        }
-//
-//        //OFFSET PROCESSING
-//        if(gADCBuffer[i] < ADC_THRESHOLD){// counts as a 0
-//            off_count++;
-//        }else if(gADCBuffer[i] > ADC_THRESHOLD){//counts as a 1
-//            on_count++;
-//        }
-//
-//        //SAMPLE COUNT ROUTINE
-//        if(off_count >= (int)PacketLength){ //found enough samples to process a 0 read
-//            raw_rx = raw_rx << 1; //shift bits left 1
-//            off_count = 0;
-//            tx_count++;
-//        }else if(on_count >= (int)PacketLength){ //found enough samples to process a 1 read
-//            raw_rx = raw_rx << 1; //shift bits left 1
-//            raw_rx += 1; //add 1 to LSB
-//            on_count = 0;
-//            tx_count++;
-//        }
-//
-//        uint8_t bit_xor = (raw_rx ^ (uint8_t) StartFrame);
-//
-//        //START BIT CHECKING (only if not reading)
-//        if((bit_xor == 0)){//current rx has just read the start bits
-//            raw_rx &= CRC_MASK; //everything but the start bits are now 0
-//            tx_count = 8; //reset count, adjusted for 8 start bits
-//        }
-//
-//        //LOGGING + PACKET PROCESS ONCE PACKET LENGTH READ
-//        if(tx_count >= PacketLength){
-//            if(check_crc(raw_rx)){ //check the packet for errors
-//                process_packet_raw(raw_rx); //look at packet frame as whole
-//            }
-//            raw_rx = 0;
-//            tx_count = 0;
-//            off_count = 0;
-//            on_count = 0; //clear
-//        }
-//    }
-//
-//    //AVG RECALC
-//    buffer_avg = (int) buffer_sum / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
-//
-//    //ADJUST THRESHOLD
-//    adjust_threshold(buffer_avg, curr_max);
-//    read_buffer = true;
-//}
 
 void process_packet_raw(uint32_t packet){
     //EXTRACT ID AND PAYLOAD OUT
