@@ -18,16 +18,8 @@
 #include "CRC.h"
 #include "Process_TX.h"
 
-//variables for ADC processing / Threshold
 static uint32_t ADC_THRESHOLD = 2048; //threshold for 0/1 TODO: measure and change
-static uint32_t curr_max, tx_count, buffer_avg, buffer_sum, on_count, off_count = 0;
-bool read_buffer = false; //debug
-
-//Debug + Raw RX Buffer (int)
-uint32_t raw_rx;
-static uint32_t rx_buffer[2048]; //reasonably sized buffer to log rx messages (and to debug)
-static int rx_index = 0;
-#define RX_INDEX_WRAP(i) ((i+1) & (2048-1)) // index wrapping macro
+uint32_t raw_rx = 0;
 
 #define HighBitTH 6
 
@@ -154,13 +146,4 @@ void process_packet_raw(uint32_t packet){
             break;
         }
     }
-
-    //Reset and Log Raw_RX
-    rx_buffer[rx_index] = packet; //add to log
-    rx_index = RX_INDEX_WRAP(rx_index);
-}
-
-//takes the buffer avg and max and adjusts the current ADC_THRESHOLD
-void adjust_threshold(int avg, int max){ //TODO: this
-    int prev_offset =  ADC_THRESHOLD;
 }

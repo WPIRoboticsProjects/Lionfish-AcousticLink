@@ -8,6 +8,7 @@
  * Port PF0:PF3 : PWM module 0 generator 0 and 1 // note:PF0 is not available on booster back breakout.
  * Port PK4:PK5 : PWM module 0 generator 3
  * Port E:
+ * Port N: PN2: Timer1 fake TX pin
  */
 
 //--------------------------        TIMER ASSIGNMENT     --------------------------//
@@ -81,18 +82,24 @@ int main(void)
     init_protocol();
     SamplingInit();
     debugPinsInit();
+    timer1Init();
+
+
     pwm1Init();
     pwm3Init();
     timer1Init();
 
+
     IntMasterEnable();
 
 
-    //Test for TX
+//    //Test for TX
 //    while(1)
 //    {
-//        send_message(0xAAAAAAAA);
-//        for(t1OFCount =0 ; t1OFCount < 20;)
+//        send_message(construct_packet(3,0xAA)); //0b1111 0101 0011 1010 1010 0000 0000
+//                                                                   //0xF53AA00
+//                                                                   //Decimal: 257141248
+//        for(t1OFCount =0 ; t1OFCount < 40;)
 //        {
 //        }
 //
@@ -103,63 +110,36 @@ int main(void)
 //        }
 //        pwmOutputDisable();
 //
-//        for(t1OFCount =0 ; t1OFCount < 20;)
+//        for(t1OFCount =0 ; t1OFCount < 40;)
+//        {
+//        }
+//
+//
+//        send_message(construct_packet(10,0b00111001)); //0b1111 0101 1010 0011 1001 0000 0000
+//                                                                         //0xF5A3900
+//                                                                         //Decimal: 257571072
+//        for(t1OFCount =0 ; t1OFCount < 40;)
+//        {
+//        }
+//
+//        pwmOutputEnable();
+//
+//        for(t1OFCount =0 ; t1OFCount < 1;)
+//        {
+//        }
+//        pwmOutputDisable();
+//
+//        for(t1OFCount =0 ; t1OFCount < 40;)
 //        {
 //        }
 //
 //    }
 
 
-    //Test for CRC
-    uint32_t test_rx = (uint32_t) 0xAAAAAA00;
-    uint32_t test_rx2 = (uint32_t) 0xFA3FA00;
-    uint32_t crc_test = gen_crc8(test_rx);
-    uint32_t crc_test2 = gen_crc8(test_rx2);
-    bool test_check = verify_crc(crc_test);
-    bool test_check2 = verify_crc(crc_test2);
-    test_check = !test_check;
-    test_check2 = !test_check2;
-
-
-
-    //Main Loop
-    while(1)
-    {
-        process_adc();
-
-    }
-}
-
-//used to delay processes (uneeded?)
-void delayMS(int ms) {
-    SysCtlDelay( (SysCtlClockGet()/(3*1000))*ms ) ;
-}
-
-//converts char message from user into binary
-int * message_to_binary(char *input, int input_length) //TODO: FIX FOR uINT32_t
-{
-    int * output = malloc(input_length * 8 * sizeof(int));
-    int output_index = 0;
-
-    int i;
-    for (i = 0; i < input_length; i++) // loop through input characters
-    {
-        int dec = (int) input[i]; // decimal ASCII representation
-        int remainder, j = 1; // binary rep of the current character
-        int temp_byte[8] = {0,0,0,0,0,0,0,0};
-        int temp_index = 7;
-
-        while(dec != 0){ // convert to binary loop
-            remainder = dec % 2; //LSB
-            temp_byte[temp_index] = remainder; temp_index--; //temp store bit (reversed)
-            dec = dec / 2; j *= 10; //iterate
-        }
-
-        int k;
-        for(k = 0; k < 8; k++){
-            output[output_index] = temp_byte[j]; //store in correct order
-            output_index++;
-        }
-    }
-    return output;
+//    //Test for RX
+//    while(1)
+//    {
+//        process_adc();
+//
+//    }
 }
