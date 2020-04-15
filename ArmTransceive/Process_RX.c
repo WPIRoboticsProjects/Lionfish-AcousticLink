@@ -19,15 +19,17 @@
 #include "Process_TX.h"
 
 //variables for ADC processing / Threshold
-static uint32_t ADC_THRESHOLD = 50; //threshold for 0/1 TODO: measure and change
+static uint32_t ADC_THRESHOLD = 2048; //threshold for 0/1 TODO: measure and change
 static uint32_t curr_max, tx_count, buffer_avg, buffer_sum, on_count, off_count = 0;
 bool read_buffer = false; //debug
 
 //Debug + Raw RX Buffer (int)
-static uint32_t raw_rx;
+uint32_t raw_rx;
 static uint32_t rx_buffer[2048]; //reasonably sized buffer to log rx messages (and to debug)
 static int rx_index = 0;
-#define RX_INDEX_WRAP(i) ((i) & (2048-1)) // index wrapping macro
+#define RX_INDEX_WRAP(i) ((i+1) & (2048-1)) // index wrapping macro
+
+#define HighBitTH 6
 
 //PROTOTYPES
 void process_adc();
@@ -39,130 +41,90 @@ void process_adc(){
     raw_rx = 0;
     gADCBufferIndex = 0; //start at 0
     uint32_t processing_index = 0;
+    uint32_t edge_state = 0;
 
-    uint32_t start_frame_length = (SamplesPerBit * STARTFrameLength)+1;
-    uint32_t packet_length = (SamplesPerBit * PacketLength)+1;
+
+    uint32_t start_frame_length = ((uint32_t) SamplesPerBit * (uint32_t) STARTFrameLength);
+    uint32_t packet_length = ((uint32_t) SamplesPerBit * (uint32_t) PacketLength);
 
     //look for start bits until processing index is at buffersize - packetlength
-    while(processing_index < (ADC_BUFFER_SIZE - packet_length)){
+    while(processing_index < ((uint32_t) ADC_BUFFER_SIZE - (packet_length + start_frame_length))){
 
+        //edge trigger
+        while(!edge_state){
+            if(gADCBuffer[processing_index] > ADC_THRESHOLD) //Found a rising edge sample
+            {
+                edge_state = 1;
+            }else if((processing_index + 1) <= (uint32_t) gADCBufferIndex)
+            {//next element has been read in from adc already
+                processing_index += 1; //advance index if no edge found
+            }
+        }
 
         //wait for at least 1 start frame to possibly be sampled by ADC
-        while(((uint32_t) gADCBufferIndex - (uint32_t) processing_index) < start_frame_length);
+        while(((uint32_t) gADCBufferIndex - processing_index) <= start_frame_length);
 
+        //read start in
         read_for(processing_index, start_frame_length);
-        uint8_t bit_xor = (raw_rx ^ (uint8_t) StartFrame);
 
-        if(!bit_xor){ //read start
-            processing_index += start_frame_length + 1; //move to current sample
-            //wait for adc to sample for length of rest of packet
-            while((gADCBufferIndex - processing_index) < (packet_length-start_frame_length)){}
-            read_for(processing_index, (packet_length-start_frame_length));
-            bool check = verify_crc(raw_rx);
-            if(!check){
+        //xor check
+        raw_rx &= (uint32_t) 0xFF;
+        uint8_t raw_xor = (raw_rx & (uint8_t) 0xFF);
+        uint8_t bit_xor = (raw_xor ^ (uint8_t) StartFrame);
+
+        //if the bit_xor is 0, which is a pass, then !0 --> 1 or true
+        if(!bit_xor)
+        {
+            processing_index += start_frame_length;
+            //wait for packet_length * samplesperbit
+            while(((uint32_t) gADCBufferIndex - processing_index) <= (packet_length - start_frame_length));
+
+            //read rest of packet
+            read_for(processing_index, (packet_length - start_frame_length));
+
+            //check crc
+            bool crc_check = verify_crc(raw_rx);
+            if(!crc_check){
                 process_packet_raw(raw_rx);
+                return;
             }
-            raw_rx = 0;
-            tx_count = 0;
-            off_count = 0;
-            on_count = 0; //clear
-            return;
-        }else{ //did not read start
-            processing_index+=start_frame_length; //progress to most currently processed sample
+        }else
+        {
+            processing_index += 1;
         }
     }
-
 }
+
 
 void read_for(uint32_t index, uint32_t length){
-    uint16_t tens = length / 10;
     uint32_t i; //Loop through
-    for(i = index; i < (index+length); i++)
+    uint8_t onSample =0;
+    for(i = 0; i < length ; )
     {
-        //OFFSET PROCESSING
-        if(gADCBuffer[i] < ADC_THRESHOLD){// reading a 0 sample
-            off_count++;
-        }else if(gADCBuffer[i] > ADC_THRESHOLD){// reading a 1 sample
-            on_count++;
+        uint8_t j=0 ;
+        onSample =0;
+        for( j = i  ; (((i-j) < SamplesPerBit) && (i < length)) ; i++ )
+        {   // check one bit length of samples.
+            if(gADCBuffer[i + index] > ADC_THRESHOLD)
+            {// reading a 1 sample
+                onSample++;
+            }
         }
-
-        //SAMPLE COUNT ROUTINE
-        if(off_count == (int)SamplesPerBit){ //found enough samples to process a 0 read
+        //check if that's a bit
+        if(onSample >= HighBitTH)
+        { //found enough samples to be count as a one.
+            raw_rx |=1;
             raw_rx = raw_rx << 1; //shift bits left 1
-            off_count = 0;
-        }else if(on_count == (int)SamplesPerBit){ //found enough samples to process a 1 read
+        }else{
             raw_rx = raw_rx << 1; //shift bits left 1
-            raw_rx += 1; //add 1 to LSB
-            on_count = 0;
         }
     }
 }
-
-
-
-//void process_adc(){
-//    read_buffer = false;
-//    int i;
-//    //ADC SAMPLING ROUTINE
-//    for(i = 0; i < ADC_BUFFER_SIZE; i++)
-//    {
-//        buffer_sum += gADCBuffer[i]; //sum up all samples
-//
-//        if((int) gADCBuffer[i] > curr_max){ //compare curr_max to current sample and adjust
-//            curr_max = (int) gADCBuffer[i];
-//        }
-//
-//        //OFFSET PROCESSING
-//        if(gADCBuffer[i] < ADC_THRESHOLD){// counts as a 0
-//            off_count++;
-//        }else if(gADCBuffer[i] > ADC_THRESHOLD){//counts as a 1
-//            on_count++;
-//        }
-//
-//        //SAMPLE COUNT ROUTINE
-//        if(off_count >= (int)PacketLength){ //found enough samples to process a 0 read
-//            raw_rx = raw_rx << 1; //shift bits left 1
-//            off_count = 0;
-//            tx_count++;
-//        }else if(on_count >= (int)PacketLength){ //found enough samples to process a 1 read
-//            raw_rx = raw_rx << 1; //shift bits left 1
-//            raw_rx += 1; //add 1 to LSB
-//            on_count = 0;
-//            tx_count++;
-//        }
-//
-//        uint8_t bit_xor = (raw_rx ^ (uint8_t) StartFrame);
-//
-//        //START BIT CHECKING (only if not reading)
-//        if((bit_xor == 0)){//current rx has just read the start bits
-//            raw_rx &= CRC_MASK; //everything but the start bits are now 0
-//            tx_count = 8; //reset count, adjusted for 8 start bits
-//        }
-//
-//        //LOGGING + PACKET PROCESS ONCE PACKET LENGTH READ
-//        if(tx_count >= PacketLength){
-//            if(check_crc(raw_rx)){ //check the packet for errors
-//                process_packet_raw(raw_rx); //look at packet frame as whole
-//            }
-//            raw_rx = 0;
-//            tx_count = 0;
-//            off_count = 0;
-//            on_count = 0; //clear
-//        }
-//    }
-//
-//    //AVG RECALC
-//    buffer_avg = (int) buffer_sum / ADC_BUFFER_SIZE; //average buffer values (Use for Threshold Control?)
-//
-//    //ADJUST THRESHOLD
-//    adjust_threshold(buffer_avg, curr_max);
-//    read_buffer = true;
-//}
 
 void process_packet_raw(uint32_t packet){
     //EXTRACT ID AND PAYLOAD OUT
-    uint32_t packet_id = (ID_MASK && packet) >> (DATAFrameLength+CRCFrameLength); //shift id to most significant 4 bit
-    uint32_t payload = (PAYLOAD_MASK && packet) >> CRCFrameLength; //shift payload to most significant 8 bit
+    uint32_t packet_id = (uint32_t) ((uint32_t) ID_MASK & packet) >> 16;
+    uint32_t payload = (uint32_t) ((uint32_t) PAYLOAD_MASK & packet) >> 8;
 
 
     if(packet_id == id.REQUEST){ //resend the data buffer of the specific ID in payload
@@ -187,8 +149,8 @@ void process_packet_raw(uint32_t packet){
 
     int i;
     for(i = 3; i < 15; i++){
-        if(packet_id == id.SCHEDULER_INFO[i]){
-            set_data_buffer(payload, id.SCHEDULER_INFO[i]);
+        if(packet_id == i){
+            set_data_buffer(payload, id.SCHEDULER_INFO[i-3]);
             break;
         }
     }
