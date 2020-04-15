@@ -21,7 +21,7 @@ const uint16_t PacketLength = STARTFrameLength+IDFrameLength+DATAFrameLength+CRC
 
 //SCHEDULER DATA
 //HOLDS DATA RECIEVED AND TO SEND
-static uint8_t DATA_BUFFER[16];
+uint8_t DATA_BUFFER[16];
 
 //Prototypes:
 //static because it is a duplicate in the SRC code right now

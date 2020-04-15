@@ -78,7 +78,7 @@ void process_adc(){
             bool crc_check = verify_crc(raw_rx);
             if(!crc_check){
                 process_packet_raw(raw_rx);
-                return;
+                raw_rx = 0;
             }
         }else
         {
@@ -128,7 +128,7 @@ void process_packet_raw(uint32_t packet){
     }
 
     if(packet_id == id.COMMAND_STATUS){ //or = the payload to the command status data buffer
-        or_data_buffer(payload, id.COMMAND_STATUS);
+        set_data_buffer(payload, id.COMMAND_STATUS);
         uint8_t new_id = id.ACK;
         uint8_t new_payload = id.COMMAND_STATUS;
         uint32_t new_packet = construct_packet(new_id, new_payload);

@@ -1,7 +1,7 @@
 /*
  * TimerTX.h
  *
- *  Created on: 2020Äê2ÔÂ23ÈÕ
+ *  Created on: 2020ï¿½ï¿½2ï¿½ï¿½23ï¿½ï¿½
  *      Author: leogr
  */
 
@@ -11,6 +11,7 @@
 
 void t1OF_ISR();
 void timer1Init();
+
 
 extern uint16_t t1OFCount ;
 
