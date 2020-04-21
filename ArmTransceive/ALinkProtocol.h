@@ -16,7 +16,9 @@
 #define SamplesPerBit 10 // 10 sample per bit.
 #define SamplePerBreak 0 // 5 sample break period between bits.
 
-extern const uint16_t SampleRate;
+extern const uint16_t SampleRate ;
+
+#define SchedulerTimeIn 60 //send scheduler information after 60 seconds no RX/TX
 
 #define STARTFrameLength 8 // number of bits in start frame
 #define IDFrameLength 4 // number of bits in ID frame

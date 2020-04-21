@@ -16,12 +16,22 @@
 #include "ALinkProtocol.h"
 #include "sampling.h"
 
+
+
 const uint16_t SampleRate = BitRate*SamplesPerBit ;  // Hz
 const uint16_t PacketLength = STARTFrameLength+IDFrameLength+DATAFrameLength+CRCFrameLength;
+
+/*
+ * ALL VARIABLES ARE STATIC TO PREVENT BUILD ERRORS FROM DUPLICATE NAMED VARIABLES
+ */
 
 //SCHEDULER DATA
 //HOLDS DATA RECIEVED AND TO SEND
 static uint8_t DATA_BUFFER[16];
+
+static bool READING, SENDING = false; //reading and sending flags for debug
+static bool AUV_RECALL = false; //flags for Debug/Jetson
+static bool AUV_ARM = false; //flags for Debug/Jetson
 
 //Prototypes:
 //static because it is a duplicate in the SRC code right now
