@@ -80,16 +80,16 @@ void send_message(uint32_t packet){
 //construct a full packet with the 8-bit ID and PAYLOAD
 uint32_t construct_packet(uint8_t packet_id, uint8_t packet_payload){
     //start frame
-    uint32_t ans = StartFrame;
-    ans <<= STARTFrameLength;
+    uint32_t ans = (uint8_t) StartFrame;
 
     //4 bits of packet ID
-    ans |= (packet_id & ID_MASK);
     ans <<= IDFrameLength;
+    ans |= (packet_id & (uint8_t)0b1111);
 
     //8 bits of payload
-    ans |= packet_payload;
     ans <<= DATAFrameLength;
+    ans |= packet_payload;
 
+    ans <<= CRCFrameLength;
     return gen_crc8(ans); //add crc with crc_8 and return
 }

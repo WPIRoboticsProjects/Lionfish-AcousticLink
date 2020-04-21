@@ -8,6 +8,7 @@
  * Port PF0:PF3 : PWM module 0 generator 0 and 1 // note:PF0 is not available on booster back breakout.
  * Port PK4:PK5 : PWM module 0 generator 3
  * Port E:
+ * Port N: PN2: Timer1 fake TX pin
  */
 
 //--------------------------        TIMER ASSIGNMENT     --------------------------//
@@ -81,53 +82,73 @@ int main(void)
     init_protocol();
     SamplingInit();
     debugPinsInit();
+    TXdebugPinInit();
+
+
     pwm1Init();
     pwm3Init();
     timer1Init();
+
 
     IntMasterEnable();
 
 
     //Test for TX
-//    while(1)
-//    {
-//        send_message(0xAAAAAAAA);
-//        for(t1OFCount =0 ; t1OFCount < 20;)
-//        {
-//        }
-//
-//        pwmOutputEnable();
-//
-//        for(t1OFCount =0 ; t1OFCount < 1;)
-//        {
-//        }
-//        pwmOutputDisable();
-//
-//        for(t1OFCount =0 ; t1OFCount < 20;)
-//        {
-//        }
-//
-//    }
-
-
-    //Test for CRC
-    uint32_t test_rx = (uint32_t) 0xAAAAAA00;
-    uint32_t test_rx2 = (uint32_t) 0xFA3FA00;
-    uint32_t crc_test = gen_crc8(test_rx);
-    uint32_t crc_test2 = gen_crc8(test_rx2);
-    bool test_check = verify_crc(crc_test);
-    bool test_check2 = verify_crc(crc_test2);
-    test_check = !test_check;
-    test_check2 = !test_check2;
-
-
-
-    //Main Loop
     while(1)
     {
-        process_adc();
+        send_message(construct_packet(3,0xAA)); //0b1111 0101 0011 1010 1010 0000 0000
+                                                                   //0xF53AA00
+                                                                   //Decimal: 257141248
+        for(t1OFCount =0 ; t1OFCount < 40;)
+        {
+        }
+
+        pwmOutputEnable();
+
+        for(t1OFCount =0 ; t1OFCount < 1;)
+        {
+        }
+        pwmOutputDisable();
+
+        for(t1OFCount =0 ; t1OFCount < 40;)
+        {
+        }
+
+
+        send_message(construct_packet(10,0b00111001)); //0b1111 0101 1010 0011 1001 0000 0000
+                                                                         //0xF5A3900
+                                                                         //Decimal: 257571072
+        for(t1OFCount =0 ; t1OFCount < 40;)
+        {
+        }
+
+        pwmOutputEnable();
+
+        for(t1OFCount =0 ; t1OFCount < 1;)
+        {
+        }
+        pwmOutputDisable();
+
+        for(t1OFCount =0 ; t1OFCount < 40;)
+        {
+        }
 
     }
+
+
+
+
+//    //Test for CRC
+//    uint32_t test_rx = 0x881E500;
+//    uint32_t crc_test = crc_8(test_rx);
+//    bool test_check = check_crc(crc_test);
+//
+//    //Main Loop
+//    while(1)
+//    {
+//        process_adc();
+//
+//    }
 }
 
 //used to delay processes (uneeded?)
