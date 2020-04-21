@@ -149,39 +149,9 @@ void pwmOutputEnable()
 {
 
     PWM0_ENABLE_R = PWM_ENABLE_PWM0EN | PWM_ENABLE_PWM1EN | PWM_ENABLE_PWM2EN | PWM_ENABLE_PWM3EN  | PWM_ENABLE_PWM6EN |PWM_ENABLE_PWM7EN; // opens up the pair of output pins
-    TXdebugPinSet(1);
 }
 
 void pwmOutputDisable()
 {
     PWM0_ENABLE_R =0;
-    TXdebugPinSet(0);
-
 }
-
-
-
-
-
-
-void TXdebugPinInit()
-{
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPION);
-    GPIOPinTypeGPIOOutput(GPIO_PORTN_BASE, GPIO_PIN_2  ); // PL0 - PL3
-
-    GPIO_PORTN_DATA_R = 4;
-    GPIO_PORTN_DATA_R = 0;
-    TXdebugPinSet(1);
-    TXdebugPinSet(0);
-
-
-}
-
-void TXdebugPinSet(uint8_t data)
-{
-    if(data)
-        GPIO_PORTN_DATA_R = 4;
-    else
-        GPIO_PORTN_DATA_R = 0;
-}
-

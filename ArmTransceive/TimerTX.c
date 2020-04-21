@@ -6,7 +6,6 @@
  */
 
 //TIMER 1 : TX bit modulation
-// PORTN PN2 for output the output status of PWM. for turn on or off
 
 
 #include <stdint.h>
@@ -32,7 +31,6 @@ uint16_t t1OFCount =0;
 
 void timer1Init()
 {
-
     /////// Setup Timer1 to be full width perodic timer running at same frequency as bit rate.
 
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1);
@@ -50,9 +48,8 @@ void timer1Init()
 
     IntEnable(INT_TIMER1A);
 
+
 }
-
-
 
 // loaded into timer1-A vector
 void t1OF_ISR(void)

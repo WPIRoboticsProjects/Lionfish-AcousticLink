@@ -59,6 +59,10 @@
 #include "TimerTX.h"
 #include "CRC.h"
 
+//PROTOTYPES
+void delayMS(int ms);
+int * message_to_binary(char *input, int input_length);
+
 //GLOBALS
 uint32_t gSystemClock; // [Hz] system clock frequency
 uint32_t gTime = 8345; // time in hundredths of a second
@@ -78,7 +82,8 @@ int main(void)
     init_protocol();
     SamplingInit();
     debugPinsInit();
-    TXdebugPinInit();
+    timer1Init();
+
 
     pwm1Init();
     pwm3Init();
@@ -88,46 +93,53 @@ int main(void)
     IntMasterEnable();
 
 
-    //Test for TX
-    while(1)
-    {
-        send_message(construct_packet(1,0x02));
+//    //Test for TX
+//    while(1)
+//    {
+//        send_message(construct_packet(3,0xAA)); //0b1111 0101 0011 1010 1010 0000 0000
+//                                                                   //0xF53AA00
+//                                                                   //Decimal: 257141248
+//        for(t1OFCount =0 ; t1OFCount < 40;)
+//        {
+//        }
+//
+//        pwmOutputEnable();
+//
+//        for(t1OFCount =0 ; t1OFCount < 1;)
+//        {
+//        }
+//        pwmOutputDisable();
+//
+//        for(t1OFCount =0 ; t1OFCount < 40;)
+//        {
+//        }
+//
+//
+//        send_message(construct_packet(10,0b00111001)); //0b1111 0101 1010 0011 1001 0000 0000
+//                                                                         //0xF5A3900
+//                                                                         //Decimal: 257571072
+//        for(t1OFCount =0 ; t1OFCount < 40;)
+//        {
+//        }
+//
+//        pwmOutputEnable();
+//
+//        for(t1OFCount =0 ; t1OFCount < 1;)
+//        {
+//        }
+//        pwmOutputDisable();
+//
+//        for(t1OFCount =0 ; t1OFCount < 40;)
+//        {
+//        }
+//
+//    }
 
+
+//    //Test for RX
+//    while(1)
+//    {
 //        process_adc();
-
-        for(t1OFCount =0 ; t1OFCount < 50;)
-        {
-        }
-
-        send_message(construct_packet(3,0xFF));
-
-//        process_adc();
-
-        for(t1OFCount =0 ; t1OFCount < 50;)
-        {
-        }
-
-        send_message(construct_packet(2,0x03));
-
-//        process_adc();
-
-        for(t1OFCount =0 ; t1OFCount < 50;)
-        {
-        }
-
-        send_message(construct_packet(2,0x01));
-
-        process_adc();
-
-        for(t1OFCount =0 ; t1OFCount < 50;)
-        {
-        }
-
-        process_adc();
-
-        process_adc();
-
-
-
-    }
+//
+//    }
 }
