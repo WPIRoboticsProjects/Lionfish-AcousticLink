@@ -21,7 +21,7 @@
 //tDMAControlTable gDMAControlTable[64]; // uDMA control table (global)
 //volatile bool gDMAPrimary = true; // is DMA occurring in the primary channel?
 
-volatile int32_t gADCBufferIndex = 0;  // latest sample index
+volatile int32_t gADCBufferIndex = ADC_BUFFER_SIZE - 1;  // latest sample index
 volatile uint16_t gADCBuffer[ADC_BUFFER_SIZE];           // circular buffer
 volatile uint32_t gADCErrors;                       // number of missed ADC deadlines
 
