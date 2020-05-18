@@ -57,7 +57,7 @@ COMMAND command;
  *
  */
 
-#define StartFrame 0xFA // exact bit sequence for start frame 1111 1010
+#define StartFrame 0b11110101 // exact bit sequence for start frame 1111 1010
 
 #define CRC_MASK                   0b11111111
 #define PAYLOAD_MASK       0b1111111100000000

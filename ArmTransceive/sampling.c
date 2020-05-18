@@ -16,6 +16,7 @@
 #include "sysctl_pll.h"
 #include "sampling.h"
 #include "ALinkProtocol.h"
+#include "hwDebug.h"
 
 //#pragma DATA_ALIGN(gDMAControlTable, 1024) // address alignment required
 //tDMAControlTable gDMAControlTable[64]; // uDMA control table (global)
@@ -95,7 +96,8 @@ void ADCTimer4Init()
 void ADC_ISR(void)
 {
 //    ADCIntClearEx(ADC1_BASE, ADC_INT_DMA_SS0); // clear the ADC1 sequence 0 DMA interrupt flag
-//
+
+
 //    // Check the alternate DMA channel for end of transfer, and restart if needed.
 //     // Also set the gDMAPrimary global.
 //    if (uDMAChannelModeGet(UDMA_SEC_CHANNEL_ADC10 | UDMA_PRI_SELECT) == UDMA_MODE_STOP) {
@@ -113,6 +115,7 @@ void ADC_ISR(void)
 //    if (!uDMAChannelIsEnabled(UDMA_SEC_CHANNEL_ADC10)) {
 //        uDMAChannelEnable(UDMA_SEC_CHANNEL_ADC10); // re-enable the DMA channel
 //    }
+
     ADC1_ISC_R = ADC_ISC_IN0;
 
     if (ADC1_OSTAT_R & ADC_OSTAT_OV0) { // check for ADC FIFO overflow
@@ -121,4 +124,6 @@ void ADC_ISR(void)
     }
 
     gADCBuffer[gADCBufferIndex = ADC_BUFFER_WRAP(gADCBufferIndex + 1)] = ADC1_SSFIFO0_R; // read sample from the ADC1 sequence 0 FIFO
+
+    debugPort ^=0xf;
 }
