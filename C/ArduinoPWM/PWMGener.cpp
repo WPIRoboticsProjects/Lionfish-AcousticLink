@@ -15,11 +15,11 @@ void timer1Setup()
   // CSn2:0 = 001, clock no prescaler WGMn3:2 = 11
   TCCR1B = 0b00011001;
   // 16Mhz / 200Khz = 80;
-  ICR1 = 80 ;
+  ICR1 = 200 ;
   //50% duty
-  OCR1A =40;
-  OCR1B = 40;
-  OCR1C = 40;
+  OCR1A =100;
+  OCR1B = 100;
+  OCR1C = 100;
 }
 
 void timer1Mute()
@@ -38,11 +38,12 @@ void timer3Setup()
 {
   // Fast PWM ocrnA top 
   TCCR3A = 0b10111011;
-  // CSn2:0 = 001, clock no prescaler WGMn3:2 = 01
-  TCCR3B = 0b00011001;
-  // 16Mhz / 20Khz = 800;
+  // CSn2:0 = 001, clock / 16 WGMn3:2 = 11
+  TCCR3B = 0b00011011;
+  // 16Mhz / 64 = 250Khz
+  // 250Khz / 1Khz = 250;
   //50% duty
-  OCR3A =1600;
+  OCR3A =125;
   OCR3B = OCR3A/2;
   TIMSK3 = 101;
 }
